@@ -3,8 +3,8 @@ const axios = require('axios');
 
 // Function to exchange a short-lived token for a long-lived token
 const getLongLivedToken = async (shortLivedToken) => {
-  const appId = '2817967348512898';  // Replace with your App ID
-  const appSecret = '66588a4ed0dc6f9d49f5997b948fcda2';  // Replace with your App Secret
+  const appId = '2817967348512898';
+  const appSecret = '66588a4ed0dc6f9d49f5997b948fcda2';
   
   try {
     const response = await axios.get('https://graph.facebook.com/v11.0/oauth/access_token', {
