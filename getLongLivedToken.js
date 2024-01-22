@@ -23,7 +23,7 @@ const getLongLivedToken = async (shortLivedToken) => {
   }
 };
 
-const shortLivedToken = 'EAAoC7SbLZBIIBAJlwFK7NhJmmUeLxNm2UQSQb5FWIxBPBwyGdm0ZAlZBKacZA4o651KnqZAxenFwilyAoth86EGPd7WGDw8B5CUCI7WHGf2UrZAR43vZC9dMHBnBm1cXBU7FJDoxEAu8oZAXBzAxZBZBWAFoZABodcZBcvCGb9nTpKFP3dZB2xcMKszhZAAuduI3TmtRPZAZAcUECn69TtyJZCbF4K8LZA';
+const shortLivedToken = 'EAAoC7SbLZBIIBO65nHXM9zDf5gr7dt2srji3lIcdje0PSQb28jxDHFrQ0hd5ZCLwRZAUTdFzfOqdAMCcqe263sttBqZBP6l4SMHF37DJ9FZANOAsMCaDB0Fm4qZBaUxTZCyxKzFJQfp4WmTwi1aAqiUkp8m24xLEu3o4LNZAZBTC1Saw7faKcmGMgEZBxxBfWbbIgCv7gKBPZBmdQRpH3xf';
 getLongLivedToken(shortLivedToken)
   .then((longLivedToken) => {
     console.log('Long-lived token:', longLivedToken);

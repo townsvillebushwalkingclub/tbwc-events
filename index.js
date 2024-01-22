@@ -44,7 +44,7 @@ async function getGroupEvents(accessToken, groupId) {
 }
 
 
-const accessToken = 'EAAoC7SbLZBIIBADIjBhshvuuUO4pA0lr9vyxCwU8nWSusIVeIWwgDGv1qVVdZAiO9K6PJ19iZCsNvxMQTcGTf23AuinKEdNdmKuRFWr7rctk3gTLBX8UXLRAogXdZCxTwOtjyEyN0p8HgRVMLRPoZBJxNf5guEthvtj10VRptwyzejw6dywjZAeaG8dpcjZCuIZD';
+const accessToken = 'EAAoC7SbLZBIIBO65nHXM9zDf5gr7dt2srji3lIcdje0PSQb28jxDHFrQ0hd5ZCLwRZAUTdFzfOqdAMCcqe263sttBqZBP6l4SMHF37DJ9FZANOAsMCaDB0Fm4qZBaUxTZCyxKzFJQfp4WmTwi1aAqiUkp8m24xLEu3o4LNZAZBTC1Saw7faKcmGMgEZBxxBfWbbIgCv7gKBPZBmdQRpH3xf';
 const pageId = '192589954994960';
 const groupId = '1044042929275742';
 
