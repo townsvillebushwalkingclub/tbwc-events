@@ -1,5 +1,6 @@
 //https://thewebscrapingguy.com/articles/I-made-a-free-script-that-scrapes-facebook-group-posts
 // also see https://quick-dungeon-673.notion.site/Scrape-Creators-API-Documentation-f18de4220c1848b3a7a6c6be6fdeaef3
+// and https://gist.github.com/adrianhorning08
 
 const allContent = []
 
