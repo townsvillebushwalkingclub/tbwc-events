@@ -13,6 +13,6 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "playwright": "^1.49.0",
-    "playwright-core": "^1.49.0"
+    "playwright-core": "^1.49.1"
   }
 }
