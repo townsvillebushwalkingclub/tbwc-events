@@ -11,7 +11,7 @@
     'use strict'
 
     // Configuration
-    const API_BASE_URL = 'https://tbwc.vercel.app'
+    const API_BASE_URL = 'https://tbwc-o1d4x0pov-luens-projects.vercel.app'
     const MAX_EVENTS = 5
     const DAYS_AHEAD = 90 // Show events for next 90 days
 
