@@ -11,7 +11,7 @@
     'use strict'
 
     // Configuration
-    const API_BASE_URL = 'https://your-vercel-deployment.vercel.app' // Update this with your actual Vercel URL
+    const API_BASE_URL = 'https://tbwc.vercel.app'
     const MAX_EVENTS = 5
     const DAYS_AHEAD = 90 // Show events for next 90 days
 
