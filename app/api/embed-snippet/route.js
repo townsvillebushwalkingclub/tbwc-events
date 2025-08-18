@@ -14,7 +14,7 @@ export async function GET() {
     'use strict';
     
     // Configuration
-    const API_BASE_URL = 'https://tbwc-o1d4x0pov-luens-projects.vercel.app';
+    const API_BASE_URL = 'https://tbwc-1rv9vvyp7-luens-projects.vercel.app';
     const MAX_EVENTS = 5;
     const DAYS_AHEAD = 90; // Show events for next 90 days
     
