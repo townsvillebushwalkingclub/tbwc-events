@@ -213,7 +213,7 @@ You can embed upcoming events on your website using our JavaScript widget:
 ### Quick Embed
 ```html
 <div id="tbwc-events"></div>
-<script src="https://your-vercel-deployment.vercel.app/api/embed-snippet"></script>
+<script src="https://your.domain/api/embed-snippet"></script>
 ```
 
 ### Features
