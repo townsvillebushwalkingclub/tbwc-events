@@ -52,9 +52,10 @@ export default function Calendar({
                         </button>
                     </div>
                     <div className="text-3xl font-bold">
-                        {new Date(year, month).toLocaleDateString('en-US', {
+                        {new Date(year, month).toLocaleDateString('en-AU', {
                             month: 'long',
                             year: 'numeric',
+                            timeZone: 'Australia/Brisbane',
                         })}
                     </div>
                 </div>

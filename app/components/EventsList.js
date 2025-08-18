@@ -7,9 +7,10 @@ export default function EventsList({
     error,
     onRefresh,
 }) {
-    const monthYear = new Date(currentDate).toLocaleDateString('en-US', {
+    const monthYear = new Date(currentDate).toLocaleDateString('en-AU', {
         month: 'long',
         year: 'numeric',
+        timeZone: 'Australia/Brisbane',
     })
 
     if (loading) {
