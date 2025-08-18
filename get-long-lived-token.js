@@ -2,7 +2,7 @@
  * Script to exchange short-lived Facebook token for long-lived token
  *
  * Usage:
- * 1. Add your APP_ID and APP_SECRET to the .env file
+ * 1. Add your FACEBOOK_APP_ID and FACEBOOK_APP_SECRET to the .env file
  * 2. Run: node get-long-lived-token.js
  */
 
@@ -30,8 +30,8 @@ function loadEnvFile() {
 }
 
 const env = loadEnvFile()
-const APP_ID = env.FACEBOOK_APP_ID
-const APP_SECRET = env.FACEBOOK_APP_SECRET
+const FACEBOOK_APP_ID = env.FACEBOOK_APP_ID
+const FACEBOOK_APP_SECRET = env.FACEBOOK_APP_SECRET
 const SHORT_LIVED_TOKEN = env.FACEBOOK_ACCESS_TOKEN
 
 function makeRequest(url) {
@@ -61,7 +61,7 @@ function makeRequest(url) {
 
 async function getLongLivedToken() {
     try {
-        const url = `https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=${APP_ID}&client_secret=${APP_SECRET}&fb_exchange_token=${SHORT_LIVED_TOKEN}`
+        const url = `https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=${FACEBOOK_APP_ID}&client_secret=${FACEBOOK_APP_SECRET}&fb_exchange_token=${SHORT_LIVED_TOKEN}`
 
         console.log('Exchanging token...')
         const data = await makeRequest(url)
@@ -87,18 +87,12 @@ async function getLongLivedToken() {
 }
 
 // Check if required values are set
-if (!APP_ID || !APP_SECRET || !SHORT_LIVED_TOKEN) {
+if (!FACEBOOK_APP_ID || !FACEBOOK_APP_SECRET || !SHORT_LIVED_TOKEN) {
     console.log('❌ Please update the .env file with:')
-    console.log('1. APP_ID - Your Facebook App ID')
-    console.log('2. APP_SECRET - Your Facebook App Secret')
+    console.log('1. FACEBOOK_APP_ID - Your Facebook App ID')
+    console.log('2. FACEBOOK_APP_SECRET - Your Facebook App Secret')
     console.log('3. FACEBOOK_ACCESS_TOKEN - Your current short-lived token')
     console.log('\nYou can find these in your Facebook Developer Console.')
-    console.log('\nYour .env file should look like:')
-    console.log('APP_ID=281796734851298')
-    console.log('APP_SECRET=66588a4ed0dc6f9d4...')
-    console.log(
-        'FACEBOOK_ACCESS_TOKEN=EAAoC7SbLZBIIBPJmuAcOEZBY7TdSZBPpKfCoRhyNB0fJpxKk8BgnfbUdzI08sVeZBKroGDCwiYU50zmgzWIhtnyxFhLlcLjXWNFjVTmGYnVQtUmcXeW1qZAoxeM19i4YG7MoGovXIkYggdk1biIwdt5KTZCMas2cZCA5bh43a6Vm5VCOXhpyvFGVxF22UQbdnwZA8ZBxXZB8OrttnNe16AW72KivaQQtM1Bb3Hlq8IzJ5TFeh6HexciQbZCjJXrN8UZD'
-    )
 } else {
     getLongLivedToken()
 }
