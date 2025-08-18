@@ -1,18 +1,26 @@
 {
   "name": "tbwc",
-  "version": "1.0.0",
-  "description": "Get townsville bushwalking club events and posts",
+  "version": "2.0.0",
+  "description": "Townsville Bushwalking Club Events Calendar and API",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "npx nodemon index"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build": "echo 'No build step required'"
   },
-  "keywords": [],
+  "keywords": ["facebook", "events", "calendar", "api"],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "hono": "^4.0.0",
+    "@hono/node-server": "^1.8.0",
     "dotenv": "^16.4.5",
-    "playwright": "^1.49.0",
-    "playwright-core": "^1.49.1"
+    "node-fetch": "^3.3.2",
+    "date-fns": "^3.6.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
   }
 }
