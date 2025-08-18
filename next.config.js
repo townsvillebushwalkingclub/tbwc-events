@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    env: {
-        FACEBOOK_ACCESS_TOKEN: process.env.FACEBOOK_ACCESS_TOKEN,
-    },
+    // Environment variables are automatically available in Next.js
 }
 
 module.exports = nextConfig
