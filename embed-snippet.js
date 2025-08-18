@@ -185,20 +185,41 @@
 
     // Fetch events from API
     async function fetchEvents() {
-        const { year, month } = getCurrentMonthYear()
-        const url = `${API_BASE_URL}/api/events/${year}/${month}`
+        const now = new Date()
+        const currentYear = now.getFullYear()
+        const currentMonth = now.getMonth() + 1
 
-        try {
-            const response = await fetch(url)
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
-            }
-            const data = await response.json()
-            return data.success ? data.data : []
-        } catch (error) {
-            console.error('Error fetching TBWC events:', error)
-            return []
+        // Fetch events from current month and next 3 months to find upcoming events
+        const monthsToFetch = []
+        for (let i = 0; i < 4; i++) {
+            const month = currentMonth + i
+            const year = currentYear + Math.floor((month - 1) / 12)
+            const adjustedMonth = ((month - 1) % 12) + 1
+            monthsToFetch.push({ year, month: adjustedMonth })
         }
+
+        let allEvents = []
+
+        for (const { year, month } of monthsToFetch) {
+            try {
+                const url = `${API_BASE_URL}/api/events/${year}/${month}`
+                const response = await fetch(url)
+
+                if (response.ok) {
+                    const data = await response.json()
+                    if (data.success && data.data) {
+                        allEvents = allEvents.concat(data.data)
+                    }
+                }
+            } catch (error) {
+                console.error(
+                    `Error fetching events for ${year}/${month}:`,
+                    error
+                )
+            }
+        }
+
+        return allEvents
     }
 
     // Filter upcoming events
@@ -312,7 +333,10 @@
             renderEvents(container, upcomingEvents)
         } catch (error) {
             console.error('TBWC Events Error:', error)
-            showError(container, error.message)
+            showError(
+                container,
+                'Failed to load events. Please check the console for details.'
+            )
         }
     }
 
