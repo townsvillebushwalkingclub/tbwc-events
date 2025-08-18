@@ -14,7 +14,7 @@ export async function GET() {
     'use strict';
     
     // Configuration
-    const API_BASE_URL = 'https://tbwc-f1f99ic1m-luens-projects.vercel.app';
+    const API_BASE_URL = 'https://tbwc.wanderstories.space';
     const MAX_EVENTS = 5;
     const DAYS_AHEAD = 90; // Show events for next 90 days
     
