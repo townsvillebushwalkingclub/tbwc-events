@@ -12,7 +12,7 @@ export async function GET() {
         let test1 = 'Not tested'
         try {
             const response1 = await fetch(
-                'https://graph.facebook.com/v19.0/townsvillebushwalkingclub?access_token=' +
+                'https://graph.facebook.com/v23.0/townsvillebushwalkingclub?access_token=' +
                     process.env.FACEBOOK_ACCESS_TOKEN +
                     '&fields=id,name'
             )
@@ -28,7 +28,7 @@ export async function GET() {
         let test2 = 'Not tested'
         try {
             const response2 = await fetch(
-                'https://graph.facebook.com/v19.0/townsvillebushwalkingclub?access_token=' +
+                'https://graph.facebook.com/v23.0/townsvillebushwalkingclub?access_token=' +
                     process.env.FACEBOOK_ACCESS_TOKEN
             )
             const data2 = await response2.json()
@@ -43,7 +43,7 @@ export async function GET() {
         let test3 = 'Not tested'
         try {
             const response3 = await fetch(
-                'https://graph.facebook.com/v19.0/townsvillebushwalkingclub/events?access_token=' +
+                'https://graph.facebook.com/v23.0/townsvillebushwalkingclub/events?access_token=' +
                     process.env.FACEBOOK_ACCESS_TOKEN +
                     '&fields=id,name&limit=5'
             )

@@ -13,7 +13,7 @@ export async function GET() {
 
         // Test the token with a simple API call
         const response = await fetch(
-            `https://graph.facebook.com/v19.0/townsvillebushwalkingclub?access_token=${token}&fields=id,name`
+            `https://graph.facebook.com/v23.0/townsvillebushwalkingclub?access_token=${token}&fields=id,name`
         )
 
         const data = await response.json()
