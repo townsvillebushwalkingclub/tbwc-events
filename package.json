@@ -2,25 +2,42 @@
   "name": "tbwc",
   "version": "2.0.0",
   "description": "Townsville Bushwalking Club Events Calendar and API",
-  "main": "index.js",
-  "type": "module",
+  "private": true,
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
-    "build": "echo 'No build step required'"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "keywords": ["facebook", "events", "calendar", "api"],
-  "author": "",
+  "keywords": [
+    "townsville",
+    "events",
+    "calendar",
+    "bushwalking",
+    "hiking",
+    "walking",
+    "outdoors",
+    "nature",
+    "adventure",
+    "explore",
+    "exploration"
+  ],
+  "author": "Luen Warneke",
   "license": "ISC",
   "dependencies": {
-    "hono": "^4.0.0",
-    "@hono/node-server": "^1.8.0",
-    "dotenv": "^16.4.5",
-    "node-fetch": "^3.3.2",
     "date-fns": "^3.6.0",
-    "cors": "^2.8.5"
+    "next": "^15.4.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.0"
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.4.6",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17"
   }
 }

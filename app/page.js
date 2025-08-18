@@ -1,0 +1,97 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Calendar from './components/Calendar'
+import EventsList from './components/EventsList'
+
+export default function Home() {
+    const [currentDate, setCurrentDate] = useState(new Date())
+    const [events, setEvents] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
+
+    const loadEvents = async () => {
+        try {
+            setLoading(true)
+            const year = currentDate.getFullYear()
+            const month = currentDate.getMonth() + 1
+
+            const response = await fetch(`/api/events/${year}/${month}`)
+            const data = await response.json()
+
+            if (data.success) {
+                setEvents(data.data)
+                setError(null)
+            } else {
+                throw new Error(data.error || 'Failed to load events')
+            }
+        } catch (error) {
+            console.error('Error loading events:', error)
+            setError(error.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        loadEvents()
+    }, [currentDate])
+
+    const previousMonth = () => {
+        setCurrentDate((prev) => {
+            const newDate = new Date(prev)
+            newDate.setMonth(prev.getMonth() - 1)
+            return newDate
+        })
+    }
+
+    const nextMonth = () => {
+        setCurrentDate((prev) => {
+            const newDate = new Date(prev)
+            newDate.setMonth(prev.getMonth() + 1)
+            return newDate
+        })
+    }
+
+    const goToToday = () => {
+        setCurrentDate(new Date())
+    }
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
+            <div className="container mx-auto px-4 py-8">
+                {/* Header */}
+                <div className="text-center mb-10 text-white">
+                    <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">
+                        🏔️ Townsville Bushwalking Club
+                    </h1>
+                    <p className="text-xl opacity-90">
+                        Events Calendar & Activities
+                    </p>
+                </div>
+
+                {/* Calendar */}
+                <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
+                    <Calendar
+                        currentDate={currentDate}
+                        events={events}
+                        onPreviousMonth={previousMonth}
+                        onNextMonth={nextMonth}
+                        onGoToToday={goToToday}
+                    />
+                </div>
+
+                {/* Events List */}
+                <div className="bg-white rounded-3xl shadow-2xl p-8">
+                    <EventsList
+                        events={events}
+                        currentDate={currentDate}
+                        loading={loading}
+                        error={error}
+                        onRefresh={loadEvents}
+                    />
+                </div>
+            </div>
+        </div>
+    )
+}

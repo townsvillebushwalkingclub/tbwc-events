@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TBWC Events Embed Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .example-section {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        code {
+            background: #333;
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>🏔️ TBWC Events Embed Widget</h1>
+    
+    <p>This example shows how to embed the Townsville Bushwalking Club events widget on your website.</p>
+    
+    <h2>📋 Implementation Steps</h2>
+    
+    <div class="example-section">
+        <h3>1. Add the Container</h3>
+        <p>Add this HTML where you want the events to appear:</p>
+        <pre><code>&lt;div id="tbwc-events"&gt;&lt;/div&gt;</code></pre>
+    </div>
+    
+    <div class="example-section">
+        <h3>2. Include the Script</h3>
+        <p>Add this script tag to your HTML head or before the closing body tag:</p>
+        <pre><code>&lt;script src="https://your-vercel-deployment.vercel.app/embed-snippet.js"&gt;&lt;/script&gt;</code></pre>
+        <p><strong>Important:</strong> Replace <code>your-vercel-deployment</code> with your actual Vercel deployment URL.</p>
+    </div>
+    
+    <div class="example-section">
+        <h3>3. Complete Example</h3>
+        <p>Here's a complete example of how to implement it:</p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Townsville Bushwalking Club&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to Townsville Bushwalking Club&lt;/h1&gt;
+    
+    &lt;!-- Events will appear here --&gt;
+    &lt;div id="tbwc-events"&gt;&lt;/div&gt;
+    
+    &lt;!-- Include the events script --&gt;
+    &lt;script src="https://your-vercel-deployment.vercel.app/embed-snippet.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    </div>
+    
+    <h2>🎨 Customization</h2>
+    
+    <div class="example-section">
+        <h3>Styling Options</h3>
+        <p>The widget comes with built-in styles, but you can customize it by adding CSS:</p>
+        <pre><code>&lt;style&gt;
+/* Customize the widget appearance */
+.tbwc-events-container {
+    max-width: 800px; /* Make it wider */
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); /* Different colors */
+}
+
+.tbwc-event-item {
+    background: rgba(255,255,255,0.2); /* More transparent */
+}
+&lt;/style&gt;</code></pre>
+    </div>
+    
+    <div class="example-section">
+        <h3>Configuration</h3>
+        <p>You can modify these settings in the script:</p>
+        <ul>
+            <li><code>MAX_EVENTS</code>: Number of events to display (default: 5)</li>
+            <li><code>DAYS_AHEAD</code>: How many days ahead to show events (default: 90)</li>
+            <li><code>API_BASE_URL</code>: Your Vercel deployment URL</li>
+        </ul>
+    </div>
+    
+    <h2>📱 Features</h2>
+    
+    <ul>
+        <li><strong>Responsive Design:</strong> Works on desktop and mobile</li>
+        <li><strong>Automatic Updates:</strong> Shows the latest events from your API</li>
+        <li><strong>Error Handling:</strong> Gracefully handles API errors</li>
+        <li><strong>Loading States:</strong> Shows loading spinner while fetching data</li>
+        <li><strong>Facebook Integration:</strong> Links to your Facebook page</li>
+        <li><strong>Beautiful Design:</strong> Modern gradient design with hover effects</li>
+    </ul>
+    
+    <h2>🔧 Technical Details</h2>
+    
+    <div class="example-section">
+        <h3>API Endpoint</h3>
+        <p>The widget fetches events from:</p>
+        <pre><code>GET https://your-vercel-deployment.vercel.app/api/events/{year}/{month}</code></pre>
+        <p>Example: <code>https://your-vercel-deployment.vercel.app/api/events/2025/8</code></p>
+    </div>
+    
+    <div class="example-section">
+        <h3>Data Format</h3>
+        <p>The API returns events in this format:</p>
+        <pre><code>{
+  "success": true,
+  "data": [
+    {
+      "id": "event-id",
+      "name": "Event Name",
+      "description": "Event description",
+      "start_time": "2025-08-15T09:00:00.000Z",
+      "formatted_date": "Friday, August 15, 2025",
+      "formatted_time": "9:00 AM",
+      "attending_count": 12,
+      "interested_count": 25,
+      "place": { "name": "Location Name" }
+    }
+  ]
+}</code></pre>
+    </div>
+    
+    <h2>🚀 Deployment</h2>
+    
+    <p>To use this widget:</p>
+    <ol>
+        <li>Deploy your Next.js app to Vercel</li>
+        <li>Update the <code>API_BASE_URL</code> in the script to your Vercel URL</li>
+        <li>Add the HTML and script to your website</li>
+        <li>Test to make sure events are loading correctly</li>
+    </ol>
+    
+    <h2>📞 Support</h2>
+    
+    <p>If you need help implementing this widget or have questions, please contact the TBWC team.</p>
+    
+    <hr>
+    <p><em>This embed widget is designed specifically for the Townsville Bushwalking Club website and integrates with the TBWC events API.</em></p>
+</body>
+</html>

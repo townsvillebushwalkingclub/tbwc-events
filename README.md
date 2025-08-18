@@ -1,6 +1,6 @@
 # Townsville Bushwalking Club - Events Calendar
 
-A modern web application that extracts Facebook events from the Townsville Bushwalking Club page and displays them in a beautiful calendar interface with a REST API.
+A modern Next.js web application that extracts Facebook events from the Townsville Bushwalking Club page and displays them in a beautiful calendar interface with a REST API.
 
 ## Features
 
@@ -8,8 +8,10 @@ A modern web application that extracts Facebook events from the Townsville Bushw
 - 🎯 **Facebook Events Integration** - Real-time events from your Facebook page
 - 🔄 **REST API** - JSON endpoints for programmatic access
 - 📱 **Responsive Design** - Works on desktop and mobile devices
-- ⚡ **Modern Tech Stack** - Built with Hono, Node.js, and vanilla JavaScript
+- ⚡ **Modern Tech Stack** - Built with Next.js 15, React 19, and Tailwind CSS
 - 🎨 **Beautiful UI** - Modern gradient design with smooth animations
+- 🚀 **Vercel Ready** - Optimized for deployment on Vercel
+- 🔗 **Embed Widget** - JavaScript snippet for embedding events on other websites
 
 ## Quick Start
 
@@ -18,6 +20,7 @@ A modern web application that extracts Facebook events from the Townsville Bushw
 - Node.js 18+ 
 - Facebook Developer Account
 - Facebook Page Access Token
+- npm or yarn
 
 ### Installation
 
@@ -33,14 +36,10 @@ A modern web application that extracts Facebook events from the Townsville Bushw
    ```
 
 3. **Set up environment variables**
-   ```bash
-   cp env.example .env
-   ```
    
-   Edit `.env` and add your Facebook access token:
+   Create a `.env.local` file and add your Facebook access token:
    ```
    FACEBOOK_ACCESS_TOKEN=your_facebook_access_token_here
-   PORT=3000
    ```
 
 4. **Get Facebook Access Token**
@@ -50,9 +49,9 @@ A modern web application that extracts Facebook events from the Townsville Bushw
    - Generate access token
    - Copy the token to your `.env` file
 
-5. **Start the server**
+5. **Start the development server**
    ```bash
-   npm start
+   npm run dev
    ```
 
 6. **Open your browser**
@@ -118,13 +117,19 @@ npm run dev
 ### Project Structure
 ```
 TBWC/
-├── index.js              # Main server file (Hono)
-├── lib/
-│   └── facebook-api.js   # Facebook Graph API integration
-├── public/
-│   └── index.html        # Calendar interface
-├── package.json          # Dependencies and scripts
-└── .env                  # Environment variables
+├── app/                  # Next.js App Router
+│   ├── page.js          # Main calendar page
+│   ├── layout.js        # Root layout
+│   ├── components/      # React components
+│   │   ├── Calendar.js  # Calendar component
+│   │   └── EventsList.js # Events list component
+│   └── api/             # API routes
+│       ├── events/      # Events API endpoints
+│       └── health/      # Health check endpoint
+├── package.json         # Dependencies and scripts
+├── next.config.js       # Next.js configuration
+├── tailwind.config.js   # Tailwind CSS configuration
+└── .env.local           # Environment variables
 ```
 
 ## Facebook API Setup
@@ -145,7 +150,7 @@ TBWC/
 ### Page Configuration
 The app is configured to fetch events from: `https://www.facebook.com/townsvillebushwalkingclub/`
 
-To change the page, update the `FACEBOOK_PAGE_ID` constant in `lib/facebook-api.js`.
+To change the page, update the `FACEBOOK_PAGE_ID` constant in the API routes.
 
 ## Features
 
@@ -160,6 +165,7 @@ To change the page, update the `FACEBOOK_PAGE_ID` constant in `lib/facebook-api.
 - **Error Handling** - Comprehensive error responses
 - **Data Formatting** - Consistent JSON structure
 - **Health Monitoring** - Health check endpoint
+- **Caching** - Built-in Next.js caching with revalidation
 
 ### Event Data
 Each event includes:
@@ -174,7 +180,7 @@ Each event includes:
 ### Common Issues
 
 **"Facebook access token is required"**
-- Check your `.env` file has `FACEBOOK_ACCESS_TOKEN` set
+- Check your `.env.local` file has `FACEBOOK_ACCESS_TOKEN` set
 - Verify the token is valid in Graph API Explorer
 
 **"Failed to fetch page info"**
@@ -186,7 +192,7 @@ Each event includes:
 - Check event privacy settings
 
 ### Debug Mode
-Add `DEBUG=true` to your `.env` file for detailed logging.
+Add `DEBUG=true` to your `.env.local` file for detailed logging.
 
 ## Contributing
 
@@ -199,6 +205,24 @@ Add `DEBUG=true` to your `.env` file for detailed logging.
 ## License
 
 ISC License - see LICENSE file for details.
+
+## Embed Widget
+
+You can embed upcoming events on your website using our JavaScript widget:
+
+### Quick Embed
+```html
+<div id="tbwc-events"></div>
+<script src="https://your-vercel-deployment.vercel.app/api/embed-snippet"></script>
+```
+
+### Features
+- **Automatic Updates**: Shows latest events from your API
+- **Responsive Design**: Works on desktop and mobile
+- **Error Handling**: Graceful fallback if API is unavailable
+- **Beautiful Design**: Modern gradient design with hover effects
+
+For detailed embed documentation, see [EMBED_README.md](./EMBED_README.md).
 
 ## Support
 
