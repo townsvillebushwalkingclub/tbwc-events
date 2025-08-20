@@ -65,9 +65,27 @@ export default function Home() {
                     <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">
                         🏔️ Townsville Bushwalking Club
                     </h1>
-                    <p className="text-xl opacity-90">
+                    <p className="text-xl opacity-90 mb-6">
                         Events Calendar & Activities
                     </p>
+                    <div className="flex justify-center gap-4">
+                        <a
+                            href="https://townsvillebushwalkingclub.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
+                        >
+                            🌐 Visit Official Website
+                        </a>
+                        <a
+                            href="https://www.facebook.com/townsvillebushwalkingclub/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
+                        >
+                            📘 Facebook Page
+                        </a>
+                    </div>
                 </div>
 
                 {/* Calendar */}

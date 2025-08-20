@@ -85,13 +85,8 @@ export default function EventsList({
                             </div>
 
                             {event.description && (
-                                <div className="text-gray-700 mb-4 leading-relaxed">
-                                    {event.description.length > 200
-                                        ? `${event.description.substring(
-                                              0,
-                                              200
-                                          )}...`
-                                        : event.description}
+                                <div className="text-gray-700 mb-4 leading-relaxed whitespace-pre-wrap">
+                                    {event.description}
                                 </div>
                             )}
 
@@ -101,13 +96,24 @@ export default function EventsList({
                                 </div>
                             )}
 
-                            <div className="flex gap-6 text-sm text-gray-500">
-                                <span>
-                                    👥 {event.attending_count} attending
-                                </span>
-                                <span>
-                                    ❤️ {event.interested_count} interested
-                                </span>
+                            <div className="flex justify-between items-center">
+                                <div className="flex gap-6 text-sm text-gray-500">
+                                    <span>
+                                        👥 {event.attending_count} attending
+                                    </span>
+                                    <span>
+                                        ❤️ {event.interested_count} interested
+                                    </span>
+                                </div>
+
+                                <a
+                                    href={`https://www.facebook.com/events/${event.id}/`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                                >
+                                    📘 View on Facebook
+                                </a>
                             </div>
                         </div>
                     ))}

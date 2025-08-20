@@ -90,6 +90,34 @@ export async function GET() {
             font-style: italic;
             opacity: 0.8;
             font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .tbwc-event-description {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 10px;
+            max-height: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        
+        .tbwc-event-description.expanded {
+            max-height: none;
+            -webkit-line-clamp: unset;
+        }
+        
+        .tbwc-event-description-toggle {
+            color: #4facfe;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-decoration: underline;
+            margin-bottom: 10px;
+            display: inline-block;
         }
         
         .tbwc-event-stats {
@@ -98,6 +126,24 @@ export async function GET() {
             margin-top: 10px;
             font-size: 0.8rem;
             opacity: 0.7;
+        }
+        
+        .tbwc-event-link {
+            margin-top: 10px;
+        }
+        
+        .tbwc-event-link a {
+            color: #4facfe;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tbwc-event-link a:hover {
+            text-decoration: underline;
         }
         
         .tbwc-loading {
@@ -225,21 +271,60 @@ export async function GET() {
             .slice(0, MAX_EVENTS);
     }
     
+    // Truncate description
+    function truncateDescription(description, maxLength = 150) {
+        if (!description || description.length <= maxLength) {
+            return description;
+        }
+        return description.substring(0, maxLength) + '...';
+    }
+    
     // Create event HTML
     function createEventHTML(event) {
+        const truncatedDesc = truncateDescription(event.description);
+        const hasLongDescription = event.description && event.description.length > 150;
+        const facebookEventUrl = \`https://www.facebook.com/events/\${event.id}/\`;
+        
         return \`
             <li class="tbwc-event-item">
                 <div class="tbwc-event-title">\${event.name}</div>
                 <div class="tbwc-event-date">\${event.formatted_date}</div>
                 <div class="tbwc-event-time">🕐 \${event.formatted_time}</div>
                 \${event.place ? \`<div class="tbwc-event-location">📍 \${event.place.name}</div>\` : ''}
+                \${event.description ? \`
+                    <div class="tbwc-event-description" id="desc-\${event.id}">\${truncatedDesc}</div>
+                    \${hasLongDescription ? \`<div class="tbwc-event-description-toggle" onclick="toggleDescription('\${event.id}')">Read more</div>\` : ''}
+                \` : ''}
                 <div class="tbwc-event-stats">
                     <span>👥 \${event.attending_count} attending</span>
                     <span>❤️ \${event.interested_count} interested</span>
                 </div>
+                <div class="tbwc-event-link">
+                    <a href="\${facebookEventUrl}" target="_blank">
+                        📘 View on Facebook →
+                    </a>
+                </div>
             </li>
         \`;
     }
+    
+    // Toggle description expansion
+    window.toggleDescription = function(eventId) {
+        const descElement = document.getElementById(\`desc-\${eventId}\`);
+        const toggleElement = descElement.nextElementSibling;
+        
+        if (descElement.classList.contains('expanded')) {
+            descElement.classList.remove('expanded');
+            descElement.textContent = truncateDescription(descElement.getAttribute('data-full-text'));
+            toggleElement.textContent = 'Read more';
+        } else {
+            const fullText = descElement.getAttribute('data-full-text') || descElement.textContent;
+            descElement.setAttribute('data-full-text', fullText);
+            descElement.classList.add('expanded');
+            descElement.textContent = fullText;
+            toggleElement.textContent = 'Read less';
+        }
+    };
     
     // Render events
     function renderEvents(container, events) {
@@ -268,6 +353,16 @@ export async function GET() {
                 </a>
             </div>
         \`;
+        
+        // Store full descriptions for toggle functionality
+        events.forEach(event => {
+            if (event.description) {
+                const descElement = document.getElementById(\`desc-\${event.id}\`);
+                if (descElement) {
+                    descElement.setAttribute('data-full-text', event.description);
+                }
+            }
+        });
     }
     
     // Show error
