@@ -157,11 +157,13 @@ export async function GET() {
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
+            white-space: pre-wrap;
         }
         
         .tbwc-event-description.expanded {
             max-height: none;
             -webkit-line-clamp: unset;
+            white-space: pre-wrap;
         }
         
         .tbwc-event-description-toggle {
