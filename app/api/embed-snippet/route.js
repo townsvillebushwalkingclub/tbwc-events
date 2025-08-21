@@ -24,8 +24,8 @@ export async function GET() {
             return \`\${protocol}//\${hostname}:\${port}\`;
         }
         
-        // Production environment - use the same domain as the current page
-        return \`\${protocol}//\${hostname}\${port ? ':' + port : ''}\`;
+        // Production environment - use the TBWC API endpoint
+        return 'http://tbwc.wanderstories.space';
     })();
     const MAX_EVENTS = 12;
     const DAYS_AHEAD = 365; // Show events for next 365 days
