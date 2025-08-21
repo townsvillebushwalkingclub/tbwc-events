@@ -17,14 +17,15 @@ export async function GET() {
     const API_BASE_URL = (() => {
         const hostname = window.location.hostname;
         const port = window.location.port;
+        const protocol = window.location.protocol;
         
         // Development environment
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            return \`http://\${hostname}:\${port}\`;
+            return \`\${protocol}//\${hostname}:\${port}\`;
         }
         
-        // Production environment
-        return 'https://tbwc.wanderstories.space';
+        // Production environment - use the same domain as the current page
+        return \`\${protocol}//\${hostname}\${port ? ':' + port : ''}\`;
     })();
     const MAX_EVENTS = 12;
     const DAYS_AHEAD = 365; // Show events for next 365 days

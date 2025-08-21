@@ -217,23 +217,36 @@ ISC License - see LICENSE file for details.
 
 ## Embed Widget
 
-You can embed upcoming events on your website using our JavaScript widget:
+You can embed upcoming events on your website using our JavaScript widget. The embed script automatically detects whether it's running in development or production and uses the appropriate API endpoints.
 
 ### Quick Embed
 ```html
 <div id="tbwc-events"></div>
-<script src="https://tbwc.wanderstories.space/api/embed-snippet"></script>
+<script src="https://your-domain.com/api/embed-snippet?v=1"></script>
+```
+
+### Development Testing
+For local development testing:
+```html
+<div id="tbwc-events"></div>
+<script src="http://localhost:3000/api/embed-snippet?v=1"></script>
 ```
 
 ### Features
+- **Environment Detection**: Automatically works in both development and production
 - **Automatic Updates**: Shows latest events from your API
 - **Event Thumbnails**: Displays cover images from Facebook events
 - **Complete Time Info**: Shows both start and end times when available
 - **Responsive Design**: Works on desktop and mobile
 - **Error Handling**: Graceful fallback if API is unavailable
 - **Beautiful Design**: Modern gradient design with hover effects
+- **Multi-Month Support**: Shows events from surrounding months
 
-For detailed embed documentation, see [EMBED_README.md](./EMBED_README.md).
+### Testing
+- **Development**: Visit `http://localhost:3000/test-embed.html` or `http://localhost:3000/embed-test.html`
+- **Production**: Visit `https://your-domain.com/test-embed.html` or `https://your-domain.com/embed-test.html`
+
+The embed script will automatically detect the environment and use the correct API base URL.
 
 ## Support
 

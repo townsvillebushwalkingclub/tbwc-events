@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TBWC Events Embed Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .instructions code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .instructions ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        .environment-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        .environment-info strong {
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>TBWC Events Embed Test</h1>
+        <p class="subtitle">Test the events embed script in any environment</p>
+        
+        <div class="environment-info">
+            <strong>Current Environment:</strong> 
+            <span id="env-info">Detecting...</span>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 How to Use This Embed</h3>
+            <p>This test page demonstrates the TBWC Events embed script. To use this on your own website:</p>
+            <ul>
+                <li>Add a container div: <code>&lt;div id="tbwc-events"&gt;&lt;/div&gt;</code></li>
+                <li>Include the script: <code>&lt;script src="https://your-domain.com/api/embed-snippet?v=1"&gt;&lt;/script&gt;</code></li>
+                <li>The script will automatically detect the environment and load events</li>
+            </ul>
+            
+            <h3>🔧 For Development</h3>
+            <ul>
+                <li>Run <code>npm run dev</code> to start the development server</li>
+                <li>Access this page at <code>http://localhost:3000/embed-test.html</code></li>
+                <li>The script will automatically use localhost:3000 for API calls</li>
+            </ul>
+            
+            <h3>🚀 For Production</h3>
+            <ul>
+                <li>Deploy your Next.js app to your hosting platform</li>
+                <li>Access this page at <code>https://your-domain.com/embed-test.html</code></li>
+                <li>The script will automatically use your domain for API calls</li>
+            </ul>
+        </div>
+        
+        <!-- Events will appear here -->
+        <div id="tbwc-events"></div>
+        
+        <!-- Include the events script -->
+        <script src="/api/embed-snippet?v=1"></script>
+        
+        <script>
+            // Display current environment info
+            document.addEventListener('DOMContentLoaded', function() {
+                const hostname = window.location.hostname;
+                const port = window.location.port;
+                const protocol = window.location.protocol;
+                
+                let envText = '';
+                if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                    envText = `Development (${protocol}//${hostname}:${port})`;
+                } else {
+                    envText = `Production (${protocol}//${hostname})`;
+                }
+                
+                document.getElementById('env-info').textContent = envText;
+            });
+        </script>
+    </div>
+</body>
+</html>
