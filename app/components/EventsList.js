@@ -46,7 +46,7 @@ export default function EventsList({
         <div>
             <div className="flex justify-between items-center mb-8 pb-4 border-b-2 border-gray-100">
                 <h2 className="text-3xl font-bold text-gray-800">
-                    Events for {monthYear} & Next Month
+                    Events for {monthYear} & Next 2 Months
                 </h2>
                 <button
                     onClick={onRefresh}
@@ -103,13 +103,27 @@ export default function EventsList({
                                             ).getMonth()
                                             const eventMonth =
                                                 eventDate.getMonth()
-                                            const isNextMonth =
-                                                eventMonth !== currentMonth
+                                            const currentYear = new Date(
+                                                currentDate
+                                            ).getFullYear()
+                                            const eventYear =
+                                                eventDate.getFullYear()
 
-                                            if (isNextMonth) {
+                                            // Calculate month difference
+                                            const monthDiff =
+                                                (eventYear - currentYear) * 12 +
+                                                (eventMonth - currentMonth)
+
+                                            if (monthDiff === 1) {
                                                 return (
                                                     <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded-full">
                                                         Next Month
+                                                    </span>
+                                                )
+                                            } else if (monthDiff === 2) {
+                                                return (
+                                                    <span className="bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
+                                                        Month After Next
                                                     </span>
                                                 )
                                             }

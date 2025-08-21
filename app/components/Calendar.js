@@ -13,16 +13,42 @@ export default function Calendar({
     // Get first day of month and number of days
     const firstDay = new Date(year, month, 1)
     const lastDay = new Date(year, month + 1, 0)
-    const startDate = new Date(firstDay)
-    startDate.setDate(startDate.getDate() - firstDay.getDay())
 
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+    // Calculate start date to show Monday as first day of week
+    const startDate = new Date(firstDay)
+    const dayOfWeek = firstDay.getDay()
+    const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1 // Monday = 1, Sunday = 0
+    startDate.setDate(startDate.getDate() - daysToSubtract)
+
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     const today = new Date()
 
     const getEventsForDate = (date) => {
         return events.filter((event) => {
-            const eventDate = new Date(event.start_time)
-            return eventDate.toDateString() === date.toDateString()
+            const eventStart = new Date(event.start_time)
+            const eventEnd = event.end_time
+                ? new Date(event.end_time)
+                : eventStart
+
+            // Normalize dates to start of day for comparison
+            const dateStart = new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate()
+            )
+            const eventStartDay = new Date(
+                eventStart.getFullYear(),
+                eventStart.getMonth(),
+                eventStart.getDate()
+            )
+            const eventEndDay = new Date(
+                eventEnd.getFullYear(),
+                eventEnd.getMonth(),
+                eventEnd.getDate()
+            )
+
+            // Check if the date falls within the event's date range (inclusive)
+            return dateStart >= eventStartDay && dateStart <= eventEndDay
         })
     }
 
@@ -100,13 +126,94 @@ export default function Calendar({
                             </div>
 
                             {/* Event Indicators */}
-                            {dayEvents.map((event, index) => (
-                                <div
-                                    key={index}
-                                    className="w-2 h-2 bg-red-500 rounded-full mb-1"
-                                    title={event.name}
-                                />
-                            ))}
+                            {dayEvents.map((event, index) => {
+                                const eventStart = new Date(event.start_time)
+                                const eventEnd = event.end_time
+                                    ? new Date(event.end_time)
+                                    : eventStart
+
+                                // Normalize dates to start of day for comparison
+                                const dateStart = new Date(
+                                    date.getFullYear(),
+                                    date.getMonth(),
+                                    date.getDate()
+                                )
+                                const eventStartDay = new Date(
+                                    eventStart.getFullYear(),
+                                    eventStart.getMonth(),
+                                    eventStart.getDate()
+                                )
+                                const eventEndDay = new Date(
+                                    eventEnd.getFullYear(),
+                                    eventEnd.getMonth(),
+                                    eventEnd.getDate()
+                                )
+
+                                // Use the is_multi_day property from the event data if available
+                                const isMultiDay =
+                                    event.is_multi_day ||
+                                    eventStartDay.getTime() !==
+                                        eventEndDay.getTime()
+                                const isFirstDay =
+                                    dateStart.getTime() ===
+                                    eventStartDay.getTime()
+                                const isLastDay =
+                                    dateStart.getTime() ===
+                                    eventEndDay.getTime()
+
+                                // For multi-day events, only show on the first day and create a spanning element
+                                if (isMultiDay && isFirstDay) {
+                                    // Calculate how many days this event spans
+                                    const daysDiff =
+                                        Math.ceil(
+                                            (eventEndDay.getTime() -
+                                                eventStartDay.getTime()) /
+                                                (1000 * 60 * 60 * 24)
+                                        ) + 1
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded mb-1 border-2 border-red-500 absolute"
+                                            style={{
+                                                left: '0',
+                                                right: `-${
+                                                    (daysDiff - 1) * 100
+                                                }%`,
+                                                zIndex: 10,
+                                                width: `${daysDiff * 100}%`,
+                                            }}
+                                            title={`${
+                                                event.name
+                                            } (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
+                                        >
+                                            {event.name.length > 25
+                                                ? event.name.substring(0, 25) +
+                                                  '...'
+                                                : event.name}
+                                        </div>
+                                    )
+                                }
+
+                                // For multi-day events on non-first days, don't show anything
+                                if (isMultiDay && !isFirstDay) {
+                                    return null
+                                }
+
+                                // For single-day events
+                                return (
+                                    <div
+                                        key={index}
+                                        className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded mb-1"
+                                        title={event.name}
+                                    >
+                                        {event.name.length > 15
+                                            ? event.name.substring(0, 15) +
+                                              '...'
+                                            : event.name}
+                                    </div>
+                                )
+                            })}
                         </div>
                     )
                 })}

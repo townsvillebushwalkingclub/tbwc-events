@@ -278,8 +278,13 @@ export async function GET() {
         const currentYear = now.getFullYear();
         const currentMonth = now.getMonth() + 1;
         
-        // Fetch events from current month and next two months
+        // Fetch events from previous month, current month, and next two months
         const monthsToFetch = [];
+        
+        // Previous month
+        const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
+        const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
+        monthsToFetch.push({ year: prevYear, month: prevMonth });
         
         // Current month
         monthsToFetch.push({ year: currentYear, month: currentMonth });
@@ -438,7 +443,7 @@ export async function GET() {
         container.innerHTML = \`
             <div class="tbwc-events-header">
                 <h3>🏔️ Upcoming Events</h3>
-                <p>Join us for our next bushwalking adventures (Current & Next 2 Months)</p>
+                <p>Join us for our next bushwalking adventures (Surrounding Months)</p>
             </div>
             <ul class="tbwc-events-list">
                 \${eventsHTML}

@@ -16,9 +16,23 @@ export default function Home() {
             const year = currentDate.getFullYear()
             const month = currentDate.getMonth() + 1
 
+            // Calculate previous month
+            const prevMonth = month === 1 ? 12 : month - 1
+            const prevYear = month === 1 ? year - 1 : year
+
             // Calculate next month
             const nextMonth = month === 12 ? 1 : month + 1
             const nextYear = month === 12 ? year + 1 : year
+
+            // Calculate month after next
+            const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1
+            const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear
+
+            // Fetch events for previous month
+            const prevResponse = await fetch(
+                `/api/events/${prevYear}/${prevMonth}`
+            )
+            const prevData = await prevResponse.json()
 
             // Fetch events for current month
             const currentResponse = await fetch(`/api/events/${year}/${month}`)
@@ -30,7 +44,17 @@ export default function Home() {
             )
             const nextData = await nextResponse.json()
 
+            // Fetch events for month after next
+            const monthAfterNextResponse = await fetch(
+                `/api/events/${yearAfterNext}/${monthAfterNext}`
+            )
+            const monthAfterNextData = await monthAfterNextResponse.json()
+
             let allEvents = []
+
+            if (prevData.success) {
+                allEvents = allEvents.concat(prevData.data)
+            }
 
             if (currentData.success) {
                 allEvents = allEvents.concat(currentData.data)
@@ -38,6 +62,10 @@ export default function Home() {
 
             if (nextData.success) {
                 allEvents = allEvents.concat(nextData.data)
+            }
+
+            if (monthAfterNextData.success) {
+                allEvents = allEvents.concat(monthAfterNextData.data)
             }
 
             // Sort events by start time
