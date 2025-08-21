@@ -44,13 +44,13 @@ export default function EventsList({
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-8 pb-4 border-b-2 border-gray-100">
-                <h2 className="text-3xl font-bold text-gray-800">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-4 border-b-2 border-gray-100 gap-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
                     Events for {monthYear} & Next 2 Months
                 </h2>
                 <button
                     onClick={onRefresh}
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105"
+                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 text-sm md:text-base"
                 >
                     🔄 Refresh Events
                 </button>
@@ -70,10 +70,10 @@ export default function EventsList({
                             key={event.id}
                             className="bg-gray-50 rounded-2xl p-6 border-l-4 border-blue-500 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
                         >
-                            <div className="flex gap-6">
+                            <div className="flex flex-col md:flex-row gap-6">
                                 {/* Event Thumbnail */}
                                 <div className="flex-shrink-0">
-                                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
+                                    <div className="w-full md:w-24 h-48 md:h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
                                         {event.cover && event.cover.source ? (
                                             <img
                                                 src={event.cover.source}
@@ -90,8 +90,8 @@ export default function EventsList({
 
                                 {/* Event Details */}
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <h3 className="text-2xl font-bold text-gray-800">
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
+                                        <h3 className="text-xl md:text-2xl font-bold text-gray-800">
                                             {event.name}
                                         </h3>
                                         {(() => {
@@ -160,8 +160,8 @@ export default function EventsList({
                                         </div>
                                     )}
 
-                                    <div className="flex justify-between items-center">
-                                        <div className="flex gap-6 text-sm text-gray-500">
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                        <div className="flex gap-4 sm:gap-6 text-sm text-gray-500">
                                             <span>
                                                 👥 {event.attending_count}{' '}
                                                 attending
@@ -176,7 +176,7 @@ export default function EventsList({
                                             href={`https://www.facebook.com/events/${event.id}/`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
                                         >
                                             📘 View on Facebook
                                         </a>

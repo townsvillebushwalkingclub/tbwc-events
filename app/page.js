@@ -109,16 +109,16 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 md:px-8 py-4 md:py-8">
                 {/* Header */}
                 <div className="text-center mb-10 text-white">
-                    <h1 className="text-5xl font-bold mb-4 drop-shadow-lg">
+                    <h1 className="text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">
                         🏔️ Townsville Bushwalking Club
                     </h1>
-                    <p className="text-xl opacity-90 mb-6">
+                    <p className="text-lg md:text-xl opacity-90 mb-6">
                         Events Calendar & Activities
                     </p>
-                    <div className="flex justify-center gap-4">
+                    <div className="flex flex-col sm:flex-row justify-center gap-4">
                         <a
                             href="https://townsvillebushwalkingclub.com/"
                             target="_blank"
@@ -158,7 +158,7 @@ export default function Home() {
                 </div>
 
                 {/* Events List */}
-                <div className="bg-white rounded-3xl shadow-2xl p-8">
+                <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
                     <EventsList
                         events={events}
                         currentDate={currentDate}
