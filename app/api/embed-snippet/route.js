@@ -14,7 +14,18 @@ export async function GET() {
     'use strict';
     
     // Configuration
-    const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://tbwc.wanderstories.space';
+    const API_BASE_URL = (() => {
+        const hostname = window.location.hostname;
+        const port = window.location.port;
+        
+        // Development environment
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return \`http://\${hostname}:\${port}\`;
+        }
+        
+        // Production environment
+        return 'https://tbwc.wanderstories.space';
+    })();
     const MAX_EVENTS = 12;
     const DAYS_AHEAD = 365; // Show events for next 365 days
     
@@ -267,7 +278,7 @@ export async function GET() {
         const currentYear = now.getFullYear();
         const currentMonth = now.getMonth() + 1;
         
-        // Fetch events from current month and next month
+        // Fetch events from current month and next two months
         const monthsToFetch = [];
         
         // Current month
@@ -277,6 +288,11 @@ export async function GET() {
         const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
         const nextYear = currentMonth === 12 ? currentYear + 1 : currentYear;
         monthsToFetch.push({ year: nextYear, month: nextMonth });
+        
+        // Month after next
+        const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1;
+        const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear;
+        monthsToFetch.push({ year: yearAfterNext, month: monthAfterNext });
 
         let allEvents = [];
         
@@ -333,11 +349,22 @@ export async function GET() {
         const facebookEventUrl = \`https://www.facebook.com/events/\${event.id}/\`;
         const coverImageUrl = event.cover && event.cover.source ? event.cover.source : null;
         
-        // Check if event is from next month
+        // Check which month the event is from
         const eventDate = new Date(event.start_time);
         const currentMonth = new Date().getMonth();
         const eventMonth = eventDate.getMonth();
-        const isNextMonth = eventMonth !== currentMonth;
+        const currentYear = new Date().getFullYear();
+        const eventYear = eventDate.getFullYear();
+        
+        // Calculate month difference
+        const monthDiff = (eventYear - currentYear) * 12 + (eventMonth - currentMonth);
+        let monthLabel = '';
+        
+        if (monthDiff === 1) {
+            monthLabel = 'Next Month';
+        } else if (monthDiff === 2) {
+            monthLabel = 'Month After Next';
+        }
         
         // Debug logging
         console.log('Event:', event.name, 'Cover:', event.cover, 'Cover URL:', coverImageUrl);
@@ -352,7 +379,7 @@ export async function GET() {
                     <div class="tbwc-event-details">
                         <div class="tbwc-event-title">
                             \${event.name}
-                            \${isNextMonth ? '<span style="background: rgba(255,255,255,0.2); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; margin-left: 8px;">Next Month</span>' : ''}
+                            \${monthLabel ? \`<span style="background: rgba(255,255,255,0.2); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; margin-left: 8px;">\${monthLabel}</span>\` : ''}
                         </div>
                         <div class="tbwc-event-date">\${event.formatted_date}</div>
                         <div class="tbwc-event-time">🕐 \${event.formatted_time}\${event.formatted_end_time ? \` - \${event.formatted_end_time}\` : ''}</div>
@@ -411,7 +438,7 @@ export async function GET() {
         container.innerHTML = \`
             <div class="tbwc-events-header">
                 <h3>🏔️ Upcoming Events</h3>
-                <p>Join us for our next bushwalking adventures (Current & Next Month)</p>
+                <p>Join us for our next bushwalking adventures (Current & Next 2 Months)</p>
             </div>
             <ul class="tbwc-events-list">
                 \${eventsHTML}
