@@ -25,7 +25,7 @@ export async function GET() {
         }
         
         // Production environment - use the TBWC API endpoint
-        return 'http://tbwc.wanderstories.space';
+        return 'https://tbwc.wanderstories.space';
     })();
     const MAX_EVENTS = 12;
     const DAYS_AHEAD = 365; // Show events for next 365 days
