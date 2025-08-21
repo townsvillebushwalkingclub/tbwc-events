@@ -14,9 +14,9 @@ export async function GET() {
     'use strict';
     
     // Configuration
-    const API_BASE_URL = 'https://tbwc.wanderstories.space';
-    const MAX_EVENTS = 5;
-    const DAYS_AHEAD = 90; // Show events for next 90 days
+    const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://tbwc.wanderstories.space';
+    const MAX_EVENTS = 12;
+    const DAYS_AHEAD = 365; // Show events for next 365 days
     
     // CSS Styles
     const styles = \`
@@ -68,6 +68,40 @@ export async function GET() {
             transform: translateY(-2px);
         }
         
+        .tbwc-event-content {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+        
+        .tbwc-event-thumbnail {
+            flex-shrink: 0;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tbwc-event-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .tbwc-event-thumbnail-placeholder {
+            color: rgba(255,255,255,0.6);
+            font-size: 2rem;
+        }
+        
+        .tbwc-event-details {
+            flex: 1;
+            min-width: 0;
+        }
+        
         .tbwc-event-title {
             font-weight: bold;
             font-size: 1.1rem;
@@ -80,18 +114,25 @@ export async function GET() {
             margin-bottom: 5px;
         }
         
-        .tbwc-event-time {
-            opacity: 0.9;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-        
-        .tbwc-event-location {
-            font-style: italic;
-            opacity: 0.8;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
+                 .tbwc-event-time {
+             opacity: 0.9;
+             font-size: 0.9rem;
+             margin-bottom: 8px;
+         }
+         
+         .tbwc-event-end-date {
+             color: #4facfe;
+             font-weight: 600;
+             font-size: 0.9rem;
+             margin-bottom: 8px;
+         }
+         
+         .tbwc-event-location {
+             font-style: italic;
+             opacity: 0.8;
+             font-size: 0.9rem;
+             margin-bottom: 10px;
+         }
         
         .tbwc-event-description {
             opacity: 0.9;
@@ -226,27 +267,33 @@ export async function GET() {
         const currentYear = now.getFullYear();
         const currentMonth = now.getMonth() + 1;
         
-        // Fetch events from current month and next 3 months to find upcoming events
+        // Fetch events from current month and next month
         const monthsToFetch = [];
-        for (let i = 0; i < 4; i++) {
-            const month = currentMonth + i;
-            const year = currentYear + Math.floor((month - 1) / 12);
-            const adjustedMonth = ((month - 1) % 12) + 1;
-            monthsToFetch.push({ year, month: adjustedMonth });
-        }
+        
+        // Current month
+        monthsToFetch.push({ year: currentYear, month: currentMonth });
+        
+        // Next month
+        const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
+        const nextYear = currentMonth === 12 ? currentYear + 1 : currentYear;
+        monthsToFetch.push({ year: nextYear, month: nextMonth });
 
         let allEvents = [];
         
         for (const { year, month } of monthsToFetch) {
             try {
                 const url = \`\${API_BASE_URL}/api/events/\${year}/\${month}\`;
+                console.log(\`Fetching events from: \${url}\`);
                 const response = await fetch(url);
                 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(\`Events for \${year}/\${month}:\`, data.success ? data.data.length : 'Failed');
                     if (data.success && data.data) {
                         allEvents = allEvents.concat(data.data);
                     }
+                } else {
+                    console.error(\`Failed to fetch events for \${year}/\${month}: \${response.status}\`);
                 }
             } catch (error) {
                 console.error(\`Error fetching events for \${year}/\${month}:\`, error);
@@ -284,25 +331,47 @@ export async function GET() {
         const truncatedDesc = truncateDescription(event.description);
         const hasLongDescription = event.description && event.description.length > 150;
         const facebookEventUrl = \`https://www.facebook.com/events/\${event.id}/\`;
+        const coverImageUrl = event.cover && event.cover.source ? event.cover.source : null;
+        
+        // Check if event is from next month
+        const eventDate = new Date(event.start_time);
+        const currentMonth = new Date().getMonth();
+        const eventMonth = eventDate.getMonth();
+        const isNextMonth = eventMonth !== currentMonth;
+        
+        // Debug logging
+        console.log('Event:', event.name, 'Cover:', event.cover, 'Cover URL:', coverImageUrl);
+        console.log('Event end date:', event.formatted_end_date, 'End time:', event.formatted_end_time);
         
         return \`
             <li class="tbwc-event-item">
-                <div class="tbwc-event-title">\${event.name}</div>
-                <div class="tbwc-event-date">\${event.formatted_date}</div>
-                <div class="tbwc-event-time">🕐 \${event.formatted_time}</div>
-                \${event.place ? \`<div class="tbwc-event-location">📍 \${event.place.name}</div>\` : ''}
-                \${event.description ? \`
-                    <div class="tbwc-event-description" id="desc-\${event.id}">\${truncatedDesc}</div>
-                    \${hasLongDescription ? \`<div class="tbwc-event-description-toggle" onclick="toggleDescription('\${event.id}')">Read more</div>\` : ''}
-                \` : ''}
-                <div class="tbwc-event-stats">
-                    <span>👥 \${event.attending_count} attending</span>
-                    <span>❤️ \${event.interested_count} interested</span>
-                </div>
-                <div class="tbwc-event-link">
-                    <a href="\${facebookEventUrl}" target="_blank">
-                        📘 View on Facebook →
-                    </a>
+                <div class="tbwc-event-content">
+                    <div class="tbwc-event-thumbnail">
+                        \${coverImageUrl ? \`<img src="\${coverImageUrl}" alt="\${event.name}">\` : \`<div class="tbwc-event-thumbnail-placeholder">🏔️</div>\`}
+                    </div>
+                    <div class="tbwc-event-details">
+                        <div class="tbwc-event-title">
+                            \${event.name}
+                            \${isNextMonth ? '<span style="background: rgba(255,255,255,0.2); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; margin-left: 8px;">Next Month</span>' : ''}
+                        </div>
+                        <div class="tbwc-event-date">\${event.formatted_date}</div>
+                        <div class="tbwc-event-time">🕐 \${event.formatted_time}\${event.formatted_end_time ? \` - \${event.formatted_end_time}\` : ''}</div>
+                        \${event.formatted_end_date ? \`<div class="tbwc-event-end-date">📅 Ends: \${event.formatted_end_date}</div>\` : ''}
+                        \${event.place ? \`<div class="tbwc-event-location">📍 \${event.place.name}</div>\` : ''}
+                        \${event.description ? \`
+                            <div class="tbwc-event-description" id="desc-\${event.id}">\${truncatedDesc}</div>
+                            \${hasLongDescription ? \`<div class="tbwc-event-description-toggle" onclick="toggleDescription('\${event.id}')">Read more</div>\` : ''}
+                        \` : ''}
+                        <div class="tbwc-event-stats">
+                            <span>👥 \${event.attending_count} attending</span>
+                            <span>❤️ \${event.interested_count} interested</span>
+                        </div>
+                        <div class="tbwc-event-link">
+                            <a href="\${facebookEventUrl}" target="_blank">
+                                📘 View on Facebook →
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </li>
         \`;
@@ -342,7 +411,7 @@ export async function GET() {
         container.innerHTML = \`
             <div class="tbwc-events-header">
                 <h3>🏔️ Upcoming Events</h3>
-                <p>Join us for our next bushwalking adventures</p>
+                <p>Join us for our next bushwalking adventures (Current & Next Month)</p>
             </div>
             <ul class="tbwc-events-list">
                 \${eventsHTML}
@@ -402,9 +471,12 @@ export async function GET() {
         try {
             // Fetch events
             const events = await fetchEvents();
+            console.log('Total events fetched:', events.length);
             
             // Filter upcoming events
             const upcomingEvents = filterUpcomingEvents(events);
+            console.log('Upcoming events after filtering:', upcomingEvents.length);
+            console.log('Upcoming events:', upcomingEvents.map(e => ({ name: e.name, date: e.formatted_date })));
             
             // Render events
             renderEvents(container, upcomingEvents);
@@ -427,7 +499,7 @@ export async function GET() {
     return new NextResponse(snippet, {
         headers: {
             'Content-Type': 'application/javascript',
-            'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+            'Cache-Control': 'public, max-age=300, s-maxage=3600', // Reduced cache time for testing
         },
     })
 }

@@ -16,15 +16,37 @@ export default function Home() {
             const year = currentDate.getFullYear()
             const month = currentDate.getMonth() + 1
 
-            const response = await fetch(`/api/events/${year}/${month}`)
-            const data = await response.json()
+            // Calculate next month
+            const nextMonth = month === 12 ? 1 : month + 1
+            const nextYear = month === 12 ? year + 1 : year
 
-            if (data.success) {
-                setEvents(data.data)
-                setError(null)
-            } else {
-                throw new Error(data.error || 'Failed to load events')
+            // Fetch events for current month
+            const currentResponse = await fetch(`/api/events/${year}/${month}`)
+            const currentData = await currentResponse.json()
+
+            // Fetch events for next month
+            const nextResponse = await fetch(
+                `/api/events/${nextYear}/${nextMonth}`
+            )
+            const nextData = await nextResponse.json()
+
+            let allEvents = []
+
+            if (currentData.success) {
+                allEvents = allEvents.concat(currentData.data)
             }
+
+            if (nextData.success) {
+                allEvents = allEvents.concat(nextData.data)
+            }
+
+            // Sort events by start time
+            allEvents.sort(
+                (a, b) => new Date(a.start_time) - new Date(b.start_time)
+            )
+
+            setEvents(allEvents)
+            setError(null)
         } catch (error) {
             console.error('Error loading events:', error)
             setError(error.message)
@@ -84,6 +106,14 @@ export default function Home() {
                             className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
                         >
                             📘 Facebook Page
+                        </a>
+                        <a
+                            href="https://instagram.com/townsvillebushwalkingclub/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
+                        >
+                            📘 Instagram Profile
                         </a>
                     </div>
                 </div>

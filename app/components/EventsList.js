@@ -46,7 +46,7 @@ export default function EventsList({
         <div>
             <div className="flex justify-between items-center mb-8 pb-4 border-b-2 border-gray-100">
                 <h2 className="text-3xl font-bold text-gray-800">
-                    Events for {monthYear}
+                    Events for {monthYear} & Next Month
                 </h2>
                 <button
                     onClick={onRefresh}
@@ -70,50 +70,104 @@ export default function EventsList({
                             key={event.id}
                             className="bg-gray-50 rounded-2xl p-6 border-l-4 border-blue-500 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
                         >
-                            <h3 className="text-2xl font-bold text-gray-800 mb-3">
-                                {event.name}
-                            </h3>
-
-                            <div className="text-blue-600 font-semibold mb-2">
-                                {event.formatted_date}
-                            </div>
-
-                            <div className="text-gray-600 mb-4">
-                                🕐 {event.formatted_time}
-                                {event.formatted_end_time &&
-                                    ` - ${event.formatted_end_time}`}
-                            </div>
-
-                            {event.description && (
-                                <div className="text-gray-700 mb-4 leading-relaxed whitespace-pre-wrap">
-                                    {event.description}
-                                </div>
-                            )}
-
-                            {event.place && (
-                                <div className="text-gray-600 mb-4 italic">
-                                    📍 {event.place.name || 'Location TBA'}
-                                </div>
-                            )}
-
-                            <div className="flex justify-between items-center">
-                                <div className="flex gap-6 text-sm text-gray-500">
-                                    <span>
-                                        👥 {event.attending_count} attending
-                                    </span>
-                                    <span>
-                                        ❤️ {event.interested_count} interested
-                                    </span>
+                            <div className="flex gap-6">
+                                {/* Event Thumbnail */}
+                                <div className="flex-shrink-0">
+                                    <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
+                                        {event.cover && event.cover.source ? (
+                                            <img
+                                                src={event.cover.source}
+                                                alt={event.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <div className="text-gray-400 text-2xl">
+                                                🏔️
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
 
-                                <a
-                                    href={`https://www.facebook.com/events/${event.id}/`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
-                                >
-                                    📘 View on Facebook
-                                </a>
+                                {/* Event Details */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <h3 className="text-2xl font-bold text-gray-800">
+                                            {event.name}
+                                        </h3>
+                                        {(() => {
+                                            const eventDate = new Date(
+                                                event.start_time
+                                            )
+                                            const currentMonth = new Date(
+                                                currentDate
+                                            ).getMonth()
+                                            const eventMonth =
+                                                eventDate.getMonth()
+                                            const isNextMonth =
+                                                eventMonth !== currentMonth
+
+                                            if (isNextMonth) {
+                                                return (
+                                                    <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded-full">
+                                                        Next Month
+                                                    </span>
+                                                )
+                                            }
+                                            return null
+                                        })()}
+                                    </div>
+
+                                    <div className="text-blue-600 font-semibold mb-2">
+                                        {event.formatted_date}
+                                    </div>
+
+                                    <div className="text-gray-600 mb-4">
+                                        🕐 {event.formatted_time}
+                                        {event.formatted_end_time &&
+                                            ` - ${event.formatted_end_time}`}
+                                        {event.formatted_end_date && (
+                                            <div className="text-blue-600 font-semibold mt-1">
+                                                📅 Ends:{' '}
+                                                {event.formatted_end_date}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {event.description && (
+                                        <div className="text-gray-700 mb-4 leading-relaxed whitespace-pre-wrap">
+                                            {event.description}
+                                        </div>
+                                    )}
+
+                                    {event.place && (
+                                        <div className="text-gray-600 mb-4 italic">
+                                            📍{' '}
+                                            {event.place.name || 'Location TBA'}
+                                        </div>
+                                    )}
+
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex gap-6 text-sm text-gray-500">
+                                            <span>
+                                                👥 {event.attending_count}{' '}
+                                                attending
+                                            </span>
+                                            <span>
+                                                ❤️ {event.interested_count}{' '}
+                                                interested
+                                            </span>
+                                        </div>
+
+                                        <a
+                                            href={`https://www.facebook.com/events/${event.id}/`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                                        >
+                                            📘 View on Facebook
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}

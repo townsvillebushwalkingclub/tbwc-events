@@ -6,6 +6,8 @@ A modern Next.js web application that extracts Facebook events from the Townsvil
 
 - 📅 **Interactive Calendar View** - Monthly calendar with event indicators
 - 🎯 **Facebook Events Integration** - Real-time events from your Facebook page
+- 🖼️ **Event Thumbnails** - Cover images from Facebook events with fallback icons
+- ⏰ **Start & End Times** - Complete time information for events
 - 🔄 **REST API** - JSON endpoints for programmatic access
 - 📱 **Responsive Design** - Works on desktop and mobile devices
 - ⚡ **Modern Tech Stack** - Built with Next.js 15, React 19, and Tailwind CSS
@@ -85,7 +87,14 @@ GET /api/events
       "interested_count": 25,
       "formatted_date": "Monday, January 15th, 2024",
       "formatted_time": "9:00 AM",
-      "formatted_end_time": "5:00 PM"
+      "formatted_end_time": "5:00 PM",
+      "formatted_end_date": "Monday, January 15th, 2024",
+      "is_multi_day": false,
+      "cover": {
+        "source": "https://scontent.xx.fbcdn.net/v/...",
+        "width": 720,
+        "height": 405
+      }
     }
   ],
   "timestamp": "2024-01-10T10:30:00.000Z"
@@ -218,6 +227,8 @@ You can embed upcoming events on your website using our JavaScript widget:
 
 ### Features
 - **Automatic Updates**: Shows latest events from your API
+- **Event Thumbnails**: Displays cover images from Facebook events
+- **Complete Time Info**: Shows both start and end times when available
 - **Responsive Design**: Works on desktop and mobile
 - **Error Handling**: Graceful fallback if API is unavailable
 - **Beautiful Design**: Modern gradient design with hover effects
