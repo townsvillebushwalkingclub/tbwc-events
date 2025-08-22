@@ -24,32 +24,39 @@ export default function Calendar({
     const today = new Date()
 
     const getEventsForDate = (date) => {
-        return events.filter((event) => {
+        const filteredEvents = events.filter((event) => {
             const eventStart = new Date(event.start_time)
             const eventEnd = event.end_time
                 ? new Date(event.end_time)
                 : eventStart
 
-            // Normalize dates to start of day for comparison
+            // Normalize dates to start of day for comparison (using UTC to avoid timezone issues)
             const dateStart = new Date(
-                date.getFullYear(),
-                date.getMonth(),
-                date.getDate()
+                Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
             )
             const eventStartDay = new Date(
-                eventStart.getFullYear(),
-                eventStart.getMonth(),
-                eventStart.getDate()
+                Date.UTC(
+                    eventStart.getFullYear(),
+                    eventStart.getMonth(),
+                    eventStart.getDate()
+                )
             )
             const eventEndDay = new Date(
-                eventEnd.getFullYear(),
-                eventEnd.getMonth(),
-                eventEnd.getDate()
+                Date.UTC(
+                    eventEnd.getFullYear(),
+                    eventEnd.getMonth(),
+                    eventEnd.getDate()
+                )
             )
 
             // Check if the date falls within the event's date range (inclusive)
-            return dateStart >= eventStartDay && dateStart <= eventEndDay
+            const isInRange =
+                dateStart >= eventStartDay && dateStart <= eventEndDay
+
+            return isInRange
         })
+
+        return filteredEvents
     }
 
     return (
@@ -132,21 +139,27 @@ export default function Calendar({
                                     ? new Date(event.end_time)
                                     : eventStart
 
-                                // Normalize dates to start of day for comparison
+                                // Normalize dates to start of day for comparison (using UTC to avoid timezone issues)
                                 const dateStart = new Date(
-                                    date.getFullYear(),
-                                    date.getMonth(),
-                                    date.getDate()
+                                    Date.UTC(
+                                        date.getFullYear(),
+                                        date.getMonth(),
+                                        date.getDate()
+                                    )
                                 )
                                 const eventStartDay = new Date(
-                                    eventStart.getFullYear(),
-                                    eventStart.getMonth(),
-                                    eventStart.getDate()
+                                    Date.UTC(
+                                        eventStart.getFullYear(),
+                                        eventStart.getMonth(),
+                                        eventStart.getDate()
+                                    )
                                 )
                                 const eventEndDay = new Date(
-                                    eventEnd.getFullYear(),
-                                    eventEnd.getMonth(),
-                                    eventEnd.getDate()
+                                    Date.UTC(
+                                        eventEnd.getFullYear(),
+                                        eventEnd.getMonth(),
+                                        eventEnd.getDate()
+                                    )
                                 )
 
                                 // Use the is_multi_day property from the event data if available
@@ -157,9 +170,6 @@ export default function Calendar({
                                 const isFirstDay =
                                     dateStart.getTime() ===
                                     eventStartDay.getTime()
-                                const isLastDay =
-                                    dateStart.getTime() ===
-                                    eventEndDay.getTime()
 
                                 // For multi-day events, only show on the first day and create a spanning element
                                 if (isMultiDay && isFirstDay) {
@@ -174,7 +184,7 @@ export default function Calendar({
                                     return (
                                         <div
                                             key={index}
-                                            className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded mb-1 border-2 border-red-500 absolute"
+                                            className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded mb-1 border-2 border-purple-500 absolute"
                                             style={{
                                                 left: '0',
                                                 right: `-${
@@ -190,7 +200,8 @@ export default function Calendar({
                                             {event.name.length > 25
                                                 ? event.name.substring(0, 25) +
                                                   '...'
-                                                : event.name}
+                                                : event.name}{' '}
+                                            (Multi-day)
                                         </div>
                                     )
                                 }
