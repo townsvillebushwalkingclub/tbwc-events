@@ -466,6 +466,28 @@ export async function GET() {
         console.log('Event:', event.name, 'Cover:', event.cover, 'Cover URL:', coverImageUrl);
         console.log('Event end date:', event.formatted_end_date, 'End time:', event.formatted_end_time);
         
+        // Determine date/time display logic
+        let dateTimeDisplay = '';
+        
+        if (!event.formatted_end_date) {
+            // No end date - show start date and time only
+            dateTimeDisplay = \`
+                <div class="tbwc-event-date">\${event.formatted_date}</div>
+                <div class="tbwc-event-time">🕐 \${event.formatted_time}</div>
+            \`;
+        } else if (event.formatted_end_date === event.formatted_date) {
+            // Same date - show start date and both times
+            dateTimeDisplay = \`
+                <div class="tbwc-event-date">\${event.formatted_date}</div>
+                <div class="tbwc-event-time">🕐 \${event.formatted_time}\${event.formatted_end_time ? \` - \${event.formatted_end_time}\` : ''}</div>
+            \`;
+        } else {
+            // Different dates - show multi-day format
+            dateTimeDisplay = \`
+                <div class="tbwc-event-time">🕐\${event.formatted_date} at \${event.formatted_time} - \${event.formatted_end_date} \${event.formatted_end_time || ''}</div>
+            \`;
+        }
+        
         return \`
             <li class="tbwc-event-item">
                 <div class="tbwc-event-content">
@@ -477,9 +499,7 @@ export async function GET() {
                             \${event.name}
                             \${monthLabel ? \`<span style="background: rgba(255,255,255,0.2); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; margin-left: 8px;">\${monthLabel}</span>\` : ''}
                         </div>
-                        <div class="tbwc-event-date">\${event.formatted_date}</div>
-                        <div class="tbwc-event-time">🕐 \${event.formatted_time}\${event.formatted_end_time ? \` - \${event.formatted_end_time}\` : ''}</div>
-                        \${event.formatted_end_date ? \`<div class="tbwc-event-end-date">📅 Ends: \${event.formatted_end_date}</div>\` : ''}
+                        \${dateTimeDisplay}
                         \${event.place ? \`<div class="tbwc-event-location">📍 \${event.place.name}</div>\` : ''}
                         \${event.description ? \`
                             <div class="tbwc-event-description" id="desc-\${event.id}">\${processedTruncatedDesc}</div>
