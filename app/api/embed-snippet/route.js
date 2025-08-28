@@ -484,7 +484,8 @@ export async function GET() {
         } else {
             // Different dates - show multi-day format
             dateTimeDisplay = \`
-                <div class="tbwc-event-time">🕐\${event.formatted_date} at \${event.formatted_time} - \${event.formatted_end_date} \${event.formatted_end_time || ''}</div>
+                <div class="tbwc-event-date">\${event.formatted_date} to \${event.formatted_end_date}</div>
+                <div class="tbwc-event-time">🕐 \${new Date(event.end_time).toLocaleDateString(undefined, { weekday: 'long', })} \${event.formatted_time} - \${new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'long', })} \${event.formatted_end_time || ''}</div>
             \`;
         }
         
