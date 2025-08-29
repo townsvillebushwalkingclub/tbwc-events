@@ -446,7 +446,7 @@ export async function GET() {
         container.innerHTML = \`
             <div class="tbwc-events-header">
                 <h3>🏔️ Upcoming Events</h3>
-                <p>Join us for our next bushwalking adventures (Surrounding Months)</p>
+                <p>Join us for our next bushwalking adventures</p>
             </div>
             <ul class="tbwc-events-list">
                 \${eventsHTML}
