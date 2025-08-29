@@ -25,6 +25,8 @@
   "author": "Luen Warneke",
   "license": "ISC",
   "dependencies": {
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "autoprefixer": "^10.4.20",
     "date-fns": "^3.6.0",
     "next": "^15.4.6",
