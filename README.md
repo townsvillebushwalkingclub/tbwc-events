@@ -258,4 +258,3 @@ For issues and questions:
 ---
 
 **Built with ❤️ for the Townsville Bushwalking Club**
-
