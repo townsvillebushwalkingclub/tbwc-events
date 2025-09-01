@@ -133,13 +133,69 @@ export default function Calendar({
                             </div>
 
                             {/* Event Indicators */}
-                            {dayEvents.map((event, index) => {
-                                const eventStart = new Date(event.start_time)
-                                const eventEnd = event.end_time
-                                    ? new Date(event.end_time)
-                                    : eventStart
+                            {(() => {
+                                // Separate multi-day and single-day events
+                                const multiDayEvents = dayEvents.filter(
+                                    (event) => {
+                                        const eventStart = new Date(
+                                            event.start_time
+                                        )
+                                        const eventEnd = event.end_time
+                                            ? new Date(event.end_time)
+                                            : eventStart
+                                        const eventStartDay = new Date(
+                                            Date.UTC(
+                                                eventStart.getFullYear(),
+                                                eventStart.getMonth(),
+                                                eventStart.getDate()
+                                            )
+                                        )
+                                        const eventEndDay = new Date(
+                                            Date.UTC(
+                                                eventEnd.getFullYear(),
+                                                eventEnd.getMonth(),
+                                                eventEnd.getDate()
+                                            )
+                                        )
+                                        return (
+                                            event.is_multi_day ||
+                                            eventStartDay.getTime() !==
+                                                eventEndDay.getTime()
+                                        )
+                                    }
+                                )
 
-                                // Normalize dates to start of day for comparison (using UTC to avoid timezone issues)
+                                const singleDayEvents = dayEvents.filter(
+                                    (event) => {
+                                        const eventStart = new Date(
+                                            event.start_time
+                                        )
+                                        const eventEnd = event.end_time
+                                            ? new Date(event.end_time)
+                                            : eventStart
+                                        const eventStartDay = new Date(
+                                            Date.UTC(
+                                                eventStart.getFullYear(),
+                                                eventStart.getMonth(),
+                                                eventStart.getDate()
+                                            )
+                                        )
+                                        const eventEndDay = new Date(
+                                            Date.UTC(
+                                                eventEnd.getFullYear(),
+                                                eventEnd.getMonth(),
+                                                eventEnd.getDate()
+                                            )
+                                        )
+                                        return !(
+                                            event.is_multi_day ||
+                                            eventStartDay.getTime() !==
+                                                eventEndDay.getTime()
+                                        )
+                                    }
+                                )
+
+                                // Normalize current date for comparison
                                 const dateStart = new Date(
                                     Date.UTC(
                                         date.getFullYear(),
@@ -147,84 +203,90 @@ export default function Calendar({
                                         date.getDate()
                                     )
                                 )
-                                const eventStartDay = new Date(
-                                    Date.UTC(
-                                        eventStart.getFullYear(),
-                                        eventStart.getMonth(),
-                                        eventStart.getDate()
-                                    )
-                                )
-                                const eventEndDay = new Date(
-                                    Date.UTC(
-                                        eventEnd.getFullYear(),
-                                        eventEnd.getMonth(),
-                                        eventEnd.getDate()
-                                    )
-                                )
 
-                                // Use the is_multi_day property from the event data if available
-                                const isMultiDay =
-                                    event.is_multi_day ||
-                                    eventStartDay.getTime() !==
-                                        eventEndDay.getTime()
-                                const isFirstDay =
-                                    dateStart.getTime() ===
-                                    eventStartDay.getTime()
-
-                                // For multi-day events, only show on the first day and create a spanning element
-                                if (isMultiDay && isFirstDay) {
-                                    // Calculate how many days this event spans
-                                    const daysDiff =
-                                        Math.ceil(
-                                            (eventEndDay.getTime() -
-                                                eventStartDay.getTime()) /
-                                                (1000 * 60 * 60 * 24)
-                                        ) + 1
-
-                                    return (
-                                        <div
-                                            key={index}
-                                            className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded mb-1 border-2 border-purple-500 absolute"
-                                            style={{
-                                                left: '0',
-                                                right: `-${
-                                                    (daysDiff - 1) * 100
-                                                }%`,
-                                                zIndex: 10,
-                                                width: `${daysDiff * 100}%`,
-                                            }}
-                                            title={`${
-                                                event.name
-                                            } (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
-                                        >
-                                            {event.name.length > 25
-                                                ? event.name.substring(0, 25) +
-                                                  '...'
-                                                : event.name}{' '}
-                                            (Multi-day)
-                                        </div>
-                                    )
-                                }
-
-                                // For multi-day events on non-first days, don't show anything
-                                if (isMultiDay && !isFirstDay) {
-                                    return null
-                                }
-
-                                // For single-day events
                                 return (
-                                    <div
-                                        key={index}
-                                        className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded mb-1"
-                                        title={event.name}
-                                    >
-                                        {event.name.length > 15
-                                            ? event.name.substring(0, 15) +
-                                              '...'
-                                            : event.name}
-                                    </div>
+                                    <>
+                                        {/* Multi-day events - only show on first day */}
+                                        {multiDayEvents.map((event, index) => {
+                                            const eventStart = new Date(
+                                                event.start_time
+                                            )
+                                            const eventEnd = event.end_time
+                                                ? new Date(event.end_time)
+                                                : eventStart
+                                            const eventStartDay = new Date(
+                                                Date.UTC(
+                                                    eventStart.getFullYear(),
+                                                    eventStart.getMonth(),
+                                                    eventStart.getDate()
+                                                )
+                                            )
+                                            const isFirstDay =
+                                                dateStart.getTime() ===
+                                                eventStartDay.getTime()
+
+                                            if (!isFirstDay) return null
+
+                                            const daysDiff =
+                                                Math.ceil(
+                                                    (eventEnd.getTime() -
+                                                        eventStart.getTime()) /
+                                                        (1000 * 60 * 60 * 24)
+                                                ) + 1
+
+                                            return (
+                                                <div
+                                                    key={`multi-${index}`}
+                                                    className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded mb-1 border-2 border-purple-500 absolute"
+                                                    style={{
+                                                        left: '0',
+                                                        right: `-${
+                                                            (daysDiff - 1) * 100
+                                                        }%`,
+                                                        zIndex: 10 + index,
+                                                        width: `${
+                                                            daysDiff * 100
+                                                        }%`,
+                                                        top: `${index * 20}px`,
+                                                    }}
+                                                    title={`${
+                                                        event.name
+                                                    } (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
+                                                >
+                                                    {event.name.length > 25
+                                                        ? event.name.substring(
+                                                              0,
+                                                              25
+                                                          ) + '...'
+                                                        : event.name}{' '}
+                                                    (Multi-day)
+                                                </div>
+                                            )
+                                        })}
+
+                                        {/* Single-day events */}
+                                        {singleDayEvents.map((event, index) => (
+                                            <div
+                                                key={`single-${index}`}
+                                                className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded mb-1"
+                                                style={{
+                                                    marginTop: `${
+                                                        index * 16
+                                                    }px`,
+                                                }}
+                                                title={event.name}
+                                            >
+                                                {event.name.length > 15
+                                                    ? event.name.substring(
+                                                          0,
+                                                          15
+                                                      ) + '...'
+                                                    : event.name}
+                                            </div>
+                                        ))}
+                                    </>
                                 )
-                            })}
+                            })()}
                         </div>
                     )
                 })}

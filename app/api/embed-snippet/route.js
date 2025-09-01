@@ -112,6 +112,7 @@ export async function GET() {
         .tbwc-event-details {
             flex: 1;
             min-width: 0;
+            overflow: hidden;
         }
         
         .tbwc-event-title {
@@ -158,12 +159,26 @@ export async function GET() {
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .tbwc-event-description a {
+            color: #4facfe;
+            text-decoration: underline;
+            word-break: break-all;
+            display: inline;
+        }
+        
+        .tbwc-event-description a:hover {
+            text-decoration: none;
         }
         
         .tbwc-event-description.expanded {
             max-height: none;
             -webkit-line-clamp: unset;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow: visible;
         }
         
         .tbwc-event-description-toggle {
@@ -173,6 +188,9 @@ export async function GET() {
             text-decoration: underline;
             margin-bottom: 10px;
             display: inline-block;
+            position: relative;
+            z-index: 2;
+            clear: both;
         }
         
         .tbwc-event-stats {
@@ -181,6 +199,9 @@ export async function GET() {
             margin-top: 10px;
             font-size: 0.8rem;
             opacity: 0.7;
+            clear: both;
+            position: relative;
+            z-index: 1;
         }
         
         .tbwc-event-link {
@@ -342,6 +363,72 @@ export async function GET() {
             .slice(0, MAX_EVENTS);
     }
     
+    // Process description to add hyperlinks for emails and URLs
+    function processDescription(description) {
+        if (!description) return '';
+        
+        // First, escape any existing HTML to prevent conflicts
+        let processed = description
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        
+        // Convert emails to mailto: links
+        processed = processed.replace(
+            /\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b/g,
+            function(match) {
+                return '<a href="mailto:' + match + '" style="color: #4facfe; text-decoration: underline;">' + match + '</a>';
+            }
+        );
+        
+        // Convert URLs to clickable links (only from allowed domains)
+        processed = processed.replace(
+            /(https?:\\/\\/[^\\s]+)/g,
+            function(match) {
+                // Check if URL is from allowed domains
+                const allowedDomains = [
+                    'townsvillebushwalkingclub.com',
+                    'townsvillebushwalkingclub.com.au',
+                    'wanderstories.space',
+                    'paluma.org',
+                    'facebook.com',
+                    'instagram.com',
+                    'parks.desi.qld.gov.au',
+                    'townsvillenorthqueensland.com.au',
+                    'townsville.qld.gov.au',
+                    'charterstowers.qld.gov.au',
+                    'visitcharterstowers.com.au',
+                    'hinchinbrookway.com.au',
+                    'queensland.com'
+                ];
+                
+                try {
+                    const url = new URL(match);
+                    const hostname = url.hostname.toLowerCase();
+                    
+                    // Check if the hostname matches any of the allowed domains
+                    const isAllowed = allowedDomains.some(domain => 
+                        hostname === domain || hostname.endsWith('.' + domain)
+                    );
+                    
+                    if (isAllowed) {
+                        return '<a href="' + match + '" target="_blank" style="color: #4facfe; text-decoration: underline;">' + match + '</a>';
+                    } else {
+                        // Return the URL as plain text if not allowed
+                        return match;
+                    }
+                } catch (e) {
+                    // If URL parsing fails, return as plain text
+                    return match;
+                }
+            }
+        );
+        
+        return processed;
+    }
+    
     // Truncate description
     function truncateDescription(description, maxLength = 150) {
         if (!description || description.length <= maxLength) {
@@ -352,8 +439,9 @@ export async function GET() {
     
     // Create event HTML
     function createEventHTML(event) {
-        const truncatedDesc = truncateDescription(event.description);
         const hasLongDescription = event.description && event.description.length > 150;
+        const truncatedDesc = hasLongDescription ? truncateDescription(event.description) : event.description;
+        const processedTruncatedDesc = processDescription(truncatedDesc);
         const facebookEventUrl = \`https://www.facebook.com/events/\${event.id}/\`;
         const coverImageUrl = event.cover && event.cover.source ? event.cover.source : null;
         
@@ -378,6 +466,29 @@ export async function GET() {
         console.log('Event:', event.name, 'Cover:', event.cover, 'Cover URL:', coverImageUrl);
         console.log('Event end date:', event.formatted_end_date, 'End time:', event.formatted_end_time);
         
+        // Determine date/time display logic
+        let dateTimeDisplay = '';
+        
+        if (!event.formatted_end_date) {
+            // No end date - show start date and time only
+            dateTimeDisplay = \`
+                <div class="tbwc-event-date">\${event.formatted_date}</div>
+                <div class="tbwc-event-time">🕐 \${event.formatted_time}</div>
+            \`;
+        } else if (event.formatted_end_date === event.formatted_date) {
+            // Same date - show start date and both times
+            dateTimeDisplay = \`
+                <div class="tbwc-event-date">\${event.formatted_date}</div>
+                <div class="tbwc-event-time">🕐 \${event.formatted_time}\${event.formatted_end_time ? \` - \${event.formatted_end_time}\` : ''}</div>
+            \`;
+        } else {
+            // Different dates - show multi-day format
+            dateTimeDisplay = \`
+                <div class="tbwc-event-date">\${event.formatted_date} to \${event.formatted_end_date}</div>
+                <div class="tbwc-event-time">🕐 \${new Date(event.end_time).toLocaleDateString(undefined, { weekday: 'long', })} \${event.formatted_time} - \${new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'long', })} \${event.formatted_end_time || ''}</div>
+            \`;
+        }
+        
         return \`
             <li class="tbwc-event-item">
                 <div class="tbwc-event-content">
@@ -389,12 +500,10 @@ export async function GET() {
                             \${event.name}
                             \${monthLabel ? \`<span style="background: rgba(255,255,255,0.2); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; margin-left: 8px;">\${monthLabel}</span>\` : ''}
                         </div>
-                        <div class="tbwc-event-date">\${event.formatted_date}</div>
-                        <div class="tbwc-event-time">🕐 \${event.formatted_time}\${event.formatted_end_time ? \` - \${event.formatted_end_time}\` : ''}</div>
-                        \${event.formatted_end_date ? \`<div class="tbwc-event-end-date">📅 Ends: \${event.formatted_end_date}</div>\` : ''}
+                        \${dateTimeDisplay}
                         \${event.place ? \`<div class="tbwc-event-location">📍 \${event.place.name}</div>\` : ''}
                         \${event.description ? \`
-                            <div class="tbwc-event-description" id="desc-\${event.id}">\${truncatedDesc}</div>
+                            <div class="tbwc-event-description" id="desc-\${event.id}">\${processedTruncatedDesc}</div>
                             \${hasLongDescription ? \`<div class="tbwc-event-description-toggle" onclick="toggleDescription('\${event.id}')">Read more</div>\` : ''}
                         \` : ''}
                         <div class="tbwc-event-stats">
@@ -419,14 +528,28 @@ export async function GET() {
         
         if (descElement.classList.contains('expanded')) {
             descElement.classList.remove('expanded');
-            descElement.textContent = truncateDescription(descElement.getAttribute('data-full-text'));
+            const fullText = descElement.getAttribute('data-full-text');
+            if (fullText) {
+                const truncatedText = truncateDescription(fullText);
+                descElement.innerHTML = processDescription(truncatedText);
+            }
             toggleElement.textContent = 'Read more';
         } else {
-            const fullText = descElement.getAttribute('data-full-text') || descElement.textContent;
-            descElement.setAttribute('data-full-text', fullText);
-            descElement.classList.add('expanded');
-            descElement.textContent = fullText;
+            const fullText = descElement.getAttribute('data-full-text');
+            if (fullText) {
+                descElement.classList.add('expanded');
+                descElement.innerHTML = processDescription(fullText);
+            }
             toggleElement.textContent = 'Read less';
+        }
+        
+        // Force a reflow to ensure proper layout
+        descElement.offsetHeight;
+        
+        // Ensure the toggle element stays in the right place
+        if (toggleElement && toggleElement.classList.contains('tbwc-event-description-toggle')) {
+            toggleElement.style.display = 'inline-block';
+            toggleElement.style.marginTop = '5px';
         }
     };
     
@@ -463,6 +586,7 @@ export async function GET() {
             if (event.description) {
                 const descElement = document.getElementById(\`desc-\${event.id}\`);
                 if (descElement) {
+                    // Store the original description text (without HTML) for toggling
                     descElement.setAttribute('data-full-text', event.description);
                 }
             }
