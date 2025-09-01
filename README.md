@@ -19,7 +19,7 @@ A modern Next.js web application that extracts Facebook events from the Townsvil
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - Facebook Developer Account
 - Facebook Page Access Token
 - npm or yarn
@@ -27,20 +27,23 @@ A modern Next.js web application that extracts Facebook events from the Townsvil
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <your-repo-url>
-   cd TBWC
+   cd tbwc-events
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
-   
+
    Create a `.env.local` file and add your Facebook access token:
-   ```
+
+   ```text
    FACEBOOK_ACCESS_TOKEN=your_facebook_access_token_here
    ```
 
@@ -52,22 +55,25 @@ A modern Next.js web application that extracts Facebook events from the Townsvil
    - Copy the token to your `.env` file
 
 5. **Start the development server**
+
    ```bash
    npm run dev
    ```
 
 6. **Open your browser**
-   - Calendar: http://localhost:3000
-   - API: http://localhost:3000/api/events
+   - Calendar: <http://localhost:3000>
+   - API: <http://localhost:3000/api/events>
 
 ## API Endpoints
 
 ### Get All Events
+
 ```http
 GET /api/events
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -102,16 +108,19 @@ GET /api/events
 ```
 
 ### Get Events by Month
+
 ```http
 GET /api/events/{year}/{month}
 ```
 
 **Example:**
+
 ```http
 GET /api/events/2024/1
 ```
 
 ### Health Check
+
 ```http
 GET /health
 ```
@@ -119,13 +128,15 @@ GET /health
 ## Development
 
 ### Running in Development Mode
+
 ```bash
 npm run dev
 ```
 
 ### Project Structure
-```
-TBWC/
+
+```text
+tbwc-events/
 ├── app/                  # Next.js App Router
 │   ├── page.js          # Main calendar page
 │   ├── layout.js        # Root layout
@@ -144,10 +155,12 @@ TBWC/
 ## Facebook API Setup
 
 ### Required Permissions
+
 - `pages_read_engagement` - Read page events
 - `pages_show_list` - Access page information
 
 ### Getting Access Token
+
 1. Visit [Facebook Developers](https://developers.facebook.com/)
 2. Create a new app or use existing one
 3. Go to Graph API Explorer
@@ -157,19 +170,20 @@ TBWC/
 7. Copy token to `.env` file
 
 ### Page Configuration
+
 The app is configured to fetch events from: `https://www.facebook.com/townsvillebushwalkingclub/`
 
 To change the page, update the `FACEBOOK_PAGE_ID` constant in the API routes.
 
-## Features
-
 ### Calendar Interface
+
 - **Month Navigation** - Navigate between months
 - **Event Indicators** - Visual dots show days with events
 - **Today Highlight** - Current day is highlighted
 - **Event Details** - Click to see full event information
 
 ### API Features
+
 - **CORS Enabled** - Cross-origin requests supported
 - **Error Handling** - Comprehensive error responses
 - **Data Formatting** - Consistent JSON structure
@@ -177,7 +191,9 @@ To change the page, update the `FACEBOOK_PAGE_ID` constant in the API routes.
 - **Caching** - Built-in Next.js caching with revalidation
 
 ### Event Data
+
 Each event includes:
+
 - Basic info (name, description, times)
 - Location details
 - Attendance statistics
@@ -188,19 +204,23 @@ Each event includes:
 
 ### Common Issues
 
-**"Facebook access token is required"**
+"Facebook access token is required"
+
 - Check your `.env.local` file has `FACEBOOK_ACCESS_TOKEN` set
 - Verify the token is valid in Graph API Explorer
 
-**"Failed to fetch page info"**
+"Failed to fetch page info"
+
 - Ensure your page is public or your token has proper permissions
 - Check the page username in `facebook-api.js`
 
-**"No events data found"**
+"No events data found"
+
 - Verify your page has published events
 - Check event privacy settings
 
 ### Debug Mode
+
 Add `DEBUG=true` to your `.env.local` file for detailed logging.
 
 ## Contributing
@@ -220,19 +240,22 @@ ISC License - see LICENSE file for details.
 You can embed upcoming events on your website using our JavaScript widget. The embed script automatically detects whether it's running in development or production and uses the appropriate API endpoints.
 
 ### Quick Embed
+
 ```html
 <div id="tbwc-events"></div>
 <script src="https://your-domain.com/api/embed-snippet?v=1"></script>
 ```
 
 ### Development Testing
+
 For local development testing:
+
 ```html
 <div id="tbwc-events"></div>
 <script src="http://localhost:3000/api/embed-snippet?v=1"></script>
 ```
 
-### Features
+
 - **Environment Detection**: Automatically works in both development and production
 - **Automatic Updates**: Shows latest events from your API
 - **Event Thumbnails**: Displays cover images from Facebook events
@@ -243,6 +266,7 @@ For local development testing:
 - **Multi-Month Support**: Shows events from surrounding months
 
 ### Testing
+
 - **Development**: Visit `http://localhost:3000/test-embed.html` or `http://localhost:3000/embed-test.html`
 - **Production**: Visit `https://your-domain.com/test-embed.html` or `https://your-domain.com/embed-test.html`
 
@@ -251,10 +275,11 @@ The embed script will automatically detect the environment and use the correct A
 ## Support
 
 For issues and questions:
+
 - Check the troubleshooting section
 - Review Facebook API documentation
 - Open an issue on GitHub
 
 ---
 
-**Built with ❤️ for the Townsville Bushwalking Club**
+Built with ❤️ for the Townsville Bushwalking Club
