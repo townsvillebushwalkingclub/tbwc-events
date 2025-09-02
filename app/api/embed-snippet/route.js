@@ -364,7 +364,7 @@ export async function GET() {
     }
     
     // Process description to add hyperlinks for emails and URLs
-    function processDescription(description) {
+    function processDescription(description, eventTitle) {
         if (!description) return '';
         
         // First, escape any existing HTML to prevent conflicts
@@ -375,11 +375,13 @@ export async function GET() {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
         
-        // Convert emails to mailto: links
+        // Convert emails to mailto: links with event title as subject
         processed = processed.replace(
             /\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b/g,
             function(match) {
-                return '<a href="mailto:' + match + '" style="color: #4facfe; text-decoration: underline;">' + match + '</a>';
+                const subject = eventTitle ? encodeURIComponent('Re: ' + eventTitle) : '';
+                const mailtoLink = subject ? 'mailto:' + match + '?subject=' + subject : 'mailto:' + match;
+                return '<a href="' + mailtoLink + '" style="color: #4facfe; text-decoration: underline;">' + match + '</a>';
             }
         );
         
@@ -441,7 +443,7 @@ export async function GET() {
     function createEventHTML(event) {
         const hasLongDescription = event.description && event.description.length > 150;
         const truncatedDesc = hasLongDescription ? truncateDescription(event.description) : event.description;
-        const processedTruncatedDesc = processDescription(truncatedDesc);
+        const processedTruncatedDesc = processDescription(truncatedDesc, event.name);
         const facebookEventUrl = \`https://www.facebook.com/events/\${event.id}/\`;
         const coverImageUrl = event.cover && event.cover.source ? event.cover.source : null;
         
@@ -531,14 +533,20 @@ export async function GET() {
             const fullText = descElement.getAttribute('data-full-text');
             if (fullText) {
                 const truncatedText = truncateDescription(fullText);
-                descElement.innerHTML = processDescription(truncatedText);
+                // Get event name from the parent event item
+                const eventItem = descElement.closest('.tbwc-event-item');
+                const eventTitle = eventItem ? eventItem.querySelector('.tbwc-event-title').textContent.trim() : '';
+                descElement.innerHTML = processDescription(truncatedText, eventTitle);
             }
             toggleElement.textContent = 'Read more';
         } else {
             const fullText = descElement.getAttribute('data-full-text');
             if (fullText) {
                 descElement.classList.add('expanded');
-                descElement.innerHTML = processDescription(fullText);
+                // Get event name from the parent event item
+                const eventItem = descElement.closest('.tbwc-event-item');
+                const eventTitle = eventItem ? eventItem.querySelector('.tbwc-event-title').textContent.trim() : '';
+                descElement.innerHTML = processDescription(fullText, eventTitle);
             }
             toggleElement.textContent = 'Read less';
         }

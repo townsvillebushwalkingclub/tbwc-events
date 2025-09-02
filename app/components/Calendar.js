@@ -247,7 +247,9 @@ export default function Calendar({
                                                         width: `${
                                                             daysDiff * 100
                                                         }%`,
-                                                        top: `${index * 20}px`,
+                                                        top: `${
+                                                            30 + index * 20
+                                                        }px`,
                                                     }}
                                                     title={`${
                                                         event.name
