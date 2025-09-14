@@ -282,4 +282,4 @@ For issues and questions:
 
 ---
 
-Built with ❤️ for the Townsville Bushwalking Club
+Built with ❤️ for the [Townsville Bushwalking Club](https://townsvillebushwalkingclub.com/)
