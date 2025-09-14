@@ -25,7 +25,7 @@ export async function GET() {
         }
         
         // Production environment - use the TBWC API endpoint
-        return 'https://tbwc.wanderstories.space';
+        return 'https://events.townsvillebushwalkingclub.com';
     })();
     const MAX_EVENTS = 12;
     const DAYS_AHEAD = 365; // Show events for next 365 days
