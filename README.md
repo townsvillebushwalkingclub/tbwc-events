@@ -296,7 +296,6 @@ For local development testing:
 <script src="http://localhost:3000/api/embed-snippet?v=1"></script>
 ```
 
-
 - **Environment Detection**: Automatically works in both development and production
 - **Automatic Updates**: Shows latest events from your API
 - **Event Thumbnails**: Displays cover images from Facebook events
