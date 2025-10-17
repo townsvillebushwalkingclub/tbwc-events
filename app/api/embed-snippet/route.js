@@ -296,13 +296,12 @@ export async function GET() {
         };
     }
     
-    // Fetch events from API
-    async function fetchEvents() {
+    // Get list of months to fetch
+    function getMonthsToFetch() {
         const now = new Date();
         const currentYear = now.getFullYear();
         const currentMonth = now.getMonth() + 1;
         
-        // Fetch events from previous month, current month, and next two months
         const monthsToFetch = [];
         
         // Previous month
@@ -322,30 +321,42 @@ export async function GET() {
         const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1;
         const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear;
         monthsToFetch.push({ year: yearAfterNext, month: monthAfterNext });
-
-        let allEvents = [];
+        
+        return monthsToFetch;
+    }
+    
+    // Fetch events from a single month
+    async function fetchMonthEvents(year, month) {
+        try {
+            const url = \`\${API_BASE_URL}/api/events/\${year}/\${month}\`;
+            console.log(\`Fetching events from: \${url}\`);
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log(\`Events for \${year}/\${month}:\`, data.success ? data.data.length : 'Failed');
+                if (data.success && data.data) {
+                    return data.data;
+                }
+            } else {
+                console.error(\`Failed to fetch events for \${year}/\${month}: \${response.status}\`);
+            }
+        } catch (error) {
+            console.error(\`Error fetching events for \${year}/\${month}:\`, error);
+        }
+        return [];
+    }
+    
+    // Fetch events progressively, calling callback for each month
+    async function fetchEventsProgressively(onMonthFetched) {
+        const monthsToFetch = getMonthsToFetch();
         
         for (const { year, month } of monthsToFetch) {
-            try {
-                const url = \`\${API_BASE_URL}/api/events/\${year}/\${month}\`;
-                console.log(\`Fetching events from: \${url}\`);
-                const response = await fetch(url);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log(\`Events for \${year}/\${month}:\`, data.success ? data.data.length : 'Failed');
-                    if (data.success && data.data) {
-                        allEvents = allEvents.concat(data.data);
-                    }
-                } else {
-                    console.error(\`Failed to fetch events for \${year}/\${month}: \${response.status}\`);
-                }
-            } catch (error) {
-                console.error(\`Error fetching events for \${year}/\${month}:\`, error);
+            const events = await fetchMonthEvents(year, month);
+            if (events.length > 0) {
+                onMonthFetched(events);
             }
         }
-        
-        return allEvents;
     }
     
     // Filter upcoming events
@@ -561,7 +572,66 @@ export async function GET() {
         }
     };
     
-    // Render events
+    // Initialize container with header and empty list
+    function initializeContainer(container) {
+        container.innerHTML = \`
+            <div class="tbwc-events-header">
+                <h3>🏔️ Upcoming Events</h3>
+                <p>Join us for our next bushwalking adventures</p>
+            </div>
+            <ul class="tbwc-events-list" id="tbwc-events-list">
+                <li class="tbwc-loading">
+                    <p>Loading events...</p>
+                </li>
+            </ul>
+            <div class="tbwc-view-all">
+                <a href="https://www.facebook.com/townsvillebushwalkingclub/" target="_blank">
+                    View All Events on Facebook →
+                </a>
+            </div>
+        \`;
+    }
+    
+    // Update the events list (clears and re-renders to maintain sort order)
+    function updateEventsList(events) {
+        const eventsList = document.getElementById('tbwc-events-list');
+        if (!eventsList) return;
+        
+        // Clear the list
+        eventsList.innerHTML = '';
+        
+        // Create and append all event items
+        events.forEach(event => {
+            const eventHTML = createEventHTML(event);
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = eventHTML;
+            const eventElement = tempDiv.firstElementChild;
+            eventsList.appendChild(eventElement);
+            
+            // Store full description for toggle functionality
+            if (event.description) {
+                const descElement = document.getElementById(\`desc-\${event.id}\`);
+                if (descElement) {
+                    descElement.setAttribute('data-full-text', event.description);
+                }
+            }
+        });
+    }
+    
+    // Show "no events" message
+    function showNoEvents(container) {
+        const eventsList = document.getElementById('tbwc-events-list');
+        if (eventsList) {
+            eventsList.innerHTML = \`
+                <div class="tbwc-no-events">
+                    <p>No upcoming events scheduled at the moment.</p>
+                    <p>Check back soon or visit our Facebook page for updates!</p>
+                </div>
+            \`;
+        }
+    }
+    
+    // Render events (for backwards compatibility)
     function renderEvents(container, events) {
         if (events.length === 0) {
             container.innerHTML = \`
@@ -632,21 +702,47 @@ export async function GET() {
             return;
         }
         
-        // Show loading
-        showLoading(container);
+        // Initialize container with header and loading indicator
+        initializeContainer(container);
         
         try {
-            // Fetch events
-            const events = await fetchEvents();
-            console.log('Total events fetched:', events.length);
+            // Track all events
+            let allEvents = [];
+            let hasReceivedEvents = false;
             
-            // Filter upcoming events
-            const upcomingEvents = filterUpcomingEvents(events);
-            console.log('Upcoming events after filtering:', upcomingEvents.length);
-            console.log('Upcoming events:', upcomingEvents.map(e => ({ name: e.name, date: e.formatted_date })));
+            // Fetch events progressively, one month at a time
+            await fetchEventsProgressively((monthEvents) => {
+                console.log(\`Received \${monthEvents.length} events from month\`);
+                
+                if (monthEvents.length > 0) {
+                    hasReceivedEvents = true;
+                    
+                    // Add new events to our collection
+                    allEvents = allEvents.concat(monthEvents);
+                    
+                    // Filter and sort all events
+                    const upcomingEvents = filterUpcomingEvents(allEvents);
+                    
+                    console.log(\`Displaying \${upcomingEvents.length} total upcoming events\`);
+                    
+                    // Update the entire list to maintain proper sort order
+                    updateEventsList(upcomingEvents);
+                }
+            });
             
-            // Render events
-            renderEvents(container, upcomingEvents);
+            // If no events were received at all, show the no events message
+            if (!hasReceivedEvents || allEvents.length === 0) {
+                showNoEvents(container);
+            } else {
+                // Final check - if after filtering we have no upcoming events
+                const finalUpcomingEvents = filterUpcomingEvents(allEvents);
+                if (finalUpcomingEvents.length === 0) {
+                    showNoEvents(container);
+                }
+            }
+            
+            console.log('Total events fetched:', allEvents.length);
+            console.log('Upcoming events displayed:', filterUpcomingEvents(allEvents).length);
             
         } catch (error) {
             console.error('TBWC Events Error:', error);

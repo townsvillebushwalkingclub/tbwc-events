@@ -169,6 +169,47 @@ tbwc-events/
 6. Generate access token
 7. Copy token to `.env` file
 
+### Token Management
+
+Facebook access tokens expire periodically. This project includes tools to help manage token refresh:
+
+#### Quick Token Refresh
+
+```bash
+# 1. Get a new short-lived token from Graph API Explorer
+# 2. Add it to your .env.local file
+# 3. Run the refresh script:
+node get-long-lived-token.js
+```
+
+This script will:
+
+- Convert your short-lived token to a long-lived token (60 days)
+- Automatically fetch a **Page Access Token** that never expires
+- Display the new token to update in your environment variables
+
+#### Token Types
+
+The project supports two types of tokens:
+
+1. **Long-lived User Token** (60 days)
+   - Requires manual refresh every ~60 days
+   - Use for development/testing
+
+2. **Page Access Token** (never expires)  ✨ **Recommended**
+   - Never expires unless permissions are revoked
+   - Automatically obtained by the refresh script
+   - Best for production use
+
+### Token Expiration Handling
+
+The application includes automatic fallback mechanisms when tokens expire:
+
+- ✅ Uses cached data (5-minute cache)
+- ✅ Shows sample events in development mode
+- ✅ Provides clear error messages with refresh instructions
+- ✅ Graceful degradation in production
+
 ### Page Configuration
 
 The app is configured to fetch events from: `https://www.facebook.com/townsvillebushwalkingclub/`
