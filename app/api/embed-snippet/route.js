@@ -414,7 +414,8 @@ export async function GET() {
                     'charterstowers.qld.gov.au',
                     'visitcharterstowers.com.au',
                     'hinchinbrookway.com.au',
-                    'queensland.com'
+                    'queensland.com',
+                    'bit.ly'
                 ];
                 
                 try {
