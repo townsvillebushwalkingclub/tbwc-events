@@ -26,22 +26,26 @@
   "author": "Luen Warneke",
   "license": "ISC",
   "dependencies": {
-    "@next/third-parties": "^15.5.4",
+    "@next/third-parties": "16.0.0",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
     "autoprefixer": "^10.4.20",
     "date-fns": "^3.6.0",
-    "next": "^15.5.4",
+    "next": "16.0.0",
     "postcss": "^8.4.49",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "eslint": "^9.0.0",
-    "eslint-config-next": "^15.4.6"
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "eslint": "^9.20.1",
+    "eslint-config-next": "16.0.0"
+  },
+  "overrides": {
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2"
   }
 }

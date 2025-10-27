@@ -10,7 +10,7 @@ A modern Next.js web application that extracts Facebook events from the Townsvil
 - ⏰ **Start & End Times** - Complete time information for events
 - 🔄 **REST API** - JSON endpoints for programmatic access
 - 📱 **Responsive Design** - Works on desktop and mobile devices
-- ⚡ **Modern Tech Stack** - Built with Next.js 15, React 19, and Tailwind CSS
+- ⚡ **Modern Tech Stack** - Built with Next.js, React, and Tailwind CSS
 - 🎨 **Beautiful UI** - Modern gradient design with smooth animations
 - 🚀 **Vercel Ready** - Optimized for deployment on Vercel
 - 🔗 **Embed Widget** - JavaScript snippet for embedding events on other websites
