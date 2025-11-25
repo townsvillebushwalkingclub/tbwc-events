@@ -87,7 +87,7 @@ export async function GET() {
         }
         
         .tbwc-event-thumbnail {
-            flex-shrink: 0;
+            shrink: 0;
             width: 80px;
             height: 80px;
             border-radius: 8px;

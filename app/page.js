@@ -108,7 +108,7 @@ export default function Home() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
+        <div className="min-h-screen bg-linear-to-br from-blue-500 to-purple-600">
             <div className="container mx-auto px-4 md:px-8 py-4 md:py-8">
                 {/* Header */}
                 <div className="text-center mb-10 text-white">
@@ -123,7 +123,7 @@ export default function Home() {
                             href="https://townsvillebushwalkingclub.com/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
+                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-xs"
                         >
                             🌐 Visit Official Website
                         </a>
@@ -131,7 +131,7 @@ export default function Home() {
                             href="https://www.facebook.com/townsvillebushwalkingclub/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
+                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-xs"
                         >
                             📘 Facebook Page
                         </a>
@@ -139,7 +139,7 @@ export default function Home() {
                             href="https://instagram.com/townsvillebushwalkingclub/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm"
+                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-xs"
                         >
                             📘 Instagram Profile
                         </a>

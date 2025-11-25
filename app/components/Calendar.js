@@ -62,7 +62,7 @@ export default function Calendar({
     return (
         <div>
             {/* Calendar Header */}
-            <div className="bg-gradient-to-r from-blue-400 to-cyan-400 text-white p-8">
+            <div className="bg-linear-to-r from-blue-400 to-cyan-400 text-white p-8">
                 <div className="flex justify-between items-center">
                     <div className="flex gap-4 items-center">
                         <button
@@ -237,7 +237,7 @@ export default function Calendar({
                                             return (
                                                 <div
                                                     key={`multi-${index}`}
-                                                    className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded mb-1 border-2 border-purple-500 absolute"
+                                                    className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-sm mb-1 border-2 border-purple-500 absolute"
                                                     style={{
                                                         left: '0',
                                                         right: `-${
@@ -270,7 +270,7 @@ export default function Calendar({
                                         {singleDayEvents.map((event, index) => (
                                             <div
                                                 key={`single-${index}`}
-                                                className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded mb-1"
+                                                className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-sm mb-1"
                                                 style={{
                                                     marginTop: `${
                                                         index * 16

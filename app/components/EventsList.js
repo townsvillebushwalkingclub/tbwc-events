@@ -50,7 +50,7 @@ export default function EventsList({
                 </h2>
                 <button
                     onClick={onRefresh}
-                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 text-sm md:text-base"
+                    className="bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 text-sm md:text-base"
                 >
                     🔄 Refresh Events
                 </button>
@@ -72,7 +72,7 @@ export default function EventsList({
                         >
                             <div className="flex flex-col md:flex-row gap-6">
                                 {/* Event Thumbnail */}
-                                <div className="flex-shrink-0">
+                                <div className="shrink-0">
                                     <div className="w-full md:w-24 h-48 md:h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
                                         {event.cover && event.cover.source ? (
                                             <img

@@ -27,15 +27,15 @@
   "license": "ISC",
   "dependencies": {
     "@next/third-parties": "16.0.1",
+    "@tailwindcss/postcss": "^4.1.17",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
-    "autoprefixer": "^10.4.20",
     "date-fns": "^3.6.0",
     "next": "16.0.1",
     "postcss": "^8.4.49",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "tailwindcss": "^3.4.18"
+    "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
