@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Calendar from './components/Calendar'
 import EventsList from './components/EventsList'
 
@@ -10,7 +10,7 @@ export default function Home() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
-    const loadEvents = async () => {
+    const loadEvents = useCallback(async () => {
         try {
             setLoading(true)
             const year = currentDate.getFullYear()
@@ -81,11 +81,11 @@ export default function Home() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [currentDate])
 
     useEffect(() => {
         loadEvents()
-    }, [currentDate])
+    }, [loadEvents])
 
     const previousMonth = () => {
         setCurrentDate((prev) => {

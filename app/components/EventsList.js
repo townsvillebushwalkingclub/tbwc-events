@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 export default function EventsList({
     events,
     currentDate,
@@ -75,10 +77,13 @@ export default function EventsList({
                                 <div className="shrink-0">
                                     <div className="w-full md:w-24 h-48 md:h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
                                         {event.cover && event.cover.source ? (
-                                            <img
+                                            <Image
                                                 src={event.cover.source}
                                                 alt={event.name}
+                                                width={96}
+                                                height={96}
                                                 className="w-full h-full object-cover"
+                                                unoptimized
                                             />
                                         ) : (
                                             <div className="text-gray-400 text-2xl">
