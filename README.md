@@ -125,13 +125,13 @@ GET /api/events/2024/1
 ### Get Single Event
 
 ```http
-GET /api/events/{id}
+GET /api/event/{id}
 ```
 
 **Example:**
 
 ```http
-GET /api/events/123456789
+GET /api/event/123456789
 ```
 
 **Response:**

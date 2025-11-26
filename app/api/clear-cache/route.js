@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { clearEventsCache } from '../../../lib/facebook-api'
+import { clearEventsCache } from '@/lib/facebook-api'
 
 /**
  * Cache clearing endpoint for development/admin use

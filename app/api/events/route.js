@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getFacebookEvents } from '../../../lib/facebook-api.js'
+import { getFacebookEvents } from '@/lib/facebook-api.js'
 
 // Cache for 1 day with revalidation
 export const revalidate = 86400 // 24 hours in seconds

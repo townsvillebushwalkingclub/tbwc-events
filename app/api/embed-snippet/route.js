@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 
+// Cache embed snippet for 1 day (86400 seconds)
+export const revalidate = 86400
+
 export async function GET() {
     const snippet = `/**
  * Townsville Bushwalking Club Events Embed
@@ -763,7 +766,7 @@ export async function GET() {
     return new NextResponse(snippet, {
         headers: {
             'Content-Type': 'application/javascript',
-            'Cache-Control': 'public, max-age=300, s-maxage=3600', // Reduced cache time for testing
+            'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400', // Cache for 1 day
         },
     })
 }
