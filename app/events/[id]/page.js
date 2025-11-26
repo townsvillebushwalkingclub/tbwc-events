@@ -127,16 +127,15 @@ export default async function EventPage({ params }) {
 }
 
 // Generate static params for ISR (Incremental Static Regeneration)
-// Pre-generate pages for ALL events at build time
-// Past events: Fully static (no revalidation) - they never change
-// Future events: Pre-generated but revalidated daily
+// Only pre-generate past events at build time (they're immutable and never change)
+// Future events are NOT pre-generated - they'll be dynamically rendered on-demand
 export async function generateStaticParams() {
     try {
         const allEvents = await getAllEvents()
 
-        // Return params for ALL events
-        // Past events will be fully static (no revalidation)
-        // Future events will be pre-generated but revalidated daily
+        // Only include past events in static params
+        // Past events are immutable (never change on Facebook), so they can be fully static
+        // Future events will be dynamically rendered and cached with revalidation
         return allEvents
             .filter((event) => event.id) // Only include events with valid IDs
             .filter((event) => isPastEvent(event.start_time)) // Only include past events
@@ -151,11 +150,11 @@ export async function generateStaticParams() {
 
 // Route segment config for ISR (Incremental Static Regeneration)
 // Revalidation strategy:
-// - Past events: Pre-generated at build time, effectively static (they never change)
-//   Since they're immutable, revalidation will just confirm they're unchanged
-// - Current/future events: Revalidate daily (86400 seconds) to get updates
+// - Past events: Pre-generated at build time (SSG), fully static
+//   The revalidate setting applies but is effectively a no-op since past events never change
+// - Current/future events: Dynamically rendered on-demand, cached and revalidated daily (86400 seconds)
 //
 // Note: Next.js doesn't support per-route revalidation in the same dynamic segment.
-// Past events are pre-generated and won't change, so revalidation is effectively a no-op.
-// Future events will be revalidated daily to pick up any changes.
+// Past events are pre-generated and immutable, so revalidation is effectively a no-op.
+// Future events are dynamically rendered and will be revalidated daily to pick up any changes.
 export const revalidate = 86400 // 1 day - ensures current/future events stay fresh

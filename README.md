@@ -320,10 +320,12 @@ To change the page, update the `FACEBOOK_PAGE_ID` constant in the API routes.
 
 The application uses Next.js Incremental Static Regeneration (ISR) for optimal performance:
 
-- **Past Events**: Pre-generated at build time (SSG) and effectively static. Since past events are immutable (they never change on Facebook), revalidation is effectively a no-op.
-- **Future Events**: Pre-generated at build time but revalidated daily (1 day) to pick up any updates or changes.
+- **Past Events**: Pre-generated at build time (SSG) as fully static pages. Since past events are immutable (they never change on Facebook), they are only included in `generateStaticParams` and are fully static with no revalidation needed.
+- **Future Events**: Dynamically rendered on-demand when accessed, then cached and revalidated daily (1 day) to pick up any updates or changes. Future events are NOT pre-generated at build time.
 - **API Routes**: Cached for 1 day with revalidation for current/future events. Past events are cached indefinitely (immutable).
 - **Sitemap & Robots**: Cached for 1 day, regenerated daily to include new events.
+
+**Note**: Next.js doesn't support per-route revalidation in the same dynamic segment. The route-level `revalidate` setting applies to all routes, but for past events (which are pre-generated and immutable), revalidation is effectively a no-op since the data never changes.
 
 ### Event Data
 
