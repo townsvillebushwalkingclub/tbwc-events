@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function EventsList({
     events,
@@ -96,9 +97,12 @@ export default function EventsList({
                                 {/* Event Details */}
                                 <div className="flex-1 min-w-0">
                                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
-                                        <h3 className="text-xl md:text-2xl font-bold text-gray-800">
+                                        <Link
+                                            href={`/events/${event.id}`}
+                                            className="text-xl md:text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors"
+                                        >
                                             {event.name}
-                                        </h3>
+                                        </Link>
                                         {(() => {
                                             const eventDate = new Date(
                                                 event.start_time

@@ -1,0 +1,3 @@
+# This directory stores past events data as JSON files
+# Files are organized by year/month: data/events/YYYY/MM.json
+
