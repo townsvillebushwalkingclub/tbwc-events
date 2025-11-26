@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Calendar from './components/Calendar'
 import EventsList from './components/EventsList'
 
@@ -9,10 +9,15 @@ export default function Home() {
     const [events, setEvents] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const cancelledRef = useRef(false)
 
     const loadEvents = useCallback(async () => {
         try {
             setLoading(true)
+            setEvents([]) // Clear existing events
+            setError(null)
+            cancelledRef.current = false
+
             const year = currentDate.getFullYear()
             const month = currentDate.getMonth() + 1
 
@@ -28,64 +33,163 @@ export default function Home() {
             const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1
             const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear
 
-            // Fetch events for previous month
-            const prevResponse = await fetch(
-                `/api/events/${prevYear}/${prevMonth}`
-            )
-            const prevData = await prevResponse.json()
+            // List of months to fetch
+            const monthsToFetch = [
+                { year: prevYear, month: prevMonth },
+                { year, month },
+                { year: nextYear, month: nextMonth },
+                { year: yearAfterNext, month: monthAfterNext },
+            ]
 
-            // Fetch events for current month
-            const currentResponse = await fetch(`/api/events/${year}/${month}`)
-            const currentData = await currentResponse.json()
-
-            // Fetch events for next month
-            const nextResponse = await fetch(
-                `/api/events/${nextYear}/${nextMonth}`
-            )
-            const nextData = await nextResponse.json()
-
-            // Fetch events for month after next
-            const monthAfterNextResponse = await fetch(
-                `/api/events/${yearAfterNext}/${monthAfterNext}`
-            )
-            const monthAfterNextData = await monthAfterNextResponse.json()
-
+            // Track all events as they come in
             let allEvents = []
+            let hasReceivedEvents = false
 
-            if (prevData.success) {
-                allEvents = allEvents.concat(prevData.data)
+            // Fetch events progressively, one month at a time
+            for (const {
+                year: fetchYear,
+                month: fetchMonth,
+            } of monthsToFetch) {
+                if (cancelledRef.current) return
+
+                try {
+                    const response = await fetch(
+                        `/api/events/${fetchYear}/${fetchMonth}`
+                    )
+                    const data = await response.json()
+
+                    if (cancelledRef.current) return
+
+                    if (data.success && data.data && data.data.length > 0) {
+                        hasReceivedEvents = true
+
+                        // Add new events to our collection
+                        allEvents = allEvents.concat(data.data)
+
+                        // Sort events by start time
+                        allEvents.sort(
+                            (a, b) =>
+                                new Date(a.start_time) - new Date(b.start_time)
+                        )
+
+                        // Update state immediately with current events
+                        setEvents([...allEvents])
+                    }
+                } catch (fetchError) {
+                    console.error(
+                        `Error fetching events for ${fetchYear}/${fetchMonth}:`,
+                        fetchError
+                    )
+                    // Continue fetching other months even if one fails
+                }
             }
 
-            if (currentData.success) {
-                allEvents = allEvents.concat(currentData.data)
-            }
+            if (cancelledRef.current) return
 
-            if (nextData.success) {
-                allEvents = allEvents.concat(nextData.data)
-            }
-
-            if (monthAfterNextData.success) {
-                allEvents = allEvents.concat(monthAfterNextData.data)
-            }
-
-            // Sort events by start time
-            allEvents.sort(
-                (a, b) => new Date(a.start_time) - new Date(b.start_time)
-            )
-
-            setEvents(allEvents)
-            setError(null)
+            // If we received events, we're done loading
+            setLoading(false)
         } catch (error) {
+            if (cancelledRef.current) return
             console.error('Error loading events:', error)
             setError(error.message)
-        } finally {
             setLoading(false)
         }
     }, [currentDate])
 
     useEffect(() => {
-        loadEvents()
-    }, [loadEvents])
+        cancelledRef.current = false
+
+        const fetchData = async () => {
+            try {
+                setLoading(true)
+                setEvents([]) // Clear existing events
+                setError(null)
+
+                const year = currentDate.getFullYear()
+                const month = currentDate.getMonth() + 1
+
+                // Calculate previous month
+                const prevMonth = month === 1 ? 12 : month - 1
+                const prevYear = month === 1 ? year - 1 : year
+
+                // Calculate next month
+                const nextMonth = month === 12 ? 1 : month + 1
+                const nextYear = month === 12 ? year + 1 : year
+
+                // Calculate month after next
+                const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1
+                const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear
+
+                // List of months to fetch
+                const monthsToFetch = [
+                    { year: prevYear, month: prevMonth },
+                    { year, month },
+                    { year: nextYear, month: nextMonth },
+                    { year: yearAfterNext, month: monthAfterNext },
+                ]
+
+                // Track all events as they come in
+                let allEvents = []
+                let hasReceivedEvents = false
+
+                // Fetch events progressively, one month at a time
+                for (const {
+                    year: fetchYear,
+                    month: fetchMonth,
+                } of monthsToFetch) {
+                    if (cancelledRef.current) return
+
+                    try {
+                        const response = await fetch(
+                            `/api/events/${fetchYear}/${fetchMonth}`
+                        )
+                        const data = await response.json()
+
+                        if (cancelledRef.current) return
+
+                        if (data.success && data.data && data.data.length > 0) {
+                            hasReceivedEvents = true
+
+                            // Add new events to our collection
+                            allEvents = allEvents.concat(data.data)
+
+                            // Sort events by start time
+                            allEvents.sort(
+                                (a, b) =>
+                                    new Date(a.start_time) -
+                                    new Date(b.start_time)
+                            )
+
+                            // Update state immediately with current events
+                            setEvents([...allEvents])
+                        }
+                    } catch (fetchError) {
+                        console.error(
+                            `Error fetching events for ${fetchYear}/${fetchMonth}:`,
+                            fetchError
+                        )
+                        // Continue fetching other months even if one fails
+                    }
+                }
+
+                if (cancelledRef.current) return
+
+                // If we received events, we're done loading
+                setLoading(false)
+            } catch (error) {
+                if (cancelledRef.current) return
+                console.error('Error loading events:', error)
+                setError(error.message)
+                setLoading(false)
+            }
+        }
+
+        fetchData()
+
+        return () => {
+            cancelledRef.current = true
+        }
+    }, [currentDate])
 
     const previousMonth = () => {
         setCurrentDate((prev) => {
