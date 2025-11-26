@@ -1,18 +1,46 @@
 'use client'
 
+import { useRouter, useSearchParams } from 'next/navigation'
+
 export default function Calendar({
     currentDate,
     events,
-    onPreviousMonth,
-    onNextMonth,
-    onGoToToday,
+    year,
+    month,
 }) {
-    const year = currentDate.getFullYear()
-    const month = currentDate.getMonth()
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
+    const navigateToMonth = (newYear, newMonth) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('year', newYear.toString())
+        params.set('month', newMonth.toString())
+        router.push(`/?${params.toString()}`)
+    }
+
+    const previousMonth = () => {
+        const newMonth = month === 1 ? 12 : month - 1
+        const newYear = month === 1 ? year - 1 : year
+        navigateToMonth(newYear, newMonth)
+    }
+
+    const nextMonth = () => {
+        const newMonth = month === 12 ? 1 : month + 1
+        const newYear = month === 12 ? year + 1 : year
+        navigateToMonth(newYear, newMonth)
+    }
+
+    const goToToday = () => {
+        const now = new Date()
+        navigateToMonth(now.getFullYear(), now.getMonth() + 1)
+    }
+    // Use the year and month props directly (month is 1-based in props, 0-based in Date)
+    const displayYear = year
+    const displayMonth = month - 1 // Convert to 0-based for Date operations
 
     // Get first day of month and number of days
-    const firstDay = new Date(year, month, 1)
-    const lastDay = new Date(year, month + 1, 0)
+    const firstDay = new Date(displayYear, displayMonth, 1)
+    const lastDay = new Date(displayYear, displayMonth + 1, 0)
 
     // Calculate start date to show Monday as first day of week
     const startDate = new Date(firstDay)
@@ -66,26 +94,26 @@ export default function Calendar({
                 <div className="flex justify-between items-center">
                     <div className="flex gap-4 items-center">
                         <button
-                            onClick={onPreviousMonth}
+                            onClick={previousMonth}
                             className="bg-white/20 hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-full font-semibold"
                         >
                             ← Previous
                         </button>
                         <button
-                            onClick={onGoToToday}
+                            onClick={goToToday}
                             className="bg-white/20 hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-full font-semibold"
                         >
                             Today
                         </button>
                         <button
-                            onClick={onNextMonth}
+                            onClick={nextMonth}
                             className="bg-white/20 hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-full font-semibold"
                         >
                             Next →
                         </button>
                     </div>
                     <div className="text-3xl font-bold">
-                        {new Date(year, month).toLocaleDateString('en-AU', {
+                        {new Date(displayYear, displayMonth).toLocaleDateString('en-AU', {
                             month: 'long',
                             year: 'numeric',
                             timeZone: 'Australia/Brisbane',
@@ -111,7 +139,7 @@ export default function Calendar({
                     const date = new Date(startDate)
                     date.setDate(startDate.getDate() + i)
 
-                    const isOtherMonth = date.getMonth() !== month
+                    const isOtherMonth = date.getMonth() !== displayMonth
                     const isToday = date.toDateString() === today.toDateString()
                     const dayEvents = getEventsForDate(date)
 

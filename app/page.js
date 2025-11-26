@@ -1,215 +1,67 @@
-'use client'
-
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { Suspense } from 'react'
+import { getEventsForMonth } from '@/lib/facebook-api.js'
 import Calendar from './components/Calendar'
 import EventsList from './components/EventsList'
 
-export default function Home() {
-    const [currentDate, setCurrentDate] = useState(new Date())
-    const [events, setEvents] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-    const cancelledRef = useRef(false)
+// Revalidate the homepage daily
+export const revalidate = 86400 // 1 day
 
-    const loadEvents = useCallback(async () => {
+export default async function Home({ searchParams }) {
+    // Await searchParams as it's a Promise in Next.js 15+
+    const params = await searchParams
+    
+    // Get the month from search params, default to current month
+    const now = new Date()
+    const yearParam = params?.year
+        ? parseInt(params.year)
+        : now.getFullYear()
+    const monthParam = params?.month
+        ? parseInt(params.month)
+        : now.getMonth() + 1
+
+    // Validate and clamp the month/year
+    const year = yearParam || now.getFullYear()
+    const month = Math.max(1, Math.min(12, monthParam || now.getMonth() + 1))
+
+    // Calculate previous month
+    const prevMonth = month === 1 ? 12 : month - 1
+    const prevYear = month === 1 ? year - 1 : year
+
+    // Calculate next month
+    const nextMonth = month === 12 ? 1 : month + 1
+    const nextYear = month === 12 ? year + 1 : year
+
+    // Calculate month after next
+    const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1
+    const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear
+
+    // Fetch events for all months in parallel
+    const monthsToFetch = [
+        { year: prevYear, month: prevMonth },
+        { year, month },
+        { year: nextYear, month: nextMonth },
+        { year: yearAfterNext, month: monthAfterNext },
+    ]
+
+    let allEvents = []
+    const fetchPromises = monthsToFetch.map(async ({ year: fetchYear, month: fetchMonth }) => {
         try {
-            setLoading(true)
-            setEvents([]) // Clear existing events
-            setError(null)
-            cancelledRef.current = false
-
-            const year = currentDate.getFullYear()
-            const month = currentDate.getMonth() + 1
-
-            // Calculate previous month
-            const prevMonth = month === 1 ? 12 : month - 1
-            const prevYear = month === 1 ? year - 1 : year
-
-            // Calculate next month
-            const nextMonth = month === 12 ? 1 : month + 1
-            const nextYear = month === 12 ? year + 1 : year
-
-            // Calculate month after next
-            const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1
-            const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear
-
-            // List of months to fetch
-            const monthsToFetch = [
-                { year: prevYear, month: prevMonth },
-                { year, month },
-                { year: nextYear, month: nextMonth },
-                { year: yearAfterNext, month: monthAfterNext },
-            ]
-
-            // Track all events as they come in
-            let allEvents = []
-            let hasReceivedEvents = false
-
-            // Fetch events progressively, one month at a time
-            for (const {
-                year: fetchYear,
-                month: fetchMonth,
-            } of monthsToFetch) {
-                if (cancelledRef.current) return
-
-                try {
-                    const response = await fetch(
-                        `/api/events/${fetchYear}/${fetchMonth}`
-                    )
-                    const data = await response.json()
-
-                    if (cancelledRef.current) return
-
-                    if (data.success && data.data && data.data.length > 0) {
-                        hasReceivedEvents = true
-
-                        // Add new events to our collection
-                        allEvents = allEvents.concat(data.data)
-
-                        // Sort events by start time
-                        allEvents.sort(
-                            (a, b) =>
-                                new Date(a.start_time) - new Date(b.start_time)
-                        )
-
-                        // Update state immediately with current events
-                        setEvents([...allEvents])
-                    }
-                } catch (fetchError) {
-                    console.error(
-                        `Error fetching events for ${fetchYear}/${fetchMonth}:`,
-                        fetchError
-                    )
-                    // Continue fetching other months even if one fails
-                }
-            }
-
-            if (cancelledRef.current) return
-
-            // If we received events, we're done loading
-            setLoading(false)
+            const events = await getEventsForMonth(fetchYear, fetchMonth)
+            return events || []
         } catch (error) {
-            if (cancelledRef.current) return
-            console.error('Error loading events:', error)
-            setError(error.message)
-            setLoading(false)
+            console.error(`Error fetching events for ${fetchYear}/${fetchMonth}:`, error)
+            return []
         }
-    }, [currentDate])
+    })
 
-    useEffect(() => {
-        cancelledRef.current = false
+    const results = await Promise.all(fetchPromises)
+    allEvents = results.flat()
 
-        const fetchData = async () => {
-            try {
-                setLoading(true)
-                setEvents([]) // Clear existing events
-                setError(null)
+    // Sort events by start time
+    allEvents.sort((a, b) => new Date(a.start_time) - new Date(b.start_time))
 
-                const year = currentDate.getFullYear()
-                const month = currentDate.getMonth() + 1
-
-                // Calculate previous month
-                const prevMonth = month === 1 ? 12 : month - 1
-                const prevYear = month === 1 ? year - 1 : year
-
-                // Calculate next month
-                const nextMonth = month === 12 ? 1 : month + 1
-                const nextYear = month === 12 ? year + 1 : year
-
-                // Calculate month after next
-                const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1
-                const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear
-
-                // List of months to fetch
-                const monthsToFetch = [
-                    { year: prevYear, month: prevMonth },
-                    { year, month },
-                    { year: nextYear, month: nextMonth },
-                    { year: yearAfterNext, month: monthAfterNext },
-                ]
-
-                // Track all events as they come in
-                let allEvents = []
-                let hasReceivedEvents = false
-
-                // Fetch events progressively, one month at a time
-                for (const {
-                    year: fetchYear,
-                    month: fetchMonth,
-                } of monthsToFetch) {
-                    if (cancelledRef.current) return
-
-                    try {
-                        const response = await fetch(
-                            `/api/events/${fetchYear}/${fetchMonth}`
-                        )
-                        const data = await response.json()
-
-                        if (cancelledRef.current) return
-
-                        if (data.success && data.data && data.data.length > 0) {
-                            hasReceivedEvents = true
-
-                            // Add new events to our collection
-                            allEvents = allEvents.concat(data.data)
-
-                            // Sort events by start time
-                            allEvents.sort(
-                                (a, b) =>
-                                    new Date(a.start_time) -
-                                    new Date(b.start_time)
-                            )
-
-                            // Update state immediately with current events
-                            setEvents([...allEvents])
-                        }
-                    } catch (fetchError) {
-                        console.error(
-                            `Error fetching events for ${fetchYear}/${fetchMonth}:`,
-                            fetchError
-                        )
-                        // Continue fetching other months even if one fails
-                    }
-                }
-
-                if (cancelledRef.current) return
-
-                // If we received events, we're done loading
-                setLoading(false)
-            } catch (error) {
-                if (cancelledRef.current) return
-                console.error('Error loading events:', error)
-                setError(error.message)
-                setLoading(false)
-            }
-        }
-
-        fetchData()
-
-        return () => {
-            cancelledRef.current = true
-        }
-    }, [currentDate])
-
-    const previousMonth = () => {
-        setCurrentDate((prev) => {
-            const newDate = new Date(prev)
-            newDate.setMonth(prev.getMonth() - 1)
-            return newDate
-        })
-    }
-
-    const nextMonth = () => {
-        setCurrentDate((prev) => {
-            const newDate = new Date(prev)
-            newDate.setMonth(prev.getMonth() + 1)
-            return newDate
-        })
-    }
-
-    const goToToday = () => {
-        setCurrentDate(new Date())
-    }
+    // Create currentDate object for components
+    const currentDate = new Date(year, month - 1, 1)
 
     return (
         <div className="min-h-screen bg-linear-to-br from-blue-500 to-purple-600">
@@ -227,7 +79,7 @@ export default function Home() {
                             href="https://townsvillebushwalkingclub.com/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-xs"
+                            className="bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
                         >
                             🌐 Visit Official Website
                         </a>
@@ -235,7 +87,7 @@ export default function Home() {
                             href="https://www.facebook.com/townsvillebushwalkingclub/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-xs"
+                            className="bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
                         >
                             📘 Facebook Page
                         </a>
@@ -243,7 +95,7 @@ export default function Home() {
                             href="https://instagram.com/townsvillebushwalkingclub/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-xs"
+                            className="bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
                         >
                             📘 Instagram Profile
                         </a>
@@ -252,24 +104,24 @@ export default function Home() {
 
                 {/* Calendar */}
                 <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
-                    <Calendar
-                        currentDate={currentDate}
-                        events={events}
-                        onPreviousMonth={previousMonth}
-                        onNextMonth={nextMonth}
-                        onGoToToday={goToToday}
-                    />
+                    <Suspense fallback={
+                        <div className="p-8 text-center">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                            <p className="text-gray-600">Loading calendar...</p>
+                        </div>
+                    }>
+                        <Calendar
+                            currentDate={currentDate}
+                            events={allEvents}
+                            year={year}
+                            month={month}
+                        />
+                    </Suspense>
                 </div>
 
                 {/* Events List */}
                 <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
-                    <EventsList
-                        events={events}
-                        currentDate={currentDate}
-                        loading={loading}
-                        error={error}
-                        onRefresh={loadEvents}
-                    />
+                    <EventsList events={allEvents} currentDate={currentDate} />
                 </div>
             </div>
         </div>

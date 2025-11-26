@@ -171,8 +171,8 @@ export default function EventClient({ initialEvent }) {
                             </div>
                         </div>
 
-                        {/* Facebook Link */}
-                        <div className="pt-6 border-t border-gray-200">
+                        {/* Links */}
+                        <div className="pt-6 border-t border-gray-200 flex flex-wrap gap-4">
                             <a
                                 href={facebookEventUrl}
                                 target="_blank"

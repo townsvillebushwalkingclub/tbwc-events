@@ -6,9 +6,6 @@ import Link from 'next/link'
 export default function EventsList({
     events,
     currentDate,
-    loading,
-    error,
-    onRefresh,
 }) {
     const monthYear = new Date(currentDate).toLocaleDateString('en-AU', {
         month: 'long',
@@ -16,47 +13,12 @@ export default function EventsList({
         timeZone: 'Australia/Brisbane',
     })
 
-    if (loading) {
-        return (
-            <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <p className="text-gray-600">Loading events...</p>
-            </div>
-        )
-    }
-
-    if (error) {
-        return (
-            <div className="text-center py-12">
-                <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-                    <div className="text-red-500 text-2xl mb-2">⚠️</div>
-                    <h3 className="text-red-800 font-semibold mb-2">
-                        Error Loading Events
-                    </h3>
-                    <p className="text-red-600 mb-4">{error}</p>
-                    <button
-                        onClick={onRefresh}
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors"
-                    >
-                        Try Again
-                    </button>
-                </div>
-            </div>
-        )
-    }
-
     return (
         <div>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-4 border-b-2 border-gray-100 gap-4">
+            <div className="mb-8 pb-4 border-b-2 border-gray-100">
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
                     Events for {monthYear} & Next 2 Months
                 </h2>
-                <button
-                    onClick={onRefresh}
-                    className="bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 text-sm md:text-base"
-                >
-                    🔄 Refresh Events
-                </button>
             </div>
 
             {events.length === 0 ? (
@@ -181,14 +143,22 @@ export default function EventsList({
                                             </span>
                                         </div>
 
-                                        <a
-                                            href={`https://www.facebook.com/events/${event.id}/`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
-                                        >
-                                            📘 View on Facebook
-                                        </a>
+                                        <div className="flex gap-3">
+                                            <Link
+                                                href={`/events/${event.id}`}
+                                                className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
+                                            >
+                                                📄 View Event Page
+                                            </Link>
+                                            <a
+                                                href={`https://www.facebook.com/events/${event.id}/`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
+                                            >
+                                                📘 View on Facebook
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
