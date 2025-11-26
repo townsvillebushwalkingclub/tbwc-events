@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "token:refresh": "node get-long-lived-token.js"
+    "token:refresh": "node tools/get-long-lived-token.js",
+    "download:history": "node tools/download-historical-events.js"
   },
   "keywords": [
     "townsville",

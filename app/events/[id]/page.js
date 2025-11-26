@@ -5,6 +5,76 @@ import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 
+// Generate metadata for the event page (runs server-side)
+export async function generateMetadata({ params }) {
+    try {
+        const { id } = await params
+        // Import server-side function (generateMetadata runs server-side)
+        const { getEventById } = await import('../../../lib/facebook-api.js')
+        const event = await getEventById(id)
+
+        if (!event) {
+            return {
+                title: 'Event Not Found - Townsville Bushwalking Club',
+                description: 'The event you are looking for does not exist.',
+            }
+        }
+
+        const description = event.description
+            ? event.description.substring(0, 160).replace(/\n/g, ' ')
+            : `Join us for ${event.name} on ${event.formatted_date}. ${event.place ? `Location: ${event.place.name}` : ''}`
+
+        const coverImageUrl =
+            event.cover && event.cover.source ? event.cover.source : null
+
+        return {
+            title: `${event.name} - Townsville Bushwalking Club`,
+            description: description,
+            keywords: [
+                'Townsville Bushwalking Club',
+                'bushwalking',
+                'hiking',
+                event.name,
+                event.place?.name || 'Townsville',
+                'North Queensland',
+            ],
+            openGraph: {
+                title: event.name,
+                description: description,
+                type: 'website',
+                url: `https://events.townsvillebushwalkingclub.com/events/${id}`,
+                siteName: 'Townsville Bushwalking Club Events',
+                locale: 'en_AU',
+                images: coverImageUrl
+                    ? [
+                          {
+                              url: coverImageUrl,
+                              width: event.cover?.width || 1200,
+                              height: event.cover?.height || 630,
+                              alt: event.name,
+                          },
+                      ]
+                    : [],
+            },
+            twitter: {
+                card: coverImageUrl ? 'summary_large_image' : 'summary',
+                title: event.name,
+                description: description,
+                images: coverImageUrl ? [coverImageUrl] : [],
+            },
+            alternates: {
+                canonical: `/events/${id}`,
+            },
+        }
+    } catch (error) {
+        console.error('Error generating metadata:', error)
+        return {
+            title: 'Event - Townsville Bushwalking Club',
+            description: 'View event details for Townsville Bushwalking Club.',
+        }
+    }
+}
+
 export default function EventPage() {
     const params = useParams()
     const router = useRouter()

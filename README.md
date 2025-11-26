@@ -8,12 +8,15 @@ A modern Next.js web application that extracts Facebook events from the Townsvil
 - 🎯 **Facebook Events Integration** - Real-time events from your Facebook page
 - 🖼️ **Event Thumbnails** - Cover images from Facebook events with fallback icons
 - ⏰ **Start & End Times** - Complete time information for events
+- 📄 **Individual Event Pages** - Dedicated pages for each event with full details and SEO metadata
 - 🔄 **REST API** - JSON endpoints for programmatic access
 - 📱 **Responsive Design** - Works on desktop and mobile devices
 - ⚡ **Modern Tech Stack** - Built with Next.js, React, and Tailwind CSS
 - 🎨 **Beautiful UI** - Modern gradient design with smooth animations
 - 🚀 **Vercel Ready** - Optimized for deployment on Vercel
 - 🔗 **Embed Widget** - JavaScript snippet for embedding events on other websites
+- 💾 **Historical Data Storage** - Past events saved to files to reduce API calls
+- 🔍 **SEO Optimized** - Comprehensive metadata for search engines and social sharing
 
 ## Quick Start
 
@@ -119,6 +122,47 @@ GET /api/events/{year}/{month}
 GET /api/events/2024/1
 ```
 
+### Get Single Event
+
+```http
+GET /api/events/{id}
+```
+
+**Example:**
+
+```http
+GET /api/events/123456789
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "123456789",
+    "name": "Mountain Hike",
+    "description": "Join us for a beautiful mountain hike...",
+    "start_time": "2024-01-15T09:00:00+1000",
+    "end_time": "2024-01-15T17:00:00+1000",
+    "formatted_date": "Monday, January 15th, 2024",
+    "formatted_time": "9:00 AM",
+    "formatted_end_time": "5:00 PM",
+    "place": {
+      "name": "Mount Stuart"
+    },
+    "attending_count": 15,
+    "interested_count": 25,
+    "cover": {
+      "source": "https://scontent.xx.fbcdn.net/v/...",
+      "width": 720,
+      "height": 405
+    }
+  },
+  "timestamp": "2024-01-10T10:30:00.000Z"
+}
+```
+
 ### Health Check
 
 ```http
@@ -139,17 +183,28 @@ npm run dev
 tbwc-events/
 ├── app/                  # Next.js App Router
 │   ├── page.js          # Main calendar page
-│   ├── layout.js        # Root layout
-│   ├── components/      # React components
-│   │   ├── Calendar.js  # Calendar component
+│   ├── layout.js        # Root layout with metadata
+│   ├── events/          # Event detail pages
+│   │   └── [id]/        # Individual event pages
+│   ├── components/       # React components
+│   │   ├── Calendar.js   # Calendar component
 │   │   └── EventsList.js # Events list component
 │   └── api/             # API routes
 │       ├── events/      # Events API endpoints
-│       └── health/      # Health check endpoint
-├── package.json         # Dependencies and scripts
-├── next.config.js       # Next.js configuration
-├── tailwind.config.js   # Tailwind CSS configuration
-└── .env.local           # Environment variables
+│       │   ├── [id]/    # Single event endpoint
+│       │   └── [year]/[month]/ # Monthly events
+│       ├── embed-snippet/ # Embed widget script
+│       └── health/       # Health check endpoint
+├── lib/                  # Library functions
+│   └── facebook-api.js   # Facebook API integration
+├── tools/                # Utility scripts
+│   ├── get-long-lived-token.js # Token refresh tool
+│   └── download-historical-events.js # Historical data download
+├── data/                 # Data storage
+│   └── events/           # Past events JSON files (YYYY/MM.json)
+├── package.json          # Dependencies and scripts
+├── next.config.js        # Next.js configuration
+└── .env.local            # Environment variables
 ```
 
 ## Facebook API Setup
@@ -179,7 +234,9 @@ Facebook access tokens expire periodically. This project includes tools to help 
 # 1. Get a new short-lived token from Graph API Explorer
 # 2. Add it to your .env.local file
 # 3. Run the refresh script:
-node get-long-lived-token.js
+npm run token:refresh
+# or
+node tools/get-long-lived-token.js
 ```
 
 This script will:
@@ -205,10 +262,38 @@ The project supports two types of tokens:
 
 The application includes automatic fallback mechanisms when tokens expire:
 
-- ✅ Uses cached data (5-minute cache)
+- ✅ Uses cached data (24-hour cache)
 - ✅ Shows sample events in development mode
 - ✅ Provides clear error messages with refresh instructions
 - ✅ Graceful degradation in production
+
+### Historical Events Storage
+
+The application automatically saves past events to JSON files to reduce Facebook API calls:
+
+- **Automatic Storage**: Past events are saved to `data/events/YYYY/MM.json`
+- **File-based Lookup**: Past months are loaded from files instead of Facebook API
+- **Download Script**: Use `npm run download:history` to download historical events from 2020 onwards
+
+#### Downloading Historical Events
+
+To populate historical event data:
+
+```bash
+npm run download:history
+# or
+node tools/download-historical-events.js
+```
+
+This script will:
+
+- Download events from January 2020 to the previous month
+- Save events to `data/events/YYYY/MM.json` files
+- Handle rate limits gracefully and save progress
+- Resume from where it left off if interrupted
+- Track progress in `data/download-progress.json`
+
+**Note**: The script respects Facebook API rate limits and will stop if rate limited. Simply run it again the next day to continue.
 
 ### Page Configuration
 

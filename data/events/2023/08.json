@@ -1,0 +1,153 @@
+[
+  {
+    "id": "828803085585915",
+    "name": "A Weekend Surprise",
+    "description": "Date: 26-27/08/23 Sun\t\nLeader: Luen \nContact us for more information.",
+    "start_time": "2023-08-26T07:00:00+1000",
+    "end_time": "2023-08-27T20:00:00+1000",
+    "formatted_date": "Saturday 26 August 2023",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "8:00 pm",
+    "formatted_end_date": "Sunday 27 August 2023",
+    "is_multi_day": true,
+    "attending_count": 4,
+    "interested_count": 15,
+    "place": {
+      "name": "Visit Townsville North Queensland",
+      "location": {
+        "city": "Townsville",
+        "country": "Australia",
+        "latitude": -19.259841073282,
+        "longitude": 146.81719064713,
+        "state": "QLD",
+        "street": "340 Flinders Street",
+        "zip": "4810"
+      },
+      "id": "104262989613738"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 0,
+      "source": "https://scontent.fbne6-1.fna.fbcdn.net/v/t39.30808-6/490756121_1271230904773188_6082172250501339846_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=9e60e4&_nc_ohc=RyyfbkwivhwQ7kNvwEUdsJL&_nc_oc=Admpz2c9ZKMAYPcDfAfmcZnCuUl9ec1awEyw3bvk9k7rJF1HvjenmRMyyaRxhiUE8KTHY-knyqozz6Cqt0LQcxQA&_nc_zt=23&_nc_ht=scontent.fbne6-1.fna&edm=ABTKTjYEAAAA&_nc_gid=JTcQSNpGC7rE2PRSsUDHsw&_nc_tpa=Q5bMBQHY0D901WO9r2ZYYFbrM8t3pl_iumQzF4dvN9Hjk_TSz-HNxNyY7CyX7T0BTnfmwuehuGFktHWLiA&oh=00_AfgkCg383aHlRC6zQhV2YOu9eKaafakmAZKa5LLK3tElww&oe=692C94AD",
+      "id": "822420332987583"
+    }
+  },
+  {
+    "id": "284990080704915",
+    "name": "Paradise Beach",
+    "description": "Sunday August 20\nLeader - Molly Hoey \nWalk - Paradise Beach\nRated - Beginner friendly, Off-track. \nInterested? - email info@townsvillebushwalkingclub.com",
+    "start_time": "2023-08-20T07:00:00+1000",
+    "formatted_date": "Sunday 20 August 2023",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": null,
+    "formatted_end_date": null,
+    "is_multi_day": null,
+    "attending_count": 4,
+    "interested_count": 46,
+    "place": {
+      "name": "Visit Townsville North Queensland",
+      "location": {
+        "city": "Townsville",
+        "country": "Australia",
+        "latitude": -19.259841073282,
+        "longitude": 146.81719064713,
+        "state": "QLD",
+        "street": "340 Flinders Street",
+        "zip": "4810"
+      },
+      "id": "104262989613738"
+    },
+    "cover": {
+      "offset_x": 51,
+      "offset_y": 65,
+      "source": "https://scontent.fbne5-1.fna.fbcdn.net/v/t39.30808-6/490733652_1269632464933032_1745613285377458318_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=9e60e4&_nc_ohc=HpMNGyy51p8Q7kNvwGNenPD&_nc_oc=AdkbXGNOy7kVHDGi5XWtdJVi54niJHI2_1c3i4Au0rMsyVHzPmAkwTI-C77EjZYqInTIPqoD8vSzPUqMbyxkmK6z&_nc_zt=23&_nc_ht=scontent.fbne5-1.fna&edm=ABTKTjYEAAAA&_nc_gid=JTcQSNpGC7rE2PRSsUDHsw&_nc_tpa=Q5bMBQGlmWHJCXKkJYjxH2cOCqJ7dSQULNnDpbt8gsplA-yz-PkzrrM6cGeN8EfdB5HsdLRzWBoIBOsW9w&oh=00_AfhSCsEdjot-PD3_j0UWLa4NaXDD1J85tKjWVcsC1u03aA&oe=692C9FD6",
+      "id": "800664718496478"
+    }
+  },
+  {
+    "id": "1208144969953985",
+    "name": "Midweek - Ethel Creek",
+    "description": "Midweek Hike - Thu, 17th August \n\nLeader: Cherry Judge\n\nRated: On-Track hike. For the easy to moderately fit walkers who can walk about 3=4 hrs with a break \n \nWalk Description:\nWe will begin in Paluma village, making our way to Cloudy Creek.\nOnce we reach Cloudy Creek, we will cross the creek and then continue along a 'less traveled' track to Ethel Creek Falls.\nWe stop for morning tea and a swim at Ethel creek Falls.\nThen we come back the same way\n After the walk, if anyone is keen we can head to the cafe in Paluma for a post walk coffee\n\nMeeting Place -  Will email those that have RSVP'd\n\nRSVP:\nMust be over 18 years to participate or approved by the committee.  \nFee: Non-member/visitors- $5. TBWC Club members - Free. You can become a TBWC member after 3 walks as a visitor. \n\nIf you have not walked with us before, please contact the walk leader before RSVP registration.\nFor more information, please contact the leader- Cherry Judge - info@townsvillebushwalkingclub.com\n\nRSVP via the link below \nhttps://forms.gle/RGa2nFHhhwABSYVd9",
+    "start_time": "2023-08-17T07:00:00+1000",
+    "formatted_date": "Thursday 17 August 2023",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": null,
+    "formatted_end_date": null,
+    "is_multi_day": null,
+    "attending_count": 4,
+    "interested_count": 30,
+    "place": {
+      "name": "Visit Townsville North Queensland",
+      "location": {
+        "city": "Townsville",
+        "country": "Australia",
+        "latitude": -19.259841073282,
+        "longitude": 146.81719064713,
+        "state": "QLD",
+        "street": "340 Flinders Street",
+        "zip": "4810"
+      },
+      "id": "104262989613738"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 44,
+      "source": "https://scontent.fbne5-1.fna.fbcdn.net/v/t39.30808-6/490764856_1271230804773198_4271221508435377135_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=9e60e4&_nc_ohc=fjjg2CuMPvQQ7kNvwF3fFlp&_nc_oc=AdmMXc_1AzhL9v67A2rbvh-3lmWwwSVs8rOdJ_KvsGqBm4kR5fuOurZgbOoUwfpCP2B1XJd956asfHYjTchcjwHm&_nc_zt=23&_nc_ht=scontent.fbne5-1.fna&edm=ABTKTjYEAAAA&_nc_gid=JTcQSNpGC7rE2PRSsUDHsw&_nc_tpa=Q5bMBQHKUHk8duRPjql8sEqNi30AfdyhTgQWW3ak1Fp7ECwmqJ36BYsLhxfmiEBFVVk9jAJPE0KShX1o-Q&oh=00_AfhRis11vhVjvEBDUqGM7tibzbLnaCfwmP81ROik3z3Msw&oe=692C8076",
+      "id": "822422429654040"
+    }
+  },
+  {
+    "id": "1213601772636224",
+    "name": "Cloudy Creek from Mango tree carpark",
+    "description": "13th August [Sunday]\nWalk leader: Wilfred \nWalk - Cloudy Creek via the Mango Tree\nRated - moderately hard. for bushwalkers comfortable with rock hopping. Off-track walk\nInterested? - email info@townsvillebushwalkingclub.com",
+    "start_time": "2023-08-13T07:00:00+1000",
+    "formatted_date": "Sunday 13 August 2023",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": null,
+    "formatted_end_date": null,
+    "is_multi_day": null,
+    "attending_count": 2,
+    "interested_count": 49,
+    "place": {
+      "name": "Paluma Range National Park",
+      "location": {
+        "latitude": -19.2566297,
+        "longitude": 146.80817353
+      },
+      "id": "201093596684029"
+    },
+    "cover": {
+      "offset_x": 51,
+      "offset_y": 1,
+      "source": "https://scontent.fbne6-1.fna.fbcdn.net/v/t39.30808-6/490453634_1269632461599699_4828545575450683398_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=9e60e4&_nc_ohc=jpFUgouEutEQ7kNvwEbGBmU&_nc_oc=Adlkl_RTNd-AdiB0EW7U6zL1tarpHCUbLx6OxEB8Y5BzeUS46tFNJgn_IUUgpPbDRcGLYSfxW_kzolpZ2wcoAtQv&_nc_zt=23&_nc_ht=scontent.fbne6-1.fna&edm=ABTKTjYEAAAA&_nc_gid=JTcQSNpGC7rE2PRSsUDHsw&_nc_tpa=Q5bMBQF0QW0WAah24kQRRvx9O7YD0yTNLYvC4ZhVvVy-_PzvTCSrtxnkhW5mjcKQJaROU--Ii0wnlMFxUw&oh=00_Afj8hdXYTG2nOip4trxaqZIMj6GMxBl670BFpK8_n7lyOQ&oe=692C99DB",
+      "id": "800663891829894"
+    }
+  },
+  {
+    "id": "241963085291838",
+    "name": "Cascades / Terraces - FULL",
+    "description": "**This walk is has now reached capacity**\n\nSun, 6th August, 2023\nThe Terraces and High Camp, Palm Creek\nLeader: Keith Dyson\n\nRated - Off Track, moderately hard. \n\nTerrain - Creek based and cross country, rough terrain. Rock hopping, boulder scrambles, rockface traverses, scrub and vines, uneven footing, slippery rocks, steep climbs.\n\nDistance: 11 km, elevation change 300m\n\nDescription:\nA club classic walk, up Palm Creek (St Margaret's Creek system) to the Terraces, Ultima Falls, Garden Wall, and High Camp.\nA creek-based walk with many waterfalls, one of the most scenic creeks in the region (and the state) and one of the local gems.\nThe club had been bushwalking St Margaret's Creek system since 1966 !\n\nOn way out, includes a stop at the at the Rockslides for a swim, then the walk back to the cars.\n\nAnd most important, ice creams at the roadhouse on the way home to finish the day off.\n\nA good day out for our adventurous bushwalkers.\n\nWhat you need: carry water (minimum 2 lt), refill from creek as required (treat / filter your water refill) . Lunch, snacks / energy food, electrolytes, hat, sunscreen, insect repellent, enclosed sturdy footwear. Recommend long sleeve clothing / gaiters to avoid scratches. Some members also wear fingerless gloves.\nTime and Meet:\nMeet 07:30 at the Alligator Creek Caltex roadhouse - junction Bentley Drive / Bruce Hwy, Alligator Creek. We will be carpooling from there. This is a full day hike, we expect to be back at the cars by 5 pm \nRSVP for the Terraces \nMust be over 18yrs to participate Or accepted by committee.\n\nFee: non-members/visitors/- $5 . TBWC Club members - Free.\nYou can become a TBWC member after 3 walks as a visitor.\n\nIf you are a new walker/non-member who has not walked with us before – please contact the walk leader before RSVP registration.\n\n𝐅𝐨𝐫 𝐦𝐨𝐫𝐞 𝐢𝐧𝐟𝐨, 𝐜𝐨𝐧𝐭𝐚𝐜𝐭 𝐭𝐡𝐞 𝐥𝐞𝐚𝐝𝐞𝐫- Keith Dyson -  0435 287 264  or email -  kadyson@hotmail.com\n\nFor Club Members – if the RSVP registration is fully subscribed, contact the leader direct to discuss participation.\n\n𝙏𝙤 𝙧𝙚𝙜𝙞𝙨𝙩𝙚𝙧 𝙛𝙤𝙧 𝙩𝙝𝙚 𝙬𝙖𝙡𝙠, 𝙋𝙡𝙚𝙖𝙨𝙚 𝙪𝙨𝙚 𝙩𝙝𝙚 𝙛𝙤𝙧𝙢 𝙗𝙚𝙡𝙤𝙬\nhttps://docs.google.com/forms/d/e/1FAIpQLSfhCXPBtcUz8jwlGvNnQe41RYDfAaDltQEVbRaAzP0mG4uMcA/viewform",
+    "start_time": "2023-08-06T07:00:00+1000",
+    "formatted_date": "Sunday 6 August 2023",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": null,
+    "formatted_end_date": null,
+    "is_multi_day": null,
+    "attending_count": 4,
+    "interested_count": 14,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 32,
+      "source": "https://scontent.fbne5-1.fna.fbcdn.net/v/t39.30808-6/490548450_1269632324933046_1949682022485136213_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=9e60e4&_nc_ohc=g3kr_OyIvSMQ7kNvwH3Eq3M&_nc_oc=AdmUY9Gd47s-MPvGlFqABXgOpaf-wV6BbvO1824d1EMTLuTrkyBcIwG80QjGq1FxDSQex0tAaYkVtpgQBV98v3Tw&_nc_zt=23&_nc_ht=scontent.fbne5-1.fna&edm=ABTKTjYEAAAA&_nc_gid=JTcQSNpGC7rE2PRSsUDHsw&_nc_tpa=Q5bMBQGxsmRGJ_iVzIRgYXyx-ZH9dCl3pjbhpYLS8BSDu2RSHp1Dp9q8qp5sh8JzmWPFAqkZhlwds3PACw&oh=00_Afi-8UkAMCDsW2Q4Z-1E2lfxKd-BZGWTlR61fjjU9EfsPg&oe=692CB5E8",
+      "id": "800662781830005"
+    }
+  }
+]
