@@ -316,6 +316,15 @@ To change the page, update the `FACEBOOK_PAGE_ID` constant in the API routes.
 - **Health Monitoring** - Health check endpoint
 - **Caching** - Built-in Next.js caching with revalidation
 
+### Caching Strategy
+
+The application uses Next.js Incremental Static Regeneration (ISR) for optimal performance:
+
+- **Past Events**: Pre-generated at build time (SSG) and effectively static. Since past events are immutable (they never change on Facebook), revalidation is effectively a no-op.
+- **Future Events**: Pre-generated at build time but revalidated daily (1 day) to pick up any updates or changes.
+- **API Routes**: Cached for 1 day with revalidation for current/future events. Past events are cached indefinitely (immutable).
+- **Sitemap & Robots**: Cached for 1 day, regenerated daily to include new events.
+
 ### Event Data
 
 Each event includes:

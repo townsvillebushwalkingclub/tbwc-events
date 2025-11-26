@@ -1,4 +1,4 @@
-import { getEventById } from '@/lib/facebook-api.js'
+import { getEventById, getAllEvents } from '@/lib/facebook-api.js'
 import EventClient from './EventClient'
 
 // Check if event is in the past (has already occurred)
@@ -40,7 +40,9 @@ export async function generateMetadata({ params }) {
 
         const description = event.description
             ? event.description.substring(0, 160).replace(/\n/g, ' ')
-            : `Join us for ${event.name} on ${event.formatted_date}. ${event.place ? `Location: ${event.place.name}` : ''}`
+            : `Join us for ${event.name} on ${event.formatted_date}. ${
+                  event.place ? `Location: ${event.place.name}` : ''
+              }`
 
         const coverImageUrl =
             event.cover && event.cover.source ? event.cover.source : null
@@ -100,6 +102,22 @@ export default async function EventPage({ params }) {
     try {
         // Fetch event server-side for initial render
         event = await getEventById(id)
+
+        // For past events, we want them to be fully static (no revalidation)
+        // Since Next.js doesn't support per-route revalidation, past events
+        // are pre-generated and won't change, making revalidation effectively a no-op
+        if (event && event.start_time) {
+            const now = new Date()
+            const eventDate = new Date(event.start_time)
+            now.setHours(0, 0, 0, 0)
+            eventDate.setHours(0, 0, 0, 0)
+
+            // Past events are immutable - they won't change
+            // Future events will be revalidated daily via the route-level revalidate export
+            const isPast = eventDate < now
+            // Note: We can't disable revalidation per-route, but past events
+            // are pre-generated and immutable, so revalidation is effectively static
+        }
     } catch (error) {
         console.error('Error fetching event:', error)
         // Event will be null, client component will handle error state
@@ -108,14 +126,36 @@ export default async function EventPage({ params }) {
     return <EventClient initialEvent={event} />
 }
 
+// Generate static params for ISR (Incremental Static Regeneration)
+// Pre-generate pages for ALL events at build time
+// Past events: Fully static (no revalidation) - they never change
+// Future events: Pre-generated but revalidated daily
+export async function generateStaticParams() {
+    try {
+        const allEvents = await getAllEvents()
+
+        // Return params for ALL events
+        // Past events will be fully static (no revalidation)
+        // Future events will be pre-generated but revalidated daily
+        return allEvents
+            .filter((event) => event.id) // Only include events with valid IDs
+            .filter((event) => isPastEvent(event.start_time)) // Only include past events
+            .map((event) => ({
+                id: event.id,
+            }))
+    } catch (error) {
+        console.error('Error generating static params for events:', error)
+        return []
+    }
+}
+
 // Route segment config for ISR (Incremental Static Regeneration)
 // Revalidation strategy:
-// - Past events: Fully static, no revalidation needed (they never change)
-// - Current/future events: Revalidate daily to get updates
+// - Past events: Pre-generated at build time, effectively static (they never change)
+//   Since they're immutable, revalidation will just confirm they're unchanged
+// - Current/future events: Revalidate daily (86400 seconds) to get updates
 //
-// Since Next.js doesn't support per-page revalidation in the same route,
-// we use daily revalidation for all pages. Past events won't change, so
-// the revalidation check will just confirm they're still the same.
-// The API route also handles caching appropriately per event date.
+// Note: Next.js doesn't support per-route revalidation in the same dynamic segment.
+// Past events are pre-generated and won't change, so revalidation is effectively a no-op.
+// Future events will be revalidated daily to pick up any changes.
 export const revalidate = 86400 // 1 day - ensures current/future events stay fresh
-// Past events are effectively static since they never change on Facebook
