@@ -9,6 +9,7 @@ A modern Next.js web application that extracts Facebook events from the Townsvil
 - 🖼️ **Event Thumbnails** - Cover images from Facebook events with fallback icons
 - ⏰ **Start & End Times** - Complete time information for events
 - 📄 **Individual Event Pages** - Dedicated pages for each event with full details and SEO metadata
+- 🗺️ **Sitemap Generation** - A sitemap listing all event and calendar pages for better search engine indexing.
 - 🔄 **REST API** - JSON endpoints for programmatic access
 - 📱 **Responsive Design** - Works on desktop and mobile devices
 - ⚡ **Modern Tech Stack** - Built with Next.js, React, and Tailwind CSS
