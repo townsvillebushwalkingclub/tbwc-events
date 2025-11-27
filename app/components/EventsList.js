@@ -2,16 +2,150 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
+import { isAllowedDomain } from '@/lib/allowed-domains'
 
-export default function EventsList({
-    events,
-    currentDate,
-}) {
+export default function EventsList({ events, currentDate }) {
+    const [expandedDescriptions, setExpandedDescriptions] = useState({})
+
     const monthYear = new Date(currentDate).toLocaleDateString('en-AU', {
         month: 'long',
         year: 'numeric',
         timeZone: 'Australia/Brisbane',
     })
+
+    // Function to normalize newlines for consistent spacing
+    const normalizeNewlines = (text) => {
+        if (!text) return ''
+        // Normalize multiple consecutive newlines to double newline (paragraph break)
+        // This ensures consistent spacing between truncated and full descriptions
+        return text.replace(/\n\s*\n+/g, '\n\n').replace(/\r\n/g, '\n')
+    }
+
+    // Function to truncate description to first N paragraphs
+    // Preserves original newline structure to avoid adding extra spacing
+    const truncateDescription = (description, maxParagraphs = 2) => {
+        if (!description) return ''
+
+        // Check if text has double newlines (paragraph breaks)
+        const hasDoubleNewlines = /\n\s*\n/.test(description)
+
+        if (hasDoubleNewlines) {
+            // Split on double newlines (actual paragraph breaks)
+            const paragraphs = description.split(/\n\s*\n+/)
+            const filteredParagraphs = paragraphs.filter(
+                (p) => p.trim().length > 0
+            )
+
+            if (filteredParagraphs.length <= maxParagraphs) {
+                return description // Return original if short enough
+            }
+
+            // Take first maxParagraphs paragraphs
+            // Preserve original separator (double newline)
+            return filteredParagraphs.slice(0, maxParagraphs).join('\n\n')
+        } else {
+            // No double newlines - text uses single newlines throughout
+            // Take first N*4 lines as approximation (allowing for title + content + bullets)
+            const lines = description.split('\n')
+            const targetLines = maxParagraphs * 4
+
+            if (lines.length <= targetLines) {
+                return description // Return original if short enough
+            }
+
+            // Take first targetLines and rejoin with single newline (preserve original structure)
+            return lines.slice(0, targetLines).join('\n')
+        }
+    }
+
+    const toggleDescription = (eventId) => {
+        setExpandedDescriptions((prev) => ({
+            ...prev,
+            [eventId]: !prev[eventId],
+        }))
+    }
+
+    const isDescriptionLong = (description) => {
+        if (!description) return false
+        // Normalize newlines for consistent paragraph detection
+        const normalized = normalizeNewlines(description)
+        // Split ONLY on double newlines (actual paragraph breaks)
+        const paragraphs = normalized
+            .split(/\n\s*\n+/)
+            .filter((p) => p.trim().length > 0)
+        return paragraphs.length > 2
+    }
+
+    // Process description to add hyperlinks for emails and URLs (same as embed script)
+    const processDescription = (description, eventTitle) => {
+        if (!description) return ''
+
+        // Normalize newlines first for consistent spacing
+        const normalized = normalizeNewlines(description)
+
+        // First, escape any existing HTML to prevent conflicts
+        let processed = normalized
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;')
+
+        // Convert emails to mailto: links with event title as subject
+        processed = processed.replace(
+            /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
+            function (match) {
+                const subject = eventTitle
+                    ? encodeURIComponent('Re: ' + eventTitle)
+                    : ''
+                const mailtoLink = subject
+                    ? 'mailto:' + match + '?subject=' + subject
+                    : 'mailto:' + match
+                return (
+                    '<a href="' +
+                    mailtoLink +
+                    '" class="text-blue-600 hover:text-blue-800 underline break-all">' +
+                    match +
+                    '</a>'
+                )
+            }
+        )
+
+        // Convert URLs to clickable links (only from allowed domains)
+        processed = processed.replace(/(https?:\/\/[^\s]+)/g, function (match) {
+            try {
+                const url = new URL(match)
+                const hostname = url.hostname
+
+                // Check if the hostname is in the allowed domains list
+                if (isAllowedDomain(hostname)) {
+                    return (
+                        '<a href="' +
+                        match +
+                        '" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline break-all">' +
+                        match +
+                        '</a>'
+                    )
+                } else {
+                    // Return the URL as plain text if not allowed
+                    return match
+                }
+            } catch (e) {
+                // If URL parsing fails, return as plain text
+                return match
+            }
+        })
+
+        // Convert newlines to <br> tags
+        // First handle paragraph breaks (double or more newlines) as double <br>
+        processed = processed.replace(/\n\s*\n+/g, '<br><br>')
+        // Then convert remaining single newlines to single <br>
+        // This preserves the original line structure
+        processed = processed.replace(/\n/g, '<br>')
+
+        return processed
+    }
 
     return (
         <div>
@@ -119,8 +253,58 @@ export default function EventsList({
                                     </div>
 
                                     {event.description && (
-                                        <div className="text-gray-700 mb-4 leading-relaxed whitespace-pre-wrap">
-                                            {event.description}
+                                        <div className="mb-4">
+                                            <div
+                                                className="text-gray-700 leading-relaxed overflow-hidden transition-all duration-500 ease-in-out"
+                                                style={{
+                                                    maxHeight:
+                                                        expandedDescriptions[
+                                                            event.id
+                                                        ] ||
+                                                        !isDescriptionLong(
+                                                            event.description
+                                                        )
+                                                            ? '2000px' // Large enough for most content
+                                                            : '8rem', // ~128px for truncated view
+                                                }}
+                                                dangerouslySetInnerHTML={{
+                                                    __html:
+                                                        expandedDescriptions[
+                                                            event.id
+                                                        ] ||
+                                                        !isDescriptionLong(
+                                                            event.description
+                                                        )
+                                                            ? processDescription(
+                                                                  event.description,
+                                                                  event.name
+                                                              )
+                                                            : processDescription(
+                                                                  truncateDescription(
+                                                                      event.description
+                                                                  ),
+                                                                  event.name
+                                                              ),
+                                                }}
+                                            />
+                                            {isDescriptionLong(
+                                                event.description
+                                            ) && (
+                                                <button
+                                                    onClick={() =>
+                                                        toggleDescription(
+                                                            event.id
+                                                        )
+                                                    }
+                                                    className="mt-2 text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors"
+                                                >
+                                                    {expandedDescriptions[
+                                                        event.id
+                                                    ]
+                                                        ? 'Read less'
+                                                        : 'Read more'}
+                                                </button>
+                                            )}
                                         </div>
                                     )}
 

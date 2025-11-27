@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server'
+import { ALLOWED_DOMAINS } from '@/lib/allowed-domains'
 
 // Cache embed snippet for 1 day (86400 seconds)
 export const revalidate = 86400
 
 export async function GET() {
+    // Convert allowed domains array to JSON for injection into the script
+    const allowedDomainsJson = JSON.stringify(ALLOWED_DOMAINS)
+
     const snippet = `/**
  * Townsville Bushwalking Club Events Embed
  * 
@@ -404,22 +408,7 @@ export async function GET() {
             /(https?:\\/\\/[^\\s]+)/g,
             function(match) {
                 // Check if URL is from allowed domains
-                const allowedDomains = [
-                    'townsvillebushwalkingclub.com',
-                    'townsvillebushwalkingclub.com.au',
-                    'wanderstories.space',
-                    'paluma.org',
-                    'facebook.com',
-                    'instagram.com',
-                    'parks.desi.qld.gov.au',
-                    'townsvillenorthqueensland.com.au',
-                    'townsville.qld.gov.au',
-                    'charterstowers.qld.gov.au',
-                    'visitcharterstowers.com.au',
-                    'hinchinbrookway.com.au',
-                    'queensland.com',
-                    'bit.ly'
-                ];
+                const allowedDomains = ${allowedDomainsJson};
                 
                 try {
                     const url = new URL(match);
@@ -766,7 +755,8 @@ export async function GET() {
     return new NextResponse(snippet, {
         headers: {
             'Content-Type': 'application/javascript',
-            'Cache-Control': 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400', // Cache for 1 day
+            'Cache-Control':
+                'public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400', // Cache for 1 day
         },
     })
 }
