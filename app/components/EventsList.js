@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { isAllowedDomain } from '@/lib/allowed-domains'
+import { processDescription, normalizeNewlines } from '@/lib/process-description'
 
 export default function EventsList({ events, currentDate }) {
     const [expandedDescriptions, setExpandedDescriptions] = useState({})
@@ -14,13 +14,6 @@ export default function EventsList({ events, currentDate }) {
         timeZone: 'Australia/Brisbane',
     })
 
-    // Function to normalize newlines for consistent spacing
-    const normalizeNewlines = (text) => {
-        if (!text) return ''
-        // Normalize multiple consecutive newlines to double newline (paragraph break)
-        // This ensures consistent spacing between truncated and full descriptions
-        return text.replace(/\n\s*\n+/g, '\n\n').replace(/\r\n/g, '\n')
-    }
 
     // Function to truncate description to first N paragraphs
     // Preserves original newline structure to avoid adding extra spacing
@@ -77,75 +70,6 @@ export default function EventsList({ events, currentDate }) {
         return paragraphs.length > 2
     }
 
-    // Process description to add hyperlinks for emails and URLs (same as embed script)
-    const processDescription = (description, eventTitle) => {
-        if (!description) return ''
-
-        // Normalize newlines first for consistent spacing
-        const normalized = normalizeNewlines(description)
-
-        // First, escape any existing HTML to prevent conflicts
-        let processed = normalized
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#39;')
-
-        // Convert emails to mailto: links with event title as subject
-        processed = processed.replace(
-            /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-            function (match) {
-                const subject = eventTitle
-                    ? encodeURIComponent('Re: ' + eventTitle)
-                    : ''
-                const mailtoLink = subject
-                    ? 'mailto:' + match + '?subject=' + subject
-                    : 'mailto:' + match
-                return (
-                    '<a href="' +
-                    mailtoLink +
-                    '" class="text-blue-600 hover:text-blue-800 underline break-all">' +
-                    match +
-                    '</a>'
-                )
-            }
-        )
-
-        // Convert URLs to clickable links (only from allowed domains)
-        processed = processed.replace(/(https?:\/\/[^\s]+)/g, function (match) {
-            try {
-                const url = new URL(match)
-                const hostname = url.hostname
-
-                // Check if the hostname is in the allowed domains list
-                if (isAllowedDomain(hostname)) {
-                    return (
-                        '<a href="' +
-                        match +
-                        '" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline break-all">' +
-                        match +
-                        '</a>'
-                    )
-                } else {
-                    // Return the URL as plain text if not allowed
-                    return match
-                }
-            } catch (e) {
-                // If URL parsing fails, return as plain text
-                return match
-            }
-        })
-
-        // Convert newlines to <br> tags
-        // First handle paragraph breaks (double or more newlines) as double <br>
-        processed = processed.replace(/\n\s*\n+/g, '<br><br>')
-        // Then convert remaining single newlines to single <br>
-        // This preserves the original line structure
-        processed = processed.replace(/\n/g, '<br>')
-
-        return processed
-    }
 
     return (
         <div>

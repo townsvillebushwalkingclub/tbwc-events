@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import { processDescription } from '@/lib/process-description'
 
 export default function EventClient({ initialEvent }) {
     const params = useParams()
@@ -197,9 +198,15 @@ export default function EventClient({ initialEvent }) {
                                 <h2 className="text-xl font-bold text-gray-800 mb-3">
                                     About this event
                                 </h2>
-                                <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                                    {event.description}
-                                </div>
+                                <div
+                                    className="text-gray-700 leading-relaxed"
+                                    dangerouslySetInnerHTML={{
+                                        __html: processDescription(
+                                            event.description,
+                                            event.name
+                                        ),
+                                    }}
+                                />
                             </div>
                         )}
 
