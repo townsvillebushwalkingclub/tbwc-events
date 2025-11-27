@@ -4,6 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import { processDescription, normalizeNewlines } from '@/lib/process-description'
+import { getMonthLabel, getFacebookEventUrl } from '@/lib/event-utils'
+import { EventDateTime } from './EventDateTime'
 
 export default function EventsList({ events, currentDate }) {
     const [expandedDescriptions, setExpandedDescriptions] = useState({})
@@ -124,32 +126,18 @@ export default function EventsList({ events, currentDate }) {
                                             {event.name}
                                         </Link>
                                         {(() => {
-                                            const eventDate = new Date(
-                                                event.start_time
+                                            const monthLabel = getMonthLabel(
+                                                event.start_time,
+                                                currentDate
                                             )
-                                            const currentMonth = new Date(
-                                                currentDate
-                                            ).getMonth()
-                                            const eventMonth =
-                                                eventDate.getMonth()
-                                            const currentYear = new Date(
-                                                currentDate
-                                            ).getFullYear()
-                                            const eventYear =
-                                                eventDate.getFullYear()
-
-                                            // Calculate month difference
-                                            const monthDiff =
-                                                (eventYear - currentYear) * 12 +
-                                                (eventMonth - currentMonth)
-
-                                            if (monthDiff === 1) {
+                                            
+                                            if (monthLabel === 'Next Month') {
                                                 return (
                                                     <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded-full">
                                                         Next Month
                                                     </span>
                                                 )
-                                            } else if (monthDiff === 2) {
+                                            } else if (monthLabel === 'Month After Next') {
                                                 return (
                                                     <span className="bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
                                                         Month After Next
@@ -160,34 +148,9 @@ export default function EventsList({ events, currentDate }) {
                                         })()}
                                     </div>
 
-                                    {event.formatted_end_date &&
-                                    event.formatted_end_date !==
-                                        event.formatted_date ? (
-                                        // Multi-day event: show start date/time and end date/time separately
-                                        <div className="mb-4">
-                                            <div className="text-blue-600 font-semibold mb-2 flex items-center gap-2">
-                                                <span>📅</span>
-                                                <span>
-                                                    {event.formatted_date}{' '}
-                                                    {event.formatted_time} to{' '}
-                                                    <br />
-                                                    {
-                                                        event.formatted_end_date
-                                                    }{' '}
-                                                    {event.formatted_end_time ||
-                                                        event.formatted_time}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        // Single-day event: show date with time range
-                                        <div className="text-blue-600 font-semibold mb-4">
-                                            📅 {event.formatted_date}{' '}
-                                            {event.formatted_time}
-                                            {event.formatted_end_time &&
-                                                ` - ${event.formatted_end_time}`}
-                                        </div>
-                                    )}
+                                    <div className="mb-4">
+                                        <EventDateTime event={event} />
+                                    </div>
 
                                     {event.description && (
                                         <div className="mb-4">
@@ -272,7 +235,7 @@ export default function EventsList({ events, currentDate }) {
                                                 📄 View Event Page
                                             </Link>
                                             <a
-                                                href={`https://www.facebook.com/events/${event.id}/`}
+                                                href={getFacebookEventUrl(event.id)}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"

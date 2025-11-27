@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { processDescription } from '@/lib/process-description'
+import { getFacebookEventUrl } from '@/lib/event-utils'
+import { EventDateTime } from '@/app/components/EventDateTime'
 
 export default function EventClient({ initialEvent }) {
     const params = useParams()
@@ -70,7 +72,7 @@ export default function EventClient({ initialEvent }) {
         )
     }
 
-    const facebookEventUrl = `https://www.facebook.com/events/${event.id}/`
+    const facebookEventUrl = getFacebookEventUrl(event.id)
     const coverImageUrl =
         event.cover && event.cover.source ? event.cover.source : null
 
@@ -137,29 +139,7 @@ export default function EventClient({ initialEvent }) {
 
                         {/* Date and Time */}
                         <div className="mb-6">
-                            {event.formatted_end_date &&
-                            event.formatted_end_date !==
-                                event.formatted_date ? (
-                                // Multi-day event: show start date/time and end date/time separately
-                                <div className="text-blue-600 font-semibold text-lg mb-2 flex items-center gap-2">
-                                    <span>📅</span>
-                                    <span>
-                                        {event.formatted_date}{' '}
-                                        {event.formatted_time} to <br />
-                                        {event.formatted_end_date}{' '}
-                                        {event.formatted_end_time ||
-                                            event.formatted_time}
-                                    </span>
-                                </div>
-                            ) : (
-                                // Single-day event: show date with time range
-                                <div className="text-blue-600 font-semibold text-lg">
-                                    📅 {event.formatted_date}{' '}
-                                    {event.formatted_time}
-                                    {event.formatted_end_time &&
-                                        ` - ${event.formatted_end_time}`}
-                                </div>
-                            )}
+                            <EventDateTime event={event} textSize="text-lg" />
                         </div>
 
                         {/* Location */}
