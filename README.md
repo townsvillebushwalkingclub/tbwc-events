@@ -70,142 +70,43 @@ A modern Next.js web application that extracts Facebook events from the Townsvil
 
 ## API Endpoints
 
-### Get All Events
+- `GET /api/events` - Get all events
+- `GET /api/events/{year}/{month}` - Get events for a specific month (e.g., `/api/events/2024/1`)
+- `GET /api/event/{id}` - Get a single event by ID
+- `GET /health` - Health check endpoint
 
-```http
-GET /api/events
-```
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "123456789",
-      "name": "Mountain Hike",
-      "description": "Join us for a beautiful mountain hike...",
-      "start_time": "2024-01-15T09:00:00+1000",
-      "end_time": "2024-01-15T17:00:00+1000",
-      "place": {
-        "name": "Mount Stuart",
-        "city": "Townsville",
-        "state": "QLD"
-      },
-      "attending_count": 15,
-      "interested_count": 25,
-      "formatted_date": "Monday, January 15th, 2024",
-      "formatted_time": "9:00 AM",
-      "formatted_end_time": "5:00 PM",
-      "formatted_end_date": "Monday, January 15th, 2024",
-      "is_multi_day": false,
-      "cover": {
-        "source": "https://scontent.xx.fbcdn.net/v/...",
-        "width": 720,
-        "height": 405
-      }
-    }
-  ],
-  "timestamp": "2024-01-10T10:30:00.000Z"
-}
-```
-
-### Get Events by Month
-
-```http
-GET /api/events/{year}/{month}
-```
-
-**Example:**
-
-```http
-GET /api/events/2024/1
-```
-
-### Get Single Event
-
-```http
-GET /api/event/{id}
-```
-
-**Example:**
-
-```http
-GET /api/event/123456789
-```
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "123456789",
-    "name": "Mountain Hike",
-    "description": "Join us for a beautiful mountain hike...",
-    "start_time": "2024-01-15T09:00:00+1000",
-    "end_time": "2024-01-15T17:00:00+1000",
-    "formatted_date": "Monday, January 15th, 2024",
-    "formatted_time": "9:00 AM",
-    "formatted_end_time": "5:00 PM",
-    "place": {
-      "name": "Mount Stuart"
-    },
-    "attending_count": 15,
-    "interested_count": 25,
-    "cover": {
-      "source": "https://scontent.xx.fbcdn.net/v/...",
-      "width": 720,
-      "height": 405
-    }
-  },
-  "timestamp": "2024-01-10T10:30:00.000Z"
-}
-```
-
-### Health Check
-
-```http
-GET /health
-```
+All endpoints return JSON with `success`, `data`, and `timestamp` fields. Events include name, description, times, location, attendance stats, and cover images.
 
 ## Development
-
-### Running in Development Mode
-
-```bash
-npm run dev
-```
 
 ### Project Structure
 
 ```text
 tbwc-events/
-├── app/                  # Next.js App Router
-│   ├── page.js          # Main calendar page
-│   ├── layout.js        # Root layout with metadata
-│   ├── events/          # Event detail pages
-│   │   └── [id]/        # Individual event pages
-│   ├── components/       # React components
-│   │   ├── Calendar.js   # Calendar component
-│   │   └── EventsList.js # Events list component
-│   └── api/             # API routes
-│       ├── events/      # Events API endpoints
-│       │   ├── [id]/    # Single event endpoint
+├── app/                   # Next.js App Router
+│   ├── page.js            # Main calendar page
+│   ├── layout.js          # Root layout with metadata
+│   ├── events/            # Event detail pages
+│   │   └── [id]/          # Individual event pages
+│   ├── components/        # React components
+│   │   ├── Calendar.js    # Calendar component
+│   │   └── EventsList.js  # Events list component
+│   └── api/               # API routes
+│       ├── events/        # Events API endpoints
+│       │   ├── [id]/      # Single event endpoint
 │       │   └── [year]/[month]/ # Monthly events
 │       ├── embed-snippet/ # Embed widget script
-│       └── health/       # Health check endpoint
-├── lib/                  # Library functions
-│   └── facebook-api.js   # Facebook API integration
-├── tools/                # Utility scripts
+│       └── health/        # Health check endpoint
+├── lib/                   # Library functions
+│   └── facebook-api.js    # Facebook API integration
+├── tools/                 # Utility scripts
 │   ├── get-long-lived-token.js # Token refresh tool
 │   └── download-historical-events.js # Historical data download
-├── data/                 # Data storage
-│   └── events/           # Past events JSON files (YYYY/MM.json)
-├── package.json          # Dependencies and scripts
-├── next.config.js        # Next.js configuration
-└── .env.local            # Environment variables
+├── data/                  # Data storage
+│   └── events/            # Past events JSON files (YYYY/MM.json)
+├── package.json           # Dependencies and scripts
+├── next.config.js         # Next.js configuration
+└── .env.local             # Environment variables
 ```
 
 ## Facebook API Setup
@@ -215,151 +116,62 @@ tbwc-events/
 - `pages_read_engagement` - Read page events
 - `pages_show_list` - Access page information
 
-### Getting Access Token
-
-1. Visit [Facebook Developers](https://developers.facebook.com/)
-2. Create a new app or use existing one
-3. Go to Graph API Explorer
-4. Select your app
-5. Add required permissions
-6. Generate access token
-7. Copy token to `.env` file
-
 ### Token Management
 
-Facebook access tokens expire periodically. This project includes tools to help manage token refresh:
-
-#### Quick Token Refresh
+Tokens expire periodically. To refresh:
 
 ```bash
-# 1. Get a new short-lived token from Graph API Explorer
-# 2. Add it to your .env.local file
-# 3. Run the refresh script:
 npm run token:refresh
-# or
-node tools/get-long-lived-token.js
 ```
 
-This script will:
+This converts short-lived tokens to long-lived (60 days) or fetches a **Page Access Token** (never expires, recommended for production).
 
-- Convert your short-lived token to a long-lived token (60 days)
-- Automatically fetch a **Page Access Token** that never expires
-- Display the new token to update in your environment variables
+The app handles token expiration gracefully with cached data and clear error messages.
 
-#### Token Types
+### Historical Events
 
-The project supports two types of tokens:
-
-1. **Long-lived User Token** (60 days)
-   - Requires manual refresh every ~60 days
-   - Use for development/testing
-
-2. **Page Access Token** (never expires)  ✨ **Recommended**
-   - Never expires unless permissions are revoked
-   - Automatically obtained by the refresh script
-   - Best for production use
-
-### Token Expiration Handling
-
-The application includes automatic fallback mechanisms when tokens expire:
-
-- ✅ Uses cached data (24-hour cache)
-- ✅ Shows sample events in development mode
-- ✅ Provides clear error messages with refresh instructions
-- ✅ Graceful degradation in production
-
-### Historical Events Storage
-
-The application automatically saves past events to JSON files to reduce Facebook API calls:
-
-- **Automatic Storage**: Past events are saved to `data/events/YYYY/MM.json`
-- **File-based Lookup**: Past months are loaded from files instead of Facebook API
-- **Download Script**: Use `npm run download:history` to download historical events from 2020 onwards
-
-#### Downloading Historical Events
-
-To populate historical event data:
+Past events are automatically saved to `data/events/YYYY/MM.json` to reduce API calls. To download historical data:
 
 ```bash
 npm run download:history
-# or
-node tools/download-historical-events.js
 ```
 
-This script will:
+Downloads events from 2020 onwards, handles rate limits, and resumes if interrupted.
 
-- Download events from January 2020 to the previous month
-- Save events to `data/events/YYYY/MM.json` files
-- Handle rate limits gracefully and save progress
-- Resume from where it left off if interrupted
-- Track progress in `data/download-progress.json`
+### Configuration
 
-**Note**: The script respects Facebook API rate limits and will stop if rate limited. Simply run it again the next day to continue.
-
-### Page Configuration
-
-The app is configured to fetch events from: `https://www.facebook.com/townsvillebushwalkingclub/`
-
-To change the page, update the `FACEBOOK_PAGE_ID` constant in the API routes.
-
-### Calendar Interface
-
-- **Month Navigation** - Navigate between months
-- **Event Indicators** - Visual dots show days with events
-- **Today Highlight** - Current day is highlighted
-- **Event Details** - Click to see full event information
-
-### API Features
-
-- **CORS Enabled** - Cross-origin requests supported
-- **Error Handling** - Comprehensive error responses
-- **Data Formatting** - Consistent JSON structure
-- **Health Monitoring** - Health check endpoint
-- **Caching** - Built-in Next.js caching with revalidation
-
-### Caching Strategy
-
-The application uses Next.js Incremental Static Regeneration (ISR) for optimal performance:
-
-- **Past Events**: Pre-generated at build time (SSG) as fully static pages. Since past events are immutable (they never change on Facebook), they are only included in `generateStaticParams` and are fully static with no revalidation needed.
-- **Future Events**: Dynamically rendered on-demand when accessed, then cached and revalidated daily (1 day) to pick up any updates or changes. Future events are NOT pre-generated at build time.
-- **API Routes**: Cached for 1 day with revalidation for current/future events. Past events are cached indefinitely (immutable).
-- **Sitemap & Robots**: Cached for 1 day, regenerated daily to include new events.
-
-**Note**: Next.js doesn't support per-route revalidation in the same dynamic segment. The route-level `revalidate` setting applies to all routes, but for past events (which are pre-generated and immutable), revalidation is effectively a no-op since the data never changes.
-
-### Event Data
-
-Each event includes:
-
-- Basic info (name, description, times)
-- Location details
-- Attendance statistics
-- Formatted dates and times
-- Facebook event ID
+The app fetches events from `https://www.facebook.com/townsvillebushwalkingclub/`. To change the page, update `FACEBOOK_PAGE_ID` in the API routes.
 
 ## Troubleshooting
 
-### Common Issues
+### Facebook access token is required
 
-"Facebook access token is required"
+- Check `.env.local` has `FACEBOOK_ACCESS_TOKEN` set
+- Verify token is valid in Graph API Explorer
 
-- Check your `.env.local` file has `FACEBOOK_ACCESS_TOKEN` set
-- Verify the token is valid in Graph API Explorer
+### Failed to fetch page info
 
-"Failed to fetch page info"
+- Ensure page is public or token has proper permissions
+- Check page username in API routes
 
-- Ensure your page is public or your token has proper permissions
-- Check the page username in `facebook-api.js`
+### No events data found
 
-"No events data found"
-
-- Verify your page has published events
+- Verify page has published events
 - Check event privacy settings
 
-### Debug Mode
+Add `DEBUG=true` to `.env.local` for detailed logging. For more help, check Facebook API documentation or open an issue on GitHub.
 
-Add `DEBUG=true` to your `.env.local` file for detailed logging.
+## Embed Widget
+
+Embed events on your website with a simple JavaScript snippet. The script automatically detects development/production environments.
+
+```html
+<div id="tbwc-events"></div>
+<script src="https://your-domain.com/api/embed-snippet?v=1"></script>
+```
+
+For local testing, use `http://localhost:3000/api/embed-snippet?v=1`. Test pages available at `/test-embed.html`.
+
 
 ## Contributing
 
@@ -372,50 +184,6 @@ Add `DEBUG=true` to your `.env.local` file for detailed logging.
 ## License
 
 ISC License - see LICENSE file for details.
-
-## Embed Widget
-
-You can embed upcoming events on your website using our JavaScript widget. The embed script automatically detects whether it's running in development or production and uses the appropriate API endpoints.
-
-### Quick Embed
-
-```html
-<div id="tbwc-events"></div>
-<script src="https://your-domain.com/api/embed-snippet?v=1"></script>
-```
-
-### Development Testing
-
-For local development testing:
-
-```html
-<div id="tbwc-events"></div>
-<script src="http://localhost:3000/api/embed-snippet?v=1"></script>
-```
-
-- **Environment Detection**: Automatically works in both development and production
-- **Automatic Updates**: Shows latest events from your API
-- **Event Thumbnails**: Displays cover images from Facebook events
-- **Complete Time Info**: Shows both start and end times when available
-- **Responsive Design**: Works on desktop and mobile
-- **Error Handling**: Graceful fallback if API is unavailable
-- **Beautiful Design**: Modern gradient design with hover effects
-- **Multi-Month Support**: Shows events from surrounding months
-
-### Testing
-
-- **Development**: Visit `http://localhost:3000/test-embed.html` or `http://localhost:3000/embed-test.html`
-- **Production**: Visit `https://your-domain.com/test-embed.html` or `https://your-domain.com/embed-test.html`
-
-The embed script will automatically detect the environment and use the correct API base URL.
-
-## Support
-
-For issues and questions:
-
-- Check the troubleshooting section
-- Review Facebook API documentation
-- Open an issue on GitHub
 
 ---
 
