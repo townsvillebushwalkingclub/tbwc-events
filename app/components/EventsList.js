@@ -3,7 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
-import { processDescription, normalizeNewlines } from '@/lib/process-description'
+import {
+    processDescription,
+    normalizeNewlines,
+} from '@/lib/process-description'
 import { getMonthLabel, getFacebookEventUrl } from '@/lib/event-utils'
 import { EventDateTime } from './EventDateTime'
 
@@ -15,7 +18,6 @@ export default function EventsList({ events, currentDate }) {
         year: 'numeric',
         timeZone: 'Australia/Brisbane',
     })
-
 
     // Function to truncate description to first N paragraphs
     // Preserves original newline structure to avoid adding extra spacing
@@ -72,7 +74,6 @@ export default function EventsList({ events, currentDate }) {
         return paragraphs.length > 2
     }
 
-
     return (
         <div>
             <div className="mb-8 pb-4 border-b-2 border-gray-100">
@@ -98,15 +99,19 @@ export default function EventsList({ events, currentDate }) {
                             <div className="flex flex-col md:flex-row gap-6">
                                 {/* Event Thumbnail */}
                                 <div className="shrink-0">
-                                    <div className="w-full md:w-24 h-48 md:h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
+                                    <div className="relative w-full md:w-24 h-48 md:h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
                                         {event.cover && event.cover.source ? (
                                             <Image
                                                 src={event.cover.source}
                                                 alt={event.name}
-                                                width={96}
-                                                height={96}
-                                                className="w-full h-full object-cover"
-                                                unoptimized
+                                                fill
+                                                className="object-cover"
+                                                sizes="(max-width: 768px) 100vw, 96px"
+                                                unoptimized={
+                                                    !event.cover.source.startsWith(
+                                                        '/event-covers/'
+                                                    )
+                                                }
                                             />
                                         ) : (
                                             <div className="text-gray-400 text-2xl">
@@ -130,14 +135,17 @@ export default function EventsList({ events, currentDate }) {
                                                 event.start_time,
                                                 currentDate
                                             )
-                                            
+
                                             if (monthLabel === 'Next Month') {
                                                 return (
                                                     <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded-full">
                                                         Next Month
                                                     </span>
                                                 )
-                                            } else if (monthLabel === 'Month After Next') {
+                                            } else if (
+                                                monthLabel ===
+                                                'Month After Next'
+                                            ) {
                                                 return (
                                                     <span className="bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
                                                         Month After Next
@@ -235,7 +243,9 @@ export default function EventsList({ events, currentDate }) {
                                                 📄 View Event Page
                                             </Link>
                                             <a
-                                                href={getFacebookEventUrl(event.id)}
+                                                href={getFacebookEventUrl(
+                                                    event.id
+                                                )}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"

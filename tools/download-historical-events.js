@@ -188,34 +188,46 @@ async function fetchEventsForMonth(year, month) {
             return []
         }
 
-        // Format events for our application
-        const formattedEvents = data.data.map((event) => {
-            const startDate = new Date(event.start_time)
-            const endDate = event.end_time ? new Date(event.end_time) : null
+        // Format events for our application and download cover images
+        const { downloadCoverImage } = require('../lib/download-cover-image.js')
 
-            // Check if end date is different from start date
-            const isMultiDay =
-                endDate && startDate.toDateString() !== endDate.toDateString()
+        const formattedEvents = await Promise.all(
+            data.data.map(async (event) => {
+                const startDate = new Date(event.start_time)
+                const endDate = event.end_time ? new Date(event.end_time) : null
 
-            return {
-                id: event.id,
-                name: event.name,
-                description: event.description || '',
-                start_time: event.start_time,
-                end_time: event.end_time,
-                formatted_date: formatEventDate(event.start_time),
-                formatted_time: formatEventTime(event.start_time),
-                formatted_end_time: formatEventEndTime(event.end_time),
-                formatted_end_date: event.end_time
-                    ? formatEventDate(event.end_time)
-                    : null,
-                is_multi_day: isMultiDay,
-                attending_count: event.attending_count || 0,
-                interested_count: event.interested_count || 0,
-                place: event.place || null,
-                cover: event.cover || null,
-            }
-        })
+                // Check if end date is different from start date
+                const isMultiDay =
+                    endDate &&
+                    startDate.toDateString() !== endDate.toDateString()
+
+                // Download cover image if it exists (but keep original URL in JSON)
+                if (event.cover && event.cover.source) {
+                    await downloadCoverImage(event.id, event.cover.source)
+                    // Note: We keep the original cover.source URL in the JSON
+                    // The application will check for local images first
+                }
+
+                return {
+                    id: event.id,
+                    name: event.name,
+                    description: event.description || '',
+                    start_time: event.start_time,
+                    end_time: event.end_time,
+                    formatted_date: formatEventDate(event.start_time),
+                    formatted_time: formatEventTime(event.start_time),
+                    formatted_end_time: formatEventEndTime(event.end_time),
+                    formatted_end_date: event.end_time
+                        ? formatEventDate(event.end_time)
+                        : null,
+                    is_multi_day: isMultiDay,
+                    attending_count: event.attending_count || 0,
+                    interested_count: event.interested_count || 0,
+                    place: event.place || null,
+                    cover: event.cover || null,
+                }
+            })
+        )
 
         return formattedEvents
     } catch (error) {
@@ -378,11 +390,21 @@ async function main() {
                     .padStart(2, '0')}...`
             )
 
-            // Fetch events
+            // Fetch events (cover images will be downloaded during formatting)
             const events = await fetchEventsForMonth(year, month)
 
             // Save to file
             saveEventsToFile(year, month, events)
+
+            // Log cover image download status
+            const eventsWithCovers = events.filter(
+                (e) => e.cover && e.cover.local
+            )
+            if (eventsWithCovers.length > 0) {
+                console.log(
+                    `   📸 Downloaded ${eventsWithCovers.length} cover image(s)`
+                )
+            }
 
             // Update progress
             progress.completed.push({ year, month })

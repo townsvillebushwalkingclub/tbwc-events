@@ -127,3 +127,6 @@ dist
 .pnp.*
 
 .vercel
+
+# Event cover images (optional - uncomment if you don't want to commit images)
+# public/event-covers/

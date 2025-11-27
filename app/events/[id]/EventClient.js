@@ -126,7 +126,11 @@ export default function EventClient({ initialEvent }) {
                                 fill
                                 className="object-cover"
                                 priority
-                                unoptimized
+                                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 1280px, 1280px"
+                                quality={90}
+                                unoptimized={
+                                    !coverImageUrl.startsWith('/event-covers/')
+                                }
                             />
                         </div>
                     )}
