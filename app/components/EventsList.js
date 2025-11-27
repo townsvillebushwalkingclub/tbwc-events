@@ -236,21 +236,34 @@ export default function EventsList({ events, currentDate }) {
                                         })()}
                                     </div>
 
-                                    <div className="text-blue-600 font-semibold mb-2">
-                                        {event.formatted_date}
-                                    </div>
-
-                                    <div className="text-gray-600 mb-4">
-                                        🕐 {event.formatted_time}
-                                        {event.formatted_end_time &&
-                                            ` - ${event.formatted_end_time}`}
-                                        {event.formatted_end_date && (
-                                            <div className="text-blue-600 font-semibold mt-1">
-                                                📅 Ends:{' '}
-                                                {event.formatted_end_date}
+                                    {event.formatted_end_date &&
+                                    event.formatted_end_date !==
+                                        event.formatted_date ? (
+                                        // Multi-day event: show start date/time and end date/time separately
+                                        <div className="mb-4">
+                                            <div className="text-blue-600 font-semibold mb-2 flex items-center gap-2">
+                                                <span>📅</span>
+                                                <span>
+                                                    {event.formatted_date}{' '}
+                                                    {event.formatted_time} to{' '}
+                                                    <br />
+                                                    {
+                                                        event.formatted_end_date
+                                                    }{' '}
+                                                    {event.formatted_end_time ||
+                                                        event.formatted_time}
+                                                </span>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    ) : (
+                                        // Single-day event: show date with time range
+                                        <div className="text-blue-600 font-semibold mb-4">
+                                            📅 {event.formatted_date}{' '}
+                                            {event.formatted_time}
+                                            {event.formatted_end_time &&
+                                                ` - ${event.formatted_end_time}`}
+                                        </div>
+                                    )}
 
                                     {event.description && (
                                         <div className="mb-4">
