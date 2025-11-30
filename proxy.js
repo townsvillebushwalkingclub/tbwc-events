@@ -85,7 +85,7 @@ function cleanupRateLimitStore() {
     }
 }
 
-export function middleware(request) {
+export async function proxy(request) {
     const pathname = request.nextUrl.pathname
     const response = NextResponse.next()
     
@@ -157,7 +157,7 @@ export function middleware(request) {
     return response
 }
 
-// Configure which routes the middleware should run on
+// Configure which routes the proxy should run on
 export const config = {
     matcher: [
         '/events/:path*',
