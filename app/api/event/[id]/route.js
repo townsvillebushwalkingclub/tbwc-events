@@ -29,6 +29,18 @@ export async function GET(request, { params }) {
             )
         }
 
+        // Security: Validate event ID format (must be exactly 15 numeric digits)
+        // This prevents enumeration attacks with invalid ID formats
+        if (!/^\d{15}$/.test(id)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    error: 'Invalid event ID format',
+                },
+                { status: 400 }
+            )
+        }
+
         // Fetch event from Facebook API or saved files
         const event = await getEventById(id)
 
@@ -40,6 +52,36 @@ export async function GET(request, { params }) {
                 },
                 { status: 404 }
             )
+        }
+
+        // Security: Block events before 2022 or more than 6 months in the future
+        if (event.start_time) {
+            const now = new Date()
+            const minYear = 2022
+            const eventDate = new Date(event.start_time)
+            // Calculate the date 6 months from now (first day of that month)
+            const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 6, 1)
+
+            if (eventDate.getFullYear() < minYear) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        error: `Events before ${minYear} are not available`,
+                    },
+                    { status: 403 }
+                )
+            }
+
+            // Block if event date is 6 months or more in the future
+            if (eventDate >= maxFutureDate) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        error: 'Events more than 6 months in the future are not available',
+                    },
+                    { status: 403 }
+                )
+            }
         }
 
         // Determine cache time based on event date

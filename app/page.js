@@ -12,16 +12,35 @@ export default async function Home({ searchParams }) {
     
     // Get the month from search params, default to current month
     const now = new Date()
-    const yearParam = params?.year
-        ? parseInt(params.year)
-        : now.getFullYear()
-    const monthParam = params?.month
-        ? parseInt(params.month)
-        : now.getMonth() + 1
-
-    // Validate and clamp the month/year
-    const year = yearParam || now.getFullYear()
-    const month = Math.max(1, Math.min(12, monthParam || now.getMonth() + 1))
+    
+    // Security: Validate and sanitize input parameters
+    let yearParam = params?.year ? parseInt(params.year) : null
+    let monthParam = params?.month ? parseInt(params.month) : null
+    
+    // Validate year is a reasonable number (2000-2100)
+    if (yearParam && (isNaN(yearParam) || yearParam < 2000 || yearParam > 2100)) {
+        yearParam = null
+    }
+    
+    // Validate month is 1-12
+    if (monthParam && (isNaN(monthParam) || monthParam < 1 || monthParam > 12)) {
+        monthParam = null
+    }
+    
+    // Security: Apply date range restrictions (same as API)
+    const minYear = 2022
+    const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 6, 1)
+    
+    let year = yearParam && yearParam >= minYear ? yearParam : now.getFullYear()
+    let month = monthParam ? Math.max(1, Math.min(12, monthParam)) : now.getMonth() + 1
+    
+    // Check if requested date is outside allowed range
+    const requestedDate = new Date(year, month - 1, 1)
+    if (year < minYear || requestedDate >= maxFutureDate) {
+        // Reset to current month if outside range
+        year = now.getFullYear()
+        month = now.getMonth() + 1
+    }
 
     // Calculate previous month
     const prevMonth = month === 1 ? 12 : month - 1

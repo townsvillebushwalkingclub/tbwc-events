@@ -29,7 +29,46 @@ function isCurrentOrFutureMonth(eventDate) {
 export async function generateMetadata({ params }) {
     try {
         const { id } = await params
+
+        // Security: Validate event ID format (must be exactly 15 numeric digits)
+        if (!id || !/^\d{15}$/.test(id)) {
+            return {
+                title: 'Event Not Found - Townsville Bushwalking Club',
+                description: 'The event you are looking for does not exist.',
+            }
+        }
+
         const event = await getEventById(id)
+
+        if (!event) {
+            return {
+                title: 'Event Not Found - Townsville Bushwalking Club',
+                description: 'The event you are looking for does not exist.',
+            }
+        }
+
+        // Security: Block events outside allowed date range
+        if (event.start_time) {
+            const now = new Date()
+            const minYear = 2022
+            const eventDate = new Date(event.start_time)
+            const maxFutureDate = new Date(
+                now.getFullYear(),
+                now.getMonth() + 6,
+                1
+            )
+
+            if (
+                eventDate.getFullYear() < minYear ||
+                eventDate >= maxFutureDate
+            ) {
+                return {
+                    title: 'Event Not Found - Townsville Bushwalking Club',
+                    description:
+                        'The event you are looking for does not exist.',
+                }
+            }
+        }
 
         if (!event) {
             return {
@@ -100,8 +139,57 @@ export default async function EventPage({ params }) {
     let event = null
 
     try {
+        // Security: Validate event ID format (must be exactly 15 numeric digits)
+        if (!id || !/^\d{15}$/.test(id)) {
+            // Invalid ID format - return 404 to prevent enumeration
+            return (
+                <div className="min-h-screen flex items-center justify-center">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold mb-4">
+                            Event Not Found
+                        </h1>
+                        <p className="text-gray-600">
+                            The event you are looking for does not exist.
+                        </p>
+                    </div>
+                </div>
+            )
+        }
+
         // Fetch event server-side for initial render
         event = await getEventById(id)
+
+        // Security: Block events before 2022 or more than 6 months in the future
+        if (event && event.start_time) {
+            const now = new Date()
+            const minYear = 2022
+            const eventDate = new Date(event.start_time)
+            // Calculate the date 6 months from now (first day of that month)
+            const maxFutureDate = new Date(
+                now.getFullYear(),
+                now.getMonth() + 6,
+                1
+            )
+
+            if (
+                eventDate.getFullYear() < minYear ||
+                eventDate >= maxFutureDate
+            ) {
+                // Event outside allowed range - return 404 to prevent information disclosure
+                return (
+                    <div className="min-h-screen flex items-center justify-center">
+                        <div className="text-center">
+                            <h1 className="text-2xl font-bold mb-4">
+                                Event Not Found
+                            </h1>
+                            <p className="text-gray-600">
+                                The event you are looking for does not exist.
+                            </p>
+                        </div>
+                    </div>
+                )
+            }
+        }
 
         // For past events, we want them to be fully static (no revalidation)
         // Since Next.js doesn't support per-route revalidation, past events

@@ -42,6 +42,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
+    "baseline-browser-mapping": "^2.8.32",
     "eslint": "^9.20.1",
     "eslint-config-next": "16.0.4"
   },

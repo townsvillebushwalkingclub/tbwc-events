@@ -63,7 +63,7 @@ export default function EventClient({ initialEvent }) {
                     </p>
                     <Link
                         href="/"
-                        className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 inline-block"
+                        className="bg-white text-gray-800 hover:bg-gray-100 px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 inline-block shadow-lg hover:shadow-xl"
                     >
                         ← Back to Events
                     </Link>
@@ -108,7 +108,7 @@ export default function EventClient({ initialEvent }) {
                     </Link>
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-2 text-white hover:opacity-80 transition-opacity bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full"
+                        className="inline-flex items-center gap-2 bg-white text-gray-800 hover:bg-gray-100 px-5 py-2.5 rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
                     >
                         <span>←</span>
                         <span>Back to Events</span>
