@@ -30,8 +30,8 @@ export async function generateMetadata({ params }) {
     try {
         const { id } = await params
 
-        // Security: Validate event ID format (must be exactly 15 numeric digits)
-        if (!id || !/^\d{15}$/.test(id)) {
+        // Security: Validate event ID format (must be 15 or 16 numeric digits)
+        if (!id || !/^\d{15,16}$/.test(id)) {
             return {
                 title: 'Event Not Found - Townsville Bushwalking Club',
                 description: 'The event you are looking for does not exist.',
@@ -52,15 +52,16 @@ export async function generateMetadata({ params }) {
             const now = new Date()
             const minYear = 2022
             const eventDate = new Date(event.start_time)
+            // Calculate the date 6 months from now (last day of that month to be more lenient)
             const maxFutureDate = new Date(
                 now.getFullYear(),
-                now.getMonth() + 6,
-                1
+                now.getMonth() + 7,
+                0  // Day 0 = last day of previous month (6 months from now)
             )
 
             if (
                 eventDate.getFullYear() < minYear ||
-                eventDate >= maxFutureDate
+                eventDate > maxFutureDate
             ) {
                 return {
                     title: 'Event Not Found - Townsville Bushwalking Club',
@@ -139,8 +140,8 @@ export default async function EventPage({ params }) {
     let event = null
 
     try {
-        // Security: Validate event ID format (must be exactly 15 numeric digits)
-        if (!id || !/^\d{15}$/.test(id)) {
+        // Security: Validate event ID format (must be 15 or 16 numeric digits)
+        if (!id || !/^\d{15,16}$/.test(id)) {
             // Invalid ID format - return 404 to prevent enumeration
             return (
                 <div className="min-h-screen flex items-center justify-center">
@@ -164,16 +165,16 @@ export default async function EventPage({ params }) {
             const now = new Date()
             const minYear = 2022
             const eventDate = new Date(event.start_time)
-            // Calculate the date 6 months from now (first day of that month)
+            // Calculate the date 6 months from now (last day of that month to be more lenient)
             const maxFutureDate = new Date(
                 now.getFullYear(),
-                now.getMonth() + 6,
-                1
+                now.getMonth() + 7,
+                0  // Day 0 = last day of previous month (6 months from now)
             )
 
             if (
                 eventDate.getFullYear() < minYear ||
-                eventDate >= maxFutureDate
+                eventDate > maxFutureDate
             ) {
                 // Event outside allowed range - return 404 to prevent information disclosure
                 return (

@@ -29,9 +29,9 @@ export async function GET(request, { params }) {
             )
         }
 
-        // Security: Validate event ID format (must be exactly 15 numeric digits)
+        // Security: Validate event ID format (must be 15 or 16 numeric digits)
         // This prevents enumeration attacks with invalid ID formats
-        if (!/^\d{15}$/.test(id)) {
+        if (!/^\d{15,16}$/.test(id)) {
             return NextResponse.json(
                 {
                     success: false,
@@ -59,8 +59,12 @@ export async function GET(request, { params }) {
             const now = new Date()
             const minYear = 2022
             const eventDate = new Date(event.start_time)
-            // Calculate the date 6 months from now (first day of that month)
-            const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 6, 1)
+            // Calculate the date 6 months from now (last day of that month to be more lenient)
+            const maxFutureDate = new Date(
+                now.getFullYear(),
+                now.getMonth() + 7,
+                0  // Day 0 = last day of previous month (6 months from now)
+            )
 
             if (eventDate.getFullYear() < minYear) {
                 return NextResponse.json(
@@ -72,8 +76,8 @@ export async function GET(request, { params }) {
                 )
             }
 
-            // Block if event date is 6 months or more in the future
-            if (eventDate >= maxFutureDate) {
+            // Block if event date is more than 6 months in the future
+            if (eventDate > maxFutureDate) {
                 return NextResponse.json(
                     {
                         success: false,
