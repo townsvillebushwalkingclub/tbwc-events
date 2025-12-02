@@ -449,7 +449,12 @@ export async function GET() {
         const truncatedDesc = hasLongDescription ? truncateDescription(event.description) : event.description;
         const processedTruncatedDesc = processDescription(truncatedDesc, event.name);
         const facebookEventUrl = \`https://www.facebook.com/events/\${event.id}/\`;
-        const coverImageUrl = event.cover && event.cover.source ? event.cover.source : null;
+        let coverImageUrl = event.cover && event.cover.source ? event.cover.source : null;
+        
+        // Convert relative image paths to absolute URLs
+        if (coverImageUrl && coverImageUrl.startsWith('/')) {
+            coverImageUrl = \`\${API_BASE_URL}\${coverImageUrl}\`;
+        }
         
         // Check which month the event is from
         const eventDate = new Date(event.start_time);
