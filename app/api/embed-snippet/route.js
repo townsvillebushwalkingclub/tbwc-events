@@ -28,6 +28,7 @@ export async function GET() {
         
         // Development environment
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            console.log('Development environment');
             return \`\${protocol}//\${hostname}:\${port}\`;
         }
         
@@ -35,7 +36,7 @@ export async function GET() {
         return 'https://events.townsvillebushwalkingclub.com';
     })();
     const MAX_EVENTS = 12;
-    const DAYS_AHEAD = 365; // Show events for next 365 days
+    const DAYS_AHEAD = 90; // Show events for next 90 days
     
     // CSS Styles
     const styles = \`
