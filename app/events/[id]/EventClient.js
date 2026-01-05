@@ -42,7 +42,7 @@ export default function EventClient({ initialEvent }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                 <div className="text-center text-white">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
                     <p>Loading event...</p>
@@ -53,7 +53,7 @@ export default function EventClient({ initialEvent }) {
 
     if (error || !event) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                 <div className="text-center text-white">
                     <div className="text-6xl mb-4">⚠️</div>
                     <h1 className="text-2xl font-bold mb-2">Event Not Found</h1>
@@ -77,7 +77,7 @@ export default function EventClient({ initialEvent }) {
         event.cover && event.cover.source ? event.cover.source : null
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
+        <div className="min-h-screen bg-linear-to-br from-blue-500 to-purple-600">
             <div className="container mx-auto px-4 md:px-8 py-8">
                 {/* Logo and Back Button */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
