@@ -404,6 +404,39 @@ export async function GET() {
             }
         );
         
+        // Convert bracketed domains to clickable links (only from allowed domains)
+        processed = processed.replace(
+            /\\(([A-Za-z0-9][A-Za-z0-9.-]*\\.[A-Z|a-z]{2,})\\)/g,
+            function(match, domain) {
+                try {
+                    // Normalize domain (remove www. prefix for comparison, but keep it in the link)
+                    const normalizedDomain = domain.toLowerCase().replace(/^www\\./, '');
+                    const fullDomain = domain.toLowerCase();
+                    
+                    // Check if the domain (with or without www) is in the allowed domains list
+                    const allowedDomains = ${allowedDomainsJson};
+                    const isAllowed = allowedDomains.some(domain => {
+                        const normalizedAllowed = domain.toLowerCase();
+                        return fullDomain === normalizedAllowed || 
+                               fullDomain === 'www.' + normalizedAllowed ||
+                               fullDomain.endsWith('.' + normalizedAllowed);
+                    });
+                    
+                    if (isAllowed) {
+                        // Create the full URL
+                        const url = 'https://' + fullDomain;
+                        return '(<a href="' + url + '" target="_blank" style="color: #4facfe; text-decoration: underline;">' + domain + '</a>)';
+                    } else {
+                        // Return as-is if not allowed
+                        return match;
+                    }
+                } catch (e) {
+                    // If parsing fails, return as-is
+                    return match;
+                }
+            }
+        );
+        
         // Convert URLs to clickable links (only from allowed domains)
         processed = processed.replace(
             /(https?:\\/\\/[^\\s]+)/g,
