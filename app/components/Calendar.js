@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 
 export default function Calendar({
     currentDate,
@@ -263,9 +264,10 @@ export default function Calendar({
                                                 ) + 1
 
                                             return (
-                                                <div
+                                                <Link
                                                     key={`multi-${index}`}
-                                                    className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-sm mb-1 border-2 border-purple-500 absolute"
+                                                    href={`/events/${event.id}`}
+                                                    className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-sm mb-1 border-2 border-purple-500 absolute hover:bg-purple-200 transition-colors cursor-pointer block"
                                                     style={{
                                                         left: '0',
                                                         right: `-${
@@ -290,15 +292,16 @@ export default function Calendar({
                                                           ) + '...'
                                                         : event.name}{' '}
                                                     (Multi-day)
-                                                </div>
+                                                </Link>
                                             )
                                         })}
 
                                         {/* Single-day events */}
                                         {singleDayEvents.map((event, index) => (
-                                            <div
+                                            <Link
                                                 key={`single-${index}`}
-                                                className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-sm mb-1"
+                                                href={`/events/${event.id}`}
+                                                className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-sm mb-1 hover:bg-red-200 transition-colors cursor-pointer block"
                                                 style={{
                                                     marginTop: `${
                                                         index * 16
@@ -312,7 +315,7 @@ export default function Calendar({
                                                           15
                                                       ) + '...'
                                                     : event.name}
-                                            </div>
+                                            </Link>
                                         ))}
                                     </>
                                 )
