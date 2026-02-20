@@ -38,10 +38,11 @@ export async function GET() {
     const MAX_EVENTS = 12;
     const DAYS_AHEAD = 90; // Show events for next 90 days
     
-    // CSS Styles
+    // CSS Styles - responsive font sizes (scale with viewport, min sizes for readability)
     const styles = \`
         .tbwc-events-container {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: clamp(16px, 1.5vw + 14px, 18px);
             max-width: 600px;
             margin: 20px auto;
             padding: 20px;
@@ -58,14 +59,14 @@ export async function GET() {
         
         .tbwc-events-header h3 {
             margin: 0 0 10px 0;
-            font-size: 1.5rem;
+            font-size: clamp(1.35rem, 2vw + 1.1rem, 1.65rem);
             font-weight: bold;
         }
         
         .tbwc-events-header p {
             margin: 0;
             opacity: 0.9;
-            font-size: 0.9rem;
+            font-size: clamp(0.95rem, 1.2vw + 0.8rem, 1.1rem);
         }
         
         .tbwc-events-list {
@@ -125,42 +126,43 @@ export async function GET() {
         
         .tbwc-event-title {
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: clamp(1.1rem, 1.5vw + 0.95rem, 1.3rem);
             margin-bottom: 8px;
         }
         
         .tbwc-event-date {
             color: #4facfe;
             font-weight: 600;
+            font-size: clamp(1rem, 1.2vw + 0.85rem, 1.15rem);
             margin-bottom: 5px;
         }
         
-                 .tbwc-event-time {
-             opacity: 0.9;
-             font-size: 0.9rem;
-             margin-bottom: 8px;
-         }
+        .tbwc-event-time {
+            opacity: 0.9;
+            font-size: clamp(0.95rem, 1.1vw + 0.8rem, 1.05rem);
+            margin-bottom: 8px;
+        }
          
-         .tbwc-event-end-date {
-             color: #4facfe;
-             font-weight: 600;
-             font-size: 0.9rem;
-             margin-bottom: 8px;
-         }
+        .tbwc-event-end-date {
+            color: #4facfe;
+            font-weight: 600;
+            font-size: clamp(0.95rem, 1.1vw + 0.8rem, 1.05rem);
+            margin-bottom: 8px;
+        }
          
-         .tbwc-event-location {
-             font-style: italic;
-             opacity: 0.8;
-             font-size: 0.9rem;
-             margin-bottom: 10px;
-         }
+        .tbwc-event-location {
+            font-style: italic;
+            opacity: 0.8;
+            font-size: clamp(0.95rem, 1.1vw + 0.8rem, 1.05rem);
+            margin-bottom: 10px;
+        }
         
         .tbwc-event-description {
             opacity: 0.9;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            font-size: clamp(1rem, 1.2vw + 0.85rem, 1.1rem);
+            line-height: 1.5;
             margin-bottom: 10px;
-            max-height: 80px;
+            max-height: 5.5em;
             overflow: hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -192,7 +194,7 @@ export async function GET() {
         .tbwc-event-description-toggle {
             color: #4facfe;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: clamp(0.9rem, 1vw + 0.8rem, 1rem);
             text-decoration: underline;
             margin-bottom: 10px;
             display: inline-block;
@@ -205,8 +207,8 @@ export async function GET() {
             display: flex;
             gap: 15px;
             margin-top: 10px;
-            font-size: 0.8rem;
-            opacity: 0.7;
+            font-size: clamp(0.9rem, 1vw + 0.8rem, 1rem);
+            opacity: 0.85;
             clear: both;
             position: relative;
             z-index: 1;
@@ -219,7 +221,7 @@ export async function GET() {
         .tbwc-event-link a {
             color: #4facfe;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: clamp(0.95rem, 1.1vw + 0.8rem, 1.05rem);
             font-weight: 600;
             display: inline-flex;
             align-items: center;
@@ -228,6 +230,19 @@ export async function GET() {
         
         .tbwc-event-link a:hover {
             text-decoration: underline;
+        }
+        
+        @media (min-width: 600px) {
+            .tbwc-events-container {
+                font-size: 18px;
+                padding: 24px;
+            }
+            .tbwc-event-item {
+                padding: 18px;
+            }
+            .tbwc-event-description {
+                max-height: 6em;
+            }
         }
         
         .tbwc-loading {
