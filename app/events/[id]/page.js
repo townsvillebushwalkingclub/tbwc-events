@@ -50,13 +50,13 @@ export async function generateMetadata({ params }) {
         // Security: Block events outside allowed date range
         if (event.start_time) {
             const now = new Date()
-            const minYear = 2022
+            const minYear = 2020
             const eventDate = new Date(event.start_time)
             // Calculate the date 6 months from now (last day of that month to be more lenient)
             const maxFutureDate = new Date(
                 now.getFullYear(),
                 now.getMonth() + 7,
-                0  // Day 0 = last day of previous month (6 months from now)
+                0, // Day 0 = last day of previous month (6 months from now)
             )
 
             if (
@@ -160,16 +160,16 @@ export default async function EventPage({ params }) {
         // Fetch event server-side for initial render
         event = await getEventById(id)
 
-        // Security: Block events before 2022 or more than 6 months in the future
+        // Security: Block events before 2020 or more than 6 months in the future
         if (event && event.start_time) {
             const now = new Date()
-            const minYear = 2022
+            const minYear = 2020
             const eventDate = new Date(event.start_time)
             // Calculate the date 6 months from now (last day of that month to be more lenient)
             const maxFutureDate = new Date(
                 now.getFullYear(),
                 now.getMonth() + 7,
-                0  // Day 0 = last day of previous month (6 months from now)
+                0, // Day 0 = last day of previous month (6 months from now)
             )
 
             if (

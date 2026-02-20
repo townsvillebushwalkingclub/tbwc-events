@@ -201,11 +201,16 @@ async function fetchEventsForMonth(year, month) {
                     endDate &&
                     startDate.toDateString() !== endDate.toDateString()
 
-                // Download cover image if it exists (but keep original URL in JSON)
-                if (event.cover && event.cover.source) {
-                    await downloadCoverImage(event.id, event.cover.source)
-                    // Note: We keep the original cover.source URL in the JSON
-                    // The application will check for local images first
+                // Download cover image and use local path in JSON when available
+                let cover = event.cover || null
+                if (cover && cover.source) {
+                    const localPath = await downloadCoverImage(
+                        event.id,
+                        cover.source
+                    )
+                    if (localPath && localPath.startsWith('/event-covers/')) {
+                        cover = { ...cover, source: localPath }
+                    }
                 }
 
                 return {
@@ -224,7 +229,7 @@ async function fetchEventsForMonth(year, month) {
                     attending_count: event.attending_count || 0,
                     interested_count: event.interested_count || 0,
                     place: event.place || null,
-                    cover: event.cover || null,
+                    cover,
                 }
             })
         )
@@ -397,12 +402,15 @@ async function main() {
             saveEventsToFile(year, month, events)
 
             // Log cover image download status
-            const eventsWithCovers = events.filter(
-                (e) => e.cover && e.cover.local
+            const eventsWithLocalCovers = events.filter(
+                (e) =>
+                    e.cover &&
+                    e.cover.source &&
+                    e.cover.source.startsWith('/event-covers/')
             )
-            if (eventsWithCovers.length > 0) {
+            if (eventsWithLocalCovers.length > 0) {
                 console.log(
-                    `   📸 Downloaded ${eventsWithCovers.length} cover image(s)`
+                    `   📸 ${eventsWithLocalCovers.length} cover image(s) (cached or downloaded)`
                 )
             }
 

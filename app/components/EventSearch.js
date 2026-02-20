@@ -1,0 +1,98 @@
+'use client'
+
+import { useState, useCallback, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import EventsList from './EventsList'
+
+export default function EventSearch({
+    initialEvents,
+    currentDate,
+    initialSearchQuery = null,
+}) {
+    const router = useRouter()
+    const [searchResults, setSearchResults] = useState(null)
+    const [isSearching, setIsSearching] = useState(false)
+    const [searchTerm, setSearchTerm] = useState('')
+
+    const runSearch = useCallback(async (q) => {
+        const trimmed = (q || '').trim()
+        if (!trimmed) {
+            setSearchResults(null)
+            setSearchTerm('')
+            return
+        }
+        setIsSearching(true)
+        setSearchTerm(trimmed)
+        try {
+            const res = await fetch(
+                `/api/events/search?q=${encodeURIComponent(trimmed)}`
+            )
+            const json = await res.json()
+            if (json.success && Array.isArray(json.data)) {
+                setSearchResults(json.data)
+            } else {
+                setSearchResults([])
+            }
+        } catch (err) {
+            console.error('Search failed:', err)
+            setSearchResults([])
+        } finally {
+            setIsSearching(false)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (initialSearchQuery?.trim()) {
+            runSearch(initialSearchQuery.trim())
+        } else {
+            setSearchResults(null)
+            setSearchTerm('')
+        }
+    }, [initialSearchQuery, runSearch])
+
+    const handleClear = () => {
+        router.push('/')
+        setSearchResults(null)
+        setSearchTerm('')
+    }
+
+    const isShowingSearch = searchResults !== null
+    const eventsToShow = isShowingSearch ? searchResults : initialEvents
+
+    return (
+        <div className="w-full">
+            {isShowingSearch && (
+                <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl bg-blue-50 px-4 py-2 text-sm text-blue-800">
+                    <span>
+                        {searchResults.length === 0
+                            ? `No events found for "${searchTerm}".`
+                            : `Found ${searchResults.length} event${searchResults.length === 1 ? '' : 's'} for "${searchTerm}".`}
+                    </span>
+                    <button
+                        type="button"
+                        onClick={handleClear}
+                        className="rounded-lg border border-blue-200 bg-white px-3 py-1 font-semibold text-blue-700 transition-colors hover:bg-blue-100"
+                    >
+                        Clear search
+                    </button>
+                </div>
+            )}
+
+            {isSearching && (
+                <div className="mb-4 text-center text-gray-500">
+                    Searching...
+                </div>
+            )}
+
+            <EventsList
+                events={eventsToShow}
+                currentDate={currentDate}
+                titleOverride={
+                    isShowingSearch
+                        ? `Search results${searchTerm ? ` for "${searchTerm}"` : ''}`
+                        : null
+                }
+            />
+        </div>
+    )
+}

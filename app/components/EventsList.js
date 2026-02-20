@@ -10,7 +10,11 @@ import {
 import { getMonthLabel, getFacebookEventUrl } from '@/lib/event-utils'
 import { EventDateTime } from './EventDateTime'
 
-export default function EventsList({ events, currentDate }) {
+export default function EventsList({
+    events,
+    currentDate,
+    titleOverride = null,
+}) {
     const [expandedDescriptions, setExpandedDescriptions] = useState({})
 
     const monthYear = new Date(currentDate).toLocaleDateString('en-AU', {
@@ -18,6 +22,10 @@ export default function EventsList({ events, currentDate }) {
         year: 'numeric',
         timeZone: 'Australia/Brisbane',
     })
+    const heading =
+        titleOverride != null
+            ? titleOverride
+            : `Events for ${monthYear} & Next 2 Months`
 
     // Function to truncate description to first N paragraphs
     // Preserves original newline structure to avoid adding extra spacing
@@ -74,11 +82,24 @@ export default function EventsList({ events, currentDate }) {
         return paragraphs.length > 2
     }
 
+    // Past event that is still in the displayed "current" month → show collapsed, greyed out
+    const isPastEventInCurrentMonth = (event) => {
+        if (!event?.start_time || !currentDate) return false
+        const now = new Date()
+        const eventDate = new Date(event.start_time)
+        const current = new Date(currentDate)
+        if (eventDate >= now) return false
+        return (
+            eventDate.getFullYear() === current.getFullYear() &&
+            eventDate.getMonth() === current.getMonth()
+        )
+    }
+
     return (
         <div>
             <div className="mb-8 pb-4 border-b-2 border-gray-100">
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-                    Events for {monthYear} & Next 2 Months
+                    {heading}
                 </h2>
             </div>
 
@@ -91,173 +112,203 @@ export default function EventsList({ events, currentDate }) {
                 </div>
             ) : (
                 <div className="space-y-6">
-                    {events.map((event) => (
-                        <div
-                            key={event.id}
-                            className="bg-gray-50 rounded-2xl p-6 border-l-4 border-blue-500 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                        >
-                            <div className="flex flex-col md:flex-row gap-6">
-                                {/* Event Thumbnail */}
-                                <div className="shrink-0">
-                                    <div className="relative w-full md:w-24 h-48 md:h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
-                                        {event.cover && event.cover.source ? (
-                                            <Image
-                                                src={event.cover.source}
-                                                alt={event.name}
-                                                fill
-                                                className="object-cover"
-                                                sizes="(max-width: 768px) 100vw, 96px"
-                                                unoptimized={
-                                                    !event.cover.source.startsWith(
-                                                        '/event-covers/'
-                                                    )
-                                                }
-                                            />
-                                        ) : (
-                                            <div className="text-gray-400 text-2xl">
-                                                🏔️
-                                            </div>
-                                        )}
-                                    </div>
+                    {events.map((event) =>
+                        isPastEventInCurrentMonth(event) ? (
+                            <div
+                                key={event.id}
+                                className="rounded-2xl p-4 border border-gray-200 bg-gray-100 text-gray-500"
+                            >
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                                    <Link
+                                        href={`/events/${event.id}`}
+                                        className="font-semibold text-gray-600 hover:text-gray-800 transition-colors"
+                                    >
+                                        {event.name}
+                                    </Link>
+                                    <span className="text-sm text-gray-500">
+                                        <EventDateTime
+                                            event={event}
+                                            textSize="text-sm"
+                                            className="!text-gray-500"
+                                        />
+                                    </span>
+                                    <span className="text-sm">(past)</span>
+                                    <Link
+                                        href={`/events/${event.id}`}
+                                        className="text-sm text-purple-600 hover:text-purple-800 font-medium"
+                                    >
+                                        View event page →
+                                    </Link>
                                 </div>
-
-                                {/* Event Details */}
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
-                                        <Link
-                                            href={`/events/${event.id}`}
-                                            className="text-xl md:text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors"
-                                        >
-                                            {event.name}
-                                        </Link>
-                                        {(() => {
-                                            const monthLabel = getMonthLabel(
-                                                event.start_time,
-                                                currentDate
-                                            )
-
-                                            if (monthLabel === 'Next Month') {
-                                                return (
-                                                    <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded-full">
-                                                        Next Month
-                                                    </span>
-                                                )
-                                            } else if (
-                                                monthLabel ===
-                                                'Month After Next'
-                                            ) {
-                                                return (
-                                                    <span className="bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
-                                                        Month After Next
-                                                    </span>
-                                                )
-                                            }
-                                            return null
-                                        })()}
-                                    </div>
-
-                                    <div className="mb-4">
-                                        <EventDateTime event={event} />
-                                    </div>
-
-                                    {event.description && (
-                                        <div className="mb-4">
-                                            <div
-                                                className="text-gray-700 leading-relaxed overflow-hidden transition-all duration-500 ease-in-out"
-                                                style={{
-                                                    maxHeight:
-                                                        expandedDescriptions[
-                                                            event.id
-                                                        ] ||
-                                                        !isDescriptionLong(
-                                                            event.description
-                                                        )
-                                                            ? '2000px' // Large enough for most content
-                                                            : '8rem', // ~128px for truncated view
-                                                }}
-                                                dangerouslySetInnerHTML={{
-                                                    __html:
-                                                        expandedDescriptions[
-                                                            event.id
-                                                        ] ||
-                                                        !isDescriptionLong(
-                                                            event.description
-                                                        )
-                                                            ? processDescription(
-                                                                  event.description,
-                                                                  event.name
-                                                              )
-                                                            : processDescription(
-                                                                  truncateDescription(
-                                                                      event.description
-                                                                  ),
-                                                                  event.name
-                                                              ),
-                                                }}
-                                            />
-                                            {isDescriptionLong(
-                                                event.description
-                                            ) && (
-                                                <button
-                                                    onClick={() =>
-                                                        toggleDescription(
-                                                            event.id
+                            </div>
+                        ) : (
+                            <div
+                                key={event.id}
+                                className="bg-gray-50 rounded-2xl p-6 border-l-4 border-blue-500 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                            >
+                                <div className="flex flex-col md:flex-row gap-6">
+                                    {/* Event Thumbnail */}
+                                    <div className="shrink-0">
+                                        <div className="relative w-full md:w-24 h-48 md:h-24 rounded-lg overflow-hidden bg-gray-200 flex items-center justify-center">
+                                            {event.cover && event.cover.source ? (
+                                                <Image
+                                                    src={event.cover.source}
+                                                    alt={event.name}
+                                                    fill
+                                                    className="object-cover"
+                                                    sizes="(max-width: 768px) 100vw, 96px"
+                                                    unoptimized={
+                                                        !event.cover.source.startsWith(
+                                                            '/event-covers/'
                                                         )
                                                     }
-                                                    className="mt-2 text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors"
-                                                >
-                                                    {expandedDescriptions[
-                                                        event.id
-                                                    ]
-                                                        ? 'Read less'
-                                                        : 'Read more'}
-                                                </button>
+                                                />
+                                            ) : (
+                                                <div className="text-gray-400 text-2xl">
+                                                    🏔️
+                                                </div>
                                             )}
                                         </div>
-                                    )}
+                                    </div>
 
-                                    {event.place && (
-                                        <div className="text-gray-600 mb-4 italic">
-                                            📍{' '}
-                                            {event.place.name || 'Location TBA'}
-                                        </div>
-                                    )}
-
-                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                                        <div className="flex gap-4 sm:gap-6 text-sm text-gray-500">
-                                            <span>
-                                                👥 {event.attending_count}{' '}
-                                                attending
-                                            </span>
-                                            <span>
-                                                ❤️ {event.interested_count}{' '}
-                                                interested
-                                            </span>
-                                        </div>
-
-                                        <div className="flex gap-3">
+                                    {/* Event Details */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
                                             <Link
                                                 href={`/events/${event.id}`}
-                                                className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
+                                                className="text-xl md:text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors"
                                             >
-                                                📄 View Event Page
+                                                {event.name}
                                             </Link>
-                                            <a
-                                                href={getFacebookEventUrl(
-                                                    event.id
+                                            {(() => {
+                                                const monthLabel = getMonthLabel(
+                                                    event.start_time,
+                                                    currentDate
+                                                )
+
+                                                if (monthLabel === 'Next Month') {
+                                                    return (
+                                                        <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded-full">
+                                                            Next Month
+                                                        </span>
+                                                    )
+                                                } else if (
+                                                    monthLabel ===
+                                                    'Month After Next'
+                                                ) {
+                                                    return (
+                                                        <span className="bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
+                                                            Month After Next
+                                                        </span>
+                                                    )
+                                                }
+                                                return null
+                                            })()}
+                                        </div>
+
+                                        <div className="mb-4">
+                                            <EventDateTime event={event} />
+                                        </div>
+
+                                        {event.description && (
+                                            <div className="mb-4">
+                                                <div
+                                                    className="text-gray-700 leading-relaxed overflow-hidden transition-all duration-500 ease-in-out"
+                                                    style={{
+                                                        maxHeight:
+                                                            expandedDescriptions[
+                                                                event.id
+                                                            ] ||
+                                                            !isDescriptionLong(
+                                                                event.description
+                                                            )
+                                                                ? '2000px' // Large enough for most content
+                                                                : '8rem', // ~128px for truncated view
+                                                    }}
+                                                    dangerouslySetInnerHTML={{
+                                                        __html:
+                                                            expandedDescriptions[
+                                                                event.id
+                                                            ] ||
+                                                            !isDescriptionLong(
+                                                                event.description
+                                                            )
+                                                                ? processDescription(
+                                                                      event.description,
+                                                                      event.name
+                                                                  )
+                                                                : processDescription(
+                                                                      truncateDescription(
+                                                                          event.description
+                                                                      ),
+                                                                      event.name
+                                                                  ),
+                                                    }}
+                                                />
+                                                {isDescriptionLong(
+                                                    event.description
+                                                ) && (
+                                                    <button
+                                                        onClick={() =>
+                                                            toggleDescription(
+                                                                event.id
+                                                            )
+                                                        }
+                                                        className="mt-2 text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors"
+                                                    >
+                                                        {expandedDescriptions[
+                                                            event.id
+                                                        ]
+                                                            ? 'Read less'
+                                                            : 'Read more'}
+                                                    </button>
                                                 )}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
-                                            >
-                                                📘 View on Facebook
-                                            </a>
+                                            </div>
+                                        )}
+
+                                        {event.place && (
+                                            <div className="text-gray-600 mb-4 italic">
+                                                📍{' '}
+                                                {event.place.name || 'Location TBA'}
+                                            </div>
+                                        )}
+
+                                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                            <div className="flex gap-4 sm:gap-6 text-sm text-gray-500">
+                                                <span>
+                                                    👥 {event.attending_count}{' '}
+                                                    attending
+                                                </span>
+                                                <span>
+                                                    ❤️ {event.interested_count}{' '}
+                                                    interested
+                                                </span>
+                                            </div>
+
+                                            <div className="flex gap-3">
+                                                <Link
+                                                    href={`/events/${event.id}`}
+                                                    className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
+                                                >
+                                                    📄 View Event Page
+                                                </Link>
+                                                <a
+                                                    href={getFacebookEventUrl(
+                                                        event.id
+                                                    )}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
+                                                >
+                                                    📘 View on Facebook
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    )}
                 </div>
             )}
         </div>

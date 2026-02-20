@@ -2,7 +2,8 @@ import { Suspense } from 'react'
 import Image from 'next/image'
 import { getEventsForMonth } from '@/lib/facebook-api.js'
 import Calendar from './components/Calendar'
-import EventsList from './components/EventsList'
+import EventSearch from './components/EventSearch'
+import SearchBar from './components/SearchBar'
 
 // Revalidate the homepage daily
 export const revalidate = 86400 // 1 day
@@ -51,10 +52,6 @@ export default async function Home({ searchParams }) {
         month = now.getMonth() + 1
     }
 
-    // Calculate previous month
-    const prevMonth = month === 1 ? 12 : month - 1
-    const prevYear = month === 1 ? year - 1 : year
-
     // Calculate next month
     const nextMonth = month === 12 ? 1 : month + 1
     const nextYear = month === 12 ? year + 1 : year
@@ -63,9 +60,8 @@ export default async function Home({ searchParams }) {
     const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1
     const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear
 
-    // Fetch events for all months in parallel
+    // Fetch events for current month and next 2 months only (exclude previous month)
     const monthsToFetch = [
-        { year: prevYear, month: prevMonth },
         { year, month },
         { year: nextYear, month: nextMonth },
         { year: yearAfterNext, month: monthAfterNext },
@@ -119,7 +115,7 @@ export default async function Home({ searchParams }) {
                             Events Calendar & Activities
                         </p>
                     </div>
-                    <div className="flex flex-col sm:flex-row justify-center gap-4">
+                    <div className="flex flex-col sm:flex-row justify-center gap-4 mb-1">
                         <a
                             href="https://townsvillebushwalkingclub.com/"
                             target="_blank"
@@ -153,32 +149,41 @@ export default async function Home({ searchParams }) {
                             📘 Instagram Profile
                         </a>
                     </div>
-                </div>
-
-                {/* Calendar */}
-                <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
-                    <Suspense
-                        fallback={
-                            <div className="p-8 text-center">
-                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                                <p className="text-gray-600">
-                                    Loading calendar...
-                                </p>
-                            </div>
-                        }
-                    >
-                        <Calendar
-                            currentDate={currentDate}
-                            events={allEvents}
-                            year={year}
-                            month={month}
-                        />
+                    <Suspense fallback={null}>
+                        <SearchBar />
                     </Suspense>
                 </div>
 
-                {/* Events List */}
+                {/* Calendar – hidden when search is active */}
+                {!params?.search && (
+                    <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
+                        <Suspense
+                            fallback={
+                                <div className="p-8 text-center">
+                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                                    <p className="text-gray-600">
+                                        Loading calendar...
+                                    </p>
+                                </div>
+                            }
+                        >
+                            <Calendar
+                                currentDate={currentDate}
+                                events={allEvents}
+                                year={year}
+                                month={month}
+                            />
+                        </Suspense>
+                    </div>
+                )}
+
+                {/* Events List or Search Results */}
                 <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
-                    <EventsList events={allEvents} currentDate={currentDate} />
+                    <EventSearch
+                        initialEvents={allEvents}
+                        currentDate={currentDate}
+                        initialSearchQuery={params?.search}
+                    />
                 </div>
             </div>
         </div>

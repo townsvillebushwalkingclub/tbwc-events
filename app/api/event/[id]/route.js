@@ -25,7 +25,7 @@ export async function GET(request, { params }) {
                     success: false,
                     error: 'Event ID is required',
                 },
-                { status: 400 }
+                { status: 400 },
             )
         }
 
@@ -37,7 +37,7 @@ export async function GET(request, { params }) {
                     success: false,
                     error: 'Invalid event ID format',
                 },
-                { status: 400 }
+                { status: 400 },
             )
         }
 
@@ -50,20 +50,20 @@ export async function GET(request, { params }) {
                     success: false,
                     error: 'Event not found',
                 },
-                { status: 404 }
+                { status: 404 },
             )
         }
 
-        // Security: Block events before 2022 or more than 6 months in the future
+        // Security: Block events before 2020 or more than 6 months in the future
         if (event.start_time) {
             const now = new Date()
-            const minYear = 2022
+            const minYear = 2020
             const eventDate = new Date(event.start_time)
             // Calculate the date 6 months from now (last day of that month to be more lenient)
             const maxFutureDate = new Date(
                 now.getFullYear(),
                 now.getMonth() + 7,
-                0  // Day 0 = last day of previous month (6 months from now)
+                0, // Day 0 = last day of previous month (6 months from now)
             )
 
             if (eventDate.getFullYear() < minYear) {
@@ -72,7 +72,7 @@ export async function GET(request, { params }) {
                         success: false,
                         error: `Events before ${minYear} are not available`,
                     },
-                    { status: 403 }
+                    { status: 403 },
                 )
             }
 
@@ -83,7 +83,7 @@ export async function GET(request, { params }) {
                         success: false,
                         error: 'Events more than 6 months in the future are not available',
                     },
-                    { status: 403 }
+                    { status: 403 },
                 )
             }
         }
@@ -117,13 +117,13 @@ export async function GET(request, { params }) {
             // Past events: Immutable cache (won't change)
             response.headers.set(
                 'Cache-Control',
-                'public, max-age=31536000, s-maxage=31536000, immutable'
+                'public, max-age=31536000, s-maxage=31536000, immutable',
             )
         } else {
             // Current/future events: Revalidate daily
             response.headers.set(
                 'Cache-Control',
-                `public, max-age=${cacheTime}, s-maxage=${cacheTime}, stale-while-revalidate=${cacheTime}`
+                `public, max-age=${cacheTime}, s-maxage=${cacheTime}, stale-while-revalidate=${cacheTime}`,
             )
         }
 
@@ -140,18 +140,18 @@ export async function GET(request, { params }) {
                 success: false,
                 error: error.message,
             },
-            { status: 500 }
+            { status: 500 },
         )
 
         // Set CORS headers for error responses too
         errorResponse.headers.set('Access-Control-Allow-Origin', '*')
         errorResponse.headers.set(
             'Access-Control-Allow-Methods',
-            'GET, OPTIONS'
+            'GET, OPTIONS',
         )
         errorResponse.headers.set(
             'Access-Control-Allow-Headers',
-            'Content-Type'
+            'Content-Type',
         )
 
         return errorResponse
