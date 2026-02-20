@@ -56,12 +56,15 @@ export default function EventSearch({
         setSearchTerm('')
     }
 
-    const isShowingSearch = searchResults !== null
-    const eventsToShow = isShowingSearch ? searchResults : initialEvents
+    const isSearchMode = !!initialSearchQuery?.trim()
+    const searchReady = isSearchMode && searchResults !== null
+    // In search mode: only show search results, never the "Events for February..." list
+    const showMonthList = !isSearchMode
+    const showEventsList = showMonthList || searchReady
 
     return (
         <div className="w-full">
-            {isShowingSearch && (
+            {searchReady && (
                 <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl bg-blue-50 px-4 py-2 text-sm text-blue-800">
                     <span>
                         {searchResults.length === 0
@@ -78,21 +81,23 @@ export default function EventSearch({
                 </div>
             )}
 
-            {isSearching && (
+            {isSearchMode && isSearching && (
                 <div className="mb-4 text-center text-gray-500">
                     Searching...
                 </div>
             )}
 
-            <EventsList
-                events={eventsToShow}
-                currentDate={currentDate}
-                titleOverride={
-                    isShowingSearch
-                        ? `Search results${searchTerm ? ` for "${searchTerm}"` : ''}`
-                        : null
-                }
-            />
+            {showEventsList && (
+                <EventsList
+                    events={searchReady ? searchResults : initialEvents}
+                    currentDate={currentDate}
+                    titleOverride={
+                        searchReady
+                            ? `Search results${searchTerm ? ` for "${searchTerm}"` : ''}`
+                            : null
+                    }
+                />
+            )}
         </div>
     )
 }

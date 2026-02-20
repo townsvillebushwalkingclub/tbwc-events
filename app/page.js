@@ -154,37 +154,50 @@ export default async function Home({ searchParams }) {
                     </Suspense>
                 </div>
 
-                {/* Calendar – hidden when search is active */}
+                {/* Calendar and main events list – hidden when search is active */}
                 {!params?.search && (
-                    <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
-                        <Suspense
-                            fallback={
-                                <div className="p-8 text-center">
-                                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                                    <p className="text-gray-600">
-                                        Loading calendar...
-                                    </p>
-                                </div>
-                            }
-                        >
-                            <Calendar
+                    <>
+                        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
+                            <Suspense
+                                fallback={
+                                    <div className="p-8 text-center">
+                                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                                        <p className="text-gray-600">
+                                            Loading calendar...
+                                        </p>
+                                    </div>
+                                }
+                            >
+                                <Calendar
+                                    currentDate={currentDate}
+                                    events={allEvents}
+                                    year={year}
+                                    month={month}
+                                />
+                            </Suspense>
+                        </div>
+
+                        {/* Events list for current month & next 2 months */}
+                        <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
+                            <EventSearch
+                                initialEvents={allEvents}
                                 currentDate={currentDate}
-                                events={allEvents}
-                                year={year}
-                                month={month}
+                                initialSearchQuery={null}
                             />
-                        </Suspense>
-                    </div>
+                        </div>
+                    </>
                 )}
 
-                {/* Events List or Search Results */}
-                <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
-                    <EventSearch
-                        initialEvents={allEvents}
-                        currentDate={currentDate}
-                        initialSearchQuery={params?.search}
-                    />
-                </div>
+                {/* Search results only – shown when search is active */}
+                {params?.search && (
+                    <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
+                        <EventSearch
+                            initialEvents={allEvents}
+                            currentDate={currentDate}
+                            initialSearchQuery={params?.search}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     )
