@@ -160,10 +160,10 @@ export default async function EventPage({ params }) {
         // Fetch event server-side for initial render
         event = await getEventById(id)
 
-        // Security: Block events before 2020 or more than 6 months in the future
+        // Security: Block events before 2019 or more than 6 months in the future
         if (event && event.start_time) {
             const now = new Date()
-            const minYear = 2020
+            const minYear = 2019
             const eventDate = new Date(event.start_time)
             // Calculate the date 6 months from now (last day of that month to be more lenient)
             const maxFutureDate = new Date(
