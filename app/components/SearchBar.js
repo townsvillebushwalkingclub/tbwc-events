@@ -36,7 +36,7 @@ export default function SearchBar() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search events (name, description, location)..."
-                    className="w-full rounded-xl border-2 border-white/30 bg-white/95 px-4 py-3 pr-10 text-gray-800 placeholder-gray-500 shadow-lg focus:border-white focus:outline-none focus:ring-2 focus:ring-white/40"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-10 text-gray-900 placeholder-gray-500 focus:border-casper-orange focus:outline-none focus:ring-1 focus:ring-casper-orange"
                     aria-label="Search events"
                 />
                 <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -45,7 +45,7 @@ export default function SearchBar() {
             </div>
             <button
                 type="submit"
-                className="rounded-xl bg-white/95 px-5 py-3 font-semibold text-gray-800 shadow-lg transition-colors hover:bg-white"
+                className="rounded-lg bg-casper-orange hover:bg-casper-orange-hover text-white px-5 py-3 font-semibold transition-colors"
             >
                 Search
             </button>

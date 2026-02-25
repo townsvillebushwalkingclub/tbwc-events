@@ -1,11 +1,19 @@
 @import 'tailwindcss';
 
+/* Casper-style theme: black & white, orange highlights, touch of blue sky */
 @theme {
   --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
   --background-image-gradient-conic: conic-gradient(
     from 180deg at 50% 50%,
     var(--tw-gradient-stops)
   );
+  /* Ghost Casper accent */
+  --color-casper-orange: #e85d3a;
+  --color-casper-orange-hover: #d94e2b;
+  /* Soft blue sky accents */
+  --color-sky: #7eb8da;
+  --color-sky-light: #e8f2f8;
+  --color-sky-muted: #a8c5e0;
 }
 
 /*
@@ -27,25 +35,14 @@
 }
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --foreground-rgb: 22, 23, 26;
+  --background-rgb: 255, 255, 255;
+  --muted-rgb: 115, 138, 148;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
+/* Keep light theme only for consistent Casper look */
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: rgb(var(--background-rgb));
+  font-feature-settings: "kern" 1;
 }

@@ -135,7 +135,7 @@ export default function EventsList({
                                     <span className="text-sm">(past)</span>
                                     <Link
                                         href={`/events/${event.id}`}
-                                        className="text-sm text-purple-600 hover:text-purple-800 font-medium"
+                                        className="text-sm text-casper-orange hover:text-casper-orange-hover font-medium"
                                     >
                                         View event page →
                                     </Link>
@@ -144,7 +144,7 @@ export default function EventsList({
                         ) : (
                             <div
                                 key={event.id}
-                                className="bg-gray-50 rounded-2xl p-6 border-l-4 border-blue-500 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+                                className="bg-white rounded-2xl p-6 border-l-4 border-casper-orange border border-gray-200 hover:shadow-md transition-all duration-200"
                             >
                                 <div className="flex flex-col md:flex-row gap-6">
                                     {/* Event Thumbnail */}
@@ -176,7 +176,7 @@ export default function EventsList({
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
                                             <Link
                                                 href={`/events/${event.id}`}
-                                                className="text-xl md:text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors"
+                                                className="text-xl md:text-2xl font-bold text-gray-900 hover:text-casper-orange transition-colors"
                                             >
                                                 {event.name}
                                             </Link>
@@ -188,7 +188,7 @@ export default function EventsList({
 
                                                 if (monthLabel === 'Next Month') {
                                                     return (
-                                                        <span className="bg-purple-100 text-purple-800 text-xs font-semibold px-2 py-1 rounded-full">
+                                                        <span className="bg-sky-light text-gray-800 text-xs font-semibold px-2 py-1 rounded-full border border-sky-muted/50">
                                                             Next Month
                                                         </span>
                                                     )
@@ -197,7 +197,7 @@ export default function EventsList({
                                                     'Month After Next'
                                                 ) {
                                                     return (
-                                                        <span className="bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
+                                                        <span className="bg-casper-orange/10 text-gray-800 text-xs font-semibold px-2 py-1 rounded-full border border-casper-orange/30">
                                                             Month After Next
                                                         </span>
                                                     )
@@ -254,7 +254,7 @@ export default function EventsList({
                                                                 event.id
                                                             )
                                                         }
-                                                        className="mt-2 text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors"
+                                                        className="mt-2 text-casper-orange hover:text-casper-orange-hover font-semibold text-sm transition-colors"
                                                     >
                                                         {expandedDescriptions[
                                                             event.id
@@ -288,7 +288,7 @@ export default function EventsList({
                                             <div className="flex gap-3">
                                                 <Link
                                                     href={`/events/${event.id}`}
-                                                    className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
+                                                    className="bg-casper-orange hover:bg-casper-orange-hover text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
                                                 >
                                                     📄 View Event Page
                                                 </Link>
@@ -298,7 +298,7 @@ export default function EventsList({
                                                     )}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
+                                                    className="border border-gray-300 hover:border-gray-400 bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 text-sm md:text-base"
                                                 >
                                                     📘 View on Facebook
                                                 </a>

@@ -42,10 +42,10 @@ export default function EventClient({ initialEvent }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <div className="text-center text-white">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-                    <p>Loading event...</p>
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="text-center text-gray-900">
+                    <div className="animate-spin rounded-full h-12 w-12 border-2 border-casper-orange border-t-transparent mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading event...</p>
                 </div>
             </div>
         )
@@ -53,17 +53,17 @@ export default function EventClient({ initialEvent }) {
 
     if (error || !event) {
         return (
-            <div className="min-h-screen bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <div className="text-center text-white">
+            <div className="min-h-screen bg-white flex items-center justify-center">
+                <div className="text-center text-gray-900">
                     <div className="text-6xl mb-4">⚠️</div>
                     <h1 className="text-2xl font-bold mb-2">Event Not Found</h1>
-                    <p className="mb-6">
+                    <p className="mb-6 text-gray-600">
                         {error ||
                             'The event you are looking for does not exist.'}
                     </p>
                     <Link
                         href="/"
-                        className="bg-white text-gray-800 hover:bg-gray-100 px-6 py-3 rounded-full font-bold text-lg transition-all duration-300 inline-block shadow-lg hover:shadow-xl"
+                        className="bg-casper-orange hover:bg-casper-orange-hover text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-block"
                     >
                         ← Back to Events
                     </Link>
@@ -77,13 +77,13 @@ export default function EventClient({ initialEvent }) {
         event.cover && event.cover.source ? event.cover.source : null
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-500 to-purple-600">
+        <div className="min-h-screen bg-white">
             <div className="container mx-auto px-4 md:px-8 py-8">
                 {/* Logo and Back Button */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
                     <Link
                         href="/"
-                        className="flex items-center gap-3 hover:opacity-90 transition-opacity"
+                        className="flex items-center gap-3 text-gray-900 hover:text-casper-orange transition-colors"
                     >
                         <div className="flex items-center gap-3">
                             <div className="relative w-16 h-16 md:w-20 md:h-20 flex items-center justify-center">
@@ -96,11 +96,11 @@ export default function EventClient({ initialEvent }) {
                                     priority
                                 />
                             </div>
-                            <div className="text-white">
+                            <div>
                                 <div className="text-xl md:text-2xl font-bold">
                                     Townsville Bushwalking Club
                                 </div>
-                                <div className="text-sm opacity-90">
+                                <div className="text-sm text-gray-600">
                                     Events Calendar
                                 </div>
                             </div>
@@ -108,7 +108,7 @@ export default function EventClient({ initialEvent }) {
                     </Link>
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-2 bg-white text-gray-800 hover:bg-gray-100 px-5 py-2.5 rounded-full font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+                        className="inline-flex items-center gap-2 border border-gray-300 hover:border-gray-400 bg-white text-gray-800 px-5 py-2.5 rounded-lg font-semibold transition-colors"
                     >
                         <span>←</span>
                         <span>Back to Events</span>
@@ -116,7 +116,7 @@ export default function EventClient({ initialEvent }) {
                 </div>
 
                 {/* Event Card */}
-                <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                     {/* Cover Image */}
                     {coverImageUrl && (
                         <div className="relative w-full h-64 md:h-96">
@@ -216,7 +216,7 @@ export default function EventClient({ initialEvent }) {
                                 href={facebookEventUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2"
+                                className="bg-casper-orange hover:bg-casper-orange-hover text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2"
                             >
                                 📘 View on Facebook
                                 <span>→</span>

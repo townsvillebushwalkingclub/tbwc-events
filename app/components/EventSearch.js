@@ -65,7 +65,7 @@ export default function EventSearch({
     return (
         <div className="w-full">
             {searchReady && (
-                <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl bg-blue-50 px-4 py-2 text-sm text-blue-800">
+                <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg bg-sky-light px-4 py-2 text-sm text-gray-800">
                     <span>
                         {searchResults.length === 0
                             ? `No events found for "${searchTerm}".`
@@ -74,7 +74,7 @@ export default function EventSearch({
                     <button
                         type="button"
                         onClick={handleClear}
-                        className="rounded-lg border border-blue-200 bg-white px-3 py-1 font-semibold text-blue-700 transition-colors hover:bg-blue-100"
+                        className="rounded-lg bg-casper-orange hover:bg-casper-orange-hover text-white px-3 py-1.5 font-semibold transition-colors"
                     >
                         Clear search
                     </button>

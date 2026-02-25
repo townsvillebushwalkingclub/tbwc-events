@@ -144,8 +144,8 @@ export default async function EventPage({ params }) {
         if (!id || !/^\d{15,16}$/.test(id)) {
             // Invalid ID format - return 404 to prevent enumeration
             return (
-                <div className="min-h-screen flex items-center justify-center">
-                    <div className="text-center">
+                <div className="min-h-screen bg-white flex items-center justify-center">
+                    <div className="text-center text-gray-900">
                         <h1 className="text-2xl font-bold mb-4">
                             Event Not Found
                         </h1>
@@ -178,8 +178,8 @@ export default async function EventPage({ params }) {
             ) {
                 // Event outside allowed range - return 404 to prevent information disclosure
                 return (
-                    <div className="min-h-screen flex items-center justify-center">
-                        <div className="text-center">
+                    <div className="min-h-screen bg-white flex items-center justify-center">
+                        <div className="text-center text-gray-900">
                             <h1 className="text-2xl font-bold mb-4">
                                 Event Not Found
                             </h1>

@@ -93,10 +93,10 @@ export default async function Home({ searchParams }) {
     const currentDate = new Date(year, month - 1, 1)
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-blue-500 to-purple-600">
+        <div className="min-h-screen bg-white">
             <div className="container mx-auto px-4 md:px-8 py-4 md:py-8">
-                {/* Header */}
-                <div className="text-center mb-10 text-white">
+                {/* Header – Casper-style: black text, clean, orange primary CTA */}
+                <div className="text-center mb-10">
                     <div className="flex flex-col items-center justify-center mb-6">
                         <div className="relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center mb-4">
                             <Image
@@ -108,19 +108,19 @@ export default async function Home({ searchParams }) {
                                 priority
                             />
                         </div>
-                        <h1 className="text-3xl md:text-5xl font-bold mb-4 drop-shadow-lg">
+                        <h1 className="text-3xl md:text-5xl font-bold mb-4 text-[rgb(var(--foreground-rgb))]">
                             Townsville Bushwalking Club
                         </h1>
-                        <p className="text-lg md:text-xl opacity-90 mb-6">
+                        <p className="text-lg md:text-xl text-gray-600 mb-6">
                             Events Calendar & Activities
                         </p>
                     </div>
-                    <div className="flex flex-col sm:flex-row justify-center gap-4 mb-1">
+                    <div className="flex flex-col sm:flex-row justify-center gap-3 mb-1 flex-wrap">
                         <a
                             href="https://townsvillebushwalkingclub.com/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                            className="bg-casper-orange hover:bg-casper-orange-hover text-white px-6 py-3 rounded-full font-semibold transition-colors shadow-sm"
                         >
                             🌐 Visit Official Website
                         </a>
@@ -128,7 +128,7 @@ export default async function Home({ searchParams }) {
                             href="https://www.facebook.com/townsvillebushwalkingclub/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                            className="border border-gray-300 hover:border-gray-400 text-gray-800 px-6 py-3 rounded-full font-semibold transition-colors bg-white"
                         >
                             📘 Facebook Page
                         </a>
@@ -136,7 +136,7 @@ export default async function Home({ searchParams }) {
                             href="https://www.facebook.com/groups/townsvillebushwalking"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                            className="border border-gray-300 hover:border-gray-400 text-gray-800 px-6 py-3 rounded-full font-semibold transition-colors bg-white"
                         >
                             👥 Facebook Group
                         </a>
@@ -144,7 +144,7 @@ export default async function Home({ searchParams }) {
                             href="https://instagram.com/townsvillebushwalkingclub/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-white bg-opacity-90 hover:bg-opacity-100 text-gray-800 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                            className="border border-gray-300 hover:border-gray-400 text-gray-800 px-6 py-3 rounded-full font-semibold transition-colors bg-white"
                         >
                             📘 Instagram Profile
                         </a>
@@ -157,11 +157,11 @@ export default async function Home({ searchParams }) {
                 {/* Calendar and main events list – hidden when search is active */}
                 {!params?.search && (
                     <>
-                        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
+                        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-8 shadow-sm">
                             <Suspense
                                 fallback={
                                     <div className="p-8 text-center">
-                                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                                        <div className="animate-spin rounded-full h-12 w-12 border-2 border-casper-orange border-t-transparent mx-auto mb-4"></div>
                                         <p className="text-gray-600">
                                             Loading calendar...
                                         </p>
@@ -178,7 +178,7 @@ export default async function Home({ searchParams }) {
                         </div>
 
                         {/* Events list for current month & next 2 months */}
-                        <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
+                        <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-8 shadow-sm">
                             <EventSearch
                                 initialEvents={allEvents}
                                 currentDate={currentDate}
@@ -190,7 +190,7 @@ export default async function Home({ searchParams }) {
 
                 {/* Search results only – shown when search is active */}
                 {params?.search && (
-                    <div className="bg-white rounded-3xl shadow-2xl p-4 md:p-8">
+                    <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-8 shadow-sm">
                         <EventSearch
                             initialEvents={allEvents}
                             currentDate={currentDate}

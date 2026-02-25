@@ -90,30 +90,30 @@ export default function Calendar({
 
     return (
         <div>
-            {/* Calendar Header */}
-            <div className="bg-linear-to-r from-blue-400 to-cyan-400 text-white p-8">
-                <div className="flex justify-between items-center">
-                    <div className="flex gap-4 items-center">
+            {/* Calendar Header – clean black/white with touch of sky */}
+            <div className="bg-sky-light border-b border-sky-muted/40 p-6 md:p-8">
+                <div className="flex flex-wrap justify-between items-center gap-4">
+                    <div className="flex gap-3 items-center">
                         <button
                             onClick={previousMonth}
-                            className="bg-white/20 hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-full font-semibold"
+                            className="border border-gray-300 hover:border-gray-400 bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold transition-colors"
                         >
                             ← Previous
                         </button>
                         <button
                             onClick={goToToday}
-                            className="bg-white/20 hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-full font-semibold"
+                            className="bg-casper-orange hover:bg-casper-orange-hover text-white px-4 py-2 rounded-lg font-semibold transition-colors"
                         >
                             Today
                         </button>
                         <button
                             onClick={nextMonth}
-                            className="bg-white/20 hover:bg-white/30 transition-all duration-300 px-6 py-3 rounded-full font-semibold"
+                            className="border border-gray-300 hover:border-gray-400 bg-white text-gray-800 px-4 py-2 rounded-lg font-semibold transition-colors"
                         >
                             Next →
                         </button>
                     </div>
-                    <div className="text-3xl font-bold">
+                    <div className="text-2xl md:text-3xl font-bold text-gray-900">
                         {new Date(displayYear, displayMonth).toLocaleDateString('en-AU', {
                             month: 'long',
                             year: 'numeric',
@@ -153,7 +153,7 @@ export default function Calendar({
                                     : 'bg-white hover:bg-gray-50'
                             } ${
                                 isToday
-                                    ? 'bg-blue-50 border-2 border-blue-500'
+                                    ? 'bg-sky-light border-2 border-sky'
                                     : ''
                             }`}
                         >
@@ -267,7 +267,7 @@ export default function Calendar({
                                                 <Link
                                                     key={`multi-${index}`}
                                                     href={`/events/${event.id}`}
-                                                    className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-sm mb-1 border-2 border-purple-500 absolute hover:bg-purple-200 transition-colors cursor-pointer block"
+                                                    className="text-xs bg-sky-light text-gray-800 px-2 py-1 rounded-sm mb-1 border border-sky absolute hover:bg-sky-muted/30 transition-colors cursor-pointer block"
                                                     style={{
                                                         left: '0',
                                                         right: `-${
@@ -301,7 +301,7 @@ export default function Calendar({
                                             <Link
                                                 key={`single-${index}`}
                                                 href={`/events/${event.id}`}
-                                                className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-sm mb-1 hover:bg-red-200 transition-colors cursor-pointer block"
+                                                className="text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block"
                                                 style={{
                                                     marginTop: `${
                                                         index * 16

@@ -18,8 +18,8 @@ export function EventDateTime({ event, className = '', textSize = 'text-lg' }) {
 
     if (isMultiDay) {
         return (
-            <div className={`text-blue-600 font-semibold ${textSize} mb-2 flex items-center gap-2 ${className}`}>
-                <span>📅</span>
+            <div className={`text-gray-800 font-semibold ${textSize} mb-2 flex items-center gap-2 ${className}`}>
+                <span className="text-sky">📅</span>
                 <span>
                     {event.formatted_date} {event.formatted_time} to <br />
                     {event.formatted_end_date}{' '}
@@ -29,9 +29,9 @@ export function EventDateTime({ event, className = '', textSize = 'text-lg' }) {
         )
     } else {
         return (
-            <div className={`text-blue-600 font-semibold ${textSize} ${className}`}>
-                📅 {event.formatted_date} {event.formatted_time}
-                {event.formatted_end_time && ` - ${event.formatted_end_time}`}
+            <div className={`text-gray-800 font-semibold ${textSize} flex items-center gap-2 ${className}`}>
+                <span className="text-sky">📅</span>
+                <span>{event.formatted_date} {event.formatted_time}{event.formatted_end_time ? ` - ${event.formatted_end_time}` : ''}</span>
             </div>
         )
     }
