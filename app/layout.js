@@ -74,12 +74,17 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
+    const isProduction = process.env.NODE_ENV === 'production'
     return (
         <html lang="en">
             <body>
                 {children}
-                <Analytics />
-                <SpeedInsights />
+                {isProduction && (
+                    <>
+                        <Analytics />
+                        <SpeedInsights />
+                    </>
+                )}
             </body>
             <GoogleAnalytics gaId="G-YZJR1FQJW1" />
         </html>

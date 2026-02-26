@@ -99,7 +99,7 @@ export async function proxy(request) {
     // Allow inline styles/scripts for Next.js, but restrict external sources
     const csp = [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com", // Next.js and GA
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com", // Next.js, GA, Cloudflare Web Analytics
         "style-src 'self' 'unsafe-inline'", // Tailwind and inline styles
         "img-src 'self' data: https: blob:", // Images from various sources
         "font-src 'self' data:",

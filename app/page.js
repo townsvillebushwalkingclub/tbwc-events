@@ -173,6 +173,7 @@ export default async function Home({ searchParams }) {
                                     events={allEvents}
                                     year={year}
                                     month={month}
+                                    serverTodayDateString={now.toDateString()}
                                 />
                             </Suspense>
                         </div>

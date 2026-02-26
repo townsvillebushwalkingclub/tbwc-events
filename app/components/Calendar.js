@@ -8,6 +8,7 @@ export default function Calendar({
     events,
     year,
     month,
+    serverTodayDateString,
 }) {
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -50,7 +51,8 @@ export default function Calendar({
     startDate.setDate(startDate.getDate() - daysToSubtract)
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    const today = new Date()
+    // Use server-provided date for "today" to avoid hydration mismatch (server vs client timezone)
+    const todayDateString = serverTodayDateString ?? new Date().toDateString()
 
     const getEventsForDate = (date) => {
         const filteredEvents = events.filter((event) => {
@@ -141,7 +143,7 @@ export default function Calendar({
                     date.setDate(startDate.getDate() + i)
 
                     const isOtherMonth = date.getMonth() !== displayMonth
-                    const isToday = date.toDateString() === today.toDateString()
+                    const isToday = date.toDateString() === todayDateString
                     const dayEvents = getEventsForDate(date)
 
                     return (
