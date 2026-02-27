@@ -124,6 +124,7 @@ export default function EventsList({
                                         className="font-semibold text-gray-600 hover:text-gray-800 transition-colors"
                                     >
                                         {event.name}
+                                        {(event.is_cancelled ?? event.is_canceled) && ' (CANCELLED)'}
                                     </Link>
                                     <span className="text-sm text-gray-500">
                                         <EventDateTime
@@ -179,6 +180,7 @@ export default function EventsList({
                                                 className="text-xl md:text-2xl font-bold text-gray-900 hover:text-casper-orange transition-colors"
                                             >
                                                 {event.name}
+                                                {(event.is_cancelled ?? event.is_canceled) && ' (CANCELLED)'}
                                             </Link>
                                             {(() => {
                                                 const monthLabel = getMonthLabel(
@@ -219,6 +221,7 @@ export default function EventsList({
                                                             expandedDescriptions[
                                                                 event.id
                                                             ] ||
+                                                            (event.is_cancelled ?? event.is_canceled) ||
                                                             !isDescriptionLong(
                                                                 event.description
                                                             )
@@ -230,6 +233,7 @@ export default function EventsList({
                                                             expandedDescriptions[
                                                                 event.id
                                                             ] ||
+                                                            (event.is_cancelled ?? event.is_canceled) ||
                                                             !isDescriptionLong(
                                                                 event.description
                                                             )
@@ -247,7 +251,8 @@ export default function EventsList({
                                                 />
                                                 {isDescriptionLong(
                                                     event.description
-                                                ) && (
+                                                ) &&
+                                                !(event.is_cancelled ?? event.is_canceled) && (
                                                     <button
                                                         onClick={() =>
                                                             toggleDescription(

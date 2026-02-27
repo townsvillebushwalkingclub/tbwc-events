@@ -292,7 +292,8 @@ export default function Calendar({
                                                               0,
                                                               25
                                                           ) + '...'
-                                                        : event.name}{' '}
+                                                        : event.name}
+                                                    {(event.is_cancelled ?? event.is_canceled) && ' (CANCELLED)'}{' '}
                                                     (Multi-day)
                                                 </Link>
                                             )
@@ -317,6 +318,7 @@ export default function Calendar({
                                                           15
                                                       ) + '...'
                                                     : event.name}
+                                                {(event.is_cancelled ?? event.is_canceled) && ' (CANCELLED)'}
                                             </Link>
                                         ))}
                                     </>

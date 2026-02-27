@@ -117,6 +117,11 @@ export default function EventClient({ initialEvent }) {
 
                 {/* Event Card */}
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    {(event.is_cancelled ?? event.is_canceled) && (
+                        <div className="bg-gray-200 text-gray-800 px-6 py-3 text-center font-semibold border-b border-gray-300">
+                            This event has been cancelled
+                        </div>
+                    )}
                     {/* Cover Image */}
                     {coverImageUrl && (
                         <div className="relative w-full h-64 md:h-96">
@@ -139,6 +144,9 @@ export default function EventClient({ initialEvent }) {
                         {/* Event Title */}
                         <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
                             {event.name}
+                            {(event.is_cancelled ?? event.is_canceled) && (
+                                <span className="text-gray-600"> (CANCELLED)</span>
+                            )}
                         </h1>
 
                         {/* Date and Time */}

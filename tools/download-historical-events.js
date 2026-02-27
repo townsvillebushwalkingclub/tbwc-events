@@ -1,11 +1,9 @@
 /**
  * Script to download historical events from Facebook API
- * Downloads events from January 2020 to the previous month
- * Handles rate limits and can be resumed
+ * Downloads events from July 2022 to the previous month. Handles rate limits and can be resumed.
  *
  * Usage:
  *   node download-historical-events.js
- *   or
  *   npm run download:history
  */
 
@@ -139,101 +137,104 @@ function isTokenExpiredError(errorData) {
 }
 
 /**
- * Fetch events from Facebook API for a specific month
+ * Format a single raw event from the API (shared by fetch loop)
+ */
+async function formatEvent(event) {
+    const { downloadCoverImage } = require('../lib/download-cover-image.js')
+    const startDate = new Date(event.start_time)
+    const endDate = event.end_time ? new Date(event.end_time) : null
+    const isMultiDay =
+        endDate &&
+        startDate.toDateString() !== endDate.toDateString()
+
+    let cover = event.cover || null
+    if (cover && cover.source) {
+        const localPath = await downloadCoverImage(event.id, cover.source)
+        if (localPath && localPath.startsWith('/event-covers/')) {
+            cover = { ...cover, source: localPath }
+        }
+    }
+
+    return {
+        id: event.id,
+        name: event.name,
+        description: event.description || '',
+        start_time: event.start_time,
+        end_time: event.end_time,
+        formatted_date: formatEventDate(event.start_time),
+        formatted_time: formatEventTime(event.start_time),
+        formatted_end_time: formatEventEndTime(event.end_time),
+        formatted_end_date: event.end_time
+            ? formatEventDate(event.end_time)
+            : null,
+        is_multi_day: isMultiDay,
+        attending_count: event.attending_count || 0,
+        interested_count: event.interested_count || 0,
+        place: event.place || null,
+        cover,
+    }
+}
+
+/**
+ * Fetch events from Facebook API for a specific month.
+ * Follows paging.next so all events are retrieved (no 100-per-month cap).
  */
 async function fetchEventsForMonth(year, month) {
-    // Calculate the start and end of the month in ISO format
     const startDate = new Date(year, month - 1, 1)
     const endDate = new Date(year, month, 0, 23, 59, 59)
-
-    // Format dates for Facebook API (Unix timestamp)
     const since = Math.floor(startDate.getTime() / 1000)
     const until = Math.floor(endDate.getTime() / 1000)
 
-    const url = `https://graph.facebook.com/v23.0/${FACEBOOK_PAGE_ID}/events?access_token=${FACEBOOK_ACCESS_TOKEN}&fields=id,name,description,start_time,end_time,place,attending_count,interested_count,cover&limit=100&since=${since}&until=${until}`
+    const allRawEvents = []
+    let url = `https://graph.facebook.com/v23.0/${FACEBOOK_PAGE_ID}/events?access_token=${FACEBOOK_ACCESS_TOKEN}&fields=id,name,description,start_time,end_time,place,attending_count,interested_count,cover&limit=100&since=${since}&until=${until}`
 
     try {
-        const response = await fetch(url)
+        while (url) {
+            const response = await fetch(url)
 
-        if (!response.ok) {
-            const errorText = await response.text()
-            console.error(
-                `❌ Facebook API error for ${year}/${month}:`,
-                response.status
-            )
+            if (!response.ok) {
+                const errorText = await response.text()
+                console.error(
+                    `❌ Facebook API error for ${year}/${month}:`,
+                    response.status
+                )
 
-            // Check for rate limit
-            if (response.status === 403 || isRateLimitError(errorText)) {
-                const errorData = JSON.parse(errorText)
-                console.error('⚠️  Rate limit reached!')
-                console.error('Error details:', errorData)
-                throw new Error('RATE_LIMIT')
+                if (response.status === 403 || isRateLimitError(errorText)) {
+                    console.error('⚠️  Rate limit reached!')
+                    throw new Error('RATE_LIMIT')
+                }
+                if (isTokenExpiredError(errorText)) {
+                    console.error('❌ Facebook access token has expired!')
+                    throw new Error('TOKEN_EXPIRED')
+                }
+                throw new Error(
+                    `Failed to fetch events: ${response.status} ${response.statusText}`
+                )
             }
 
-            // Check for token expiration
-            if (isTokenExpiredError(errorText)) {
-                console.error('❌ Facebook access token has expired!')
-                throw new Error('TOKEN_EXPIRED')
+            const data = await response.json()
+
+            if (data.data && data.data.length > 0) {
+                allRawEvents.push(...data.data)
             }
 
-            throw new Error(
-                `Failed to fetch events: ${response.status} ${response.statusText}`
-            )
+            // Follow next page if present
+            if (data.paging && data.paging.next) {
+                url = data.paging.next
+                // Brief delay to be nice to the API
+                await new Promise((r) => setTimeout(r, 200))
+            } else {
+                url = null
+            }
         }
 
-        const data = await response.json()
-
-        if (!data.data) {
-            console.warn(`⚠️  No events data returned for ${year}/${month}`)
+        if (allRawEvents.length === 0) {
             return []
         }
 
-        // Format events for our application and download cover images
-        const { downloadCoverImage } = require('../lib/download-cover-image.js')
-
         const formattedEvents = await Promise.all(
-            data.data.map(async (event) => {
-                const startDate = new Date(event.start_time)
-                const endDate = event.end_time ? new Date(event.end_time) : null
-
-                // Check if end date is different from start date
-                const isMultiDay =
-                    endDate &&
-                    startDate.toDateString() !== endDate.toDateString()
-
-                // Download cover image and use local path in JSON when available
-                let cover = event.cover || null
-                if (cover && cover.source) {
-                    const localPath = await downloadCoverImage(
-                        event.id,
-                        cover.source
-                    )
-                    if (localPath && localPath.startsWith('/event-covers/')) {
-                        cover = { ...cover, source: localPath }
-                    }
-                }
-
-                return {
-                    id: event.id,
-                    name: event.name,
-                    description: event.description || '',
-                    start_time: event.start_time,
-                    end_time: event.end_time,
-                    formatted_date: formatEventDate(event.start_time),
-                    formatted_time: formatEventTime(event.start_time),
-                    formatted_end_time: formatEventEndTime(event.end_time),
-                    formatted_end_date: event.end_time
-                        ? formatEventDate(event.end_time)
-                        : null,
-                    is_multi_day: isMultiDay,
-                    attending_count: event.attending_count || 0,
-                    interested_count: event.interested_count || 0,
-                    place: event.place || null,
-                    cover,
-                }
-            })
+            allRawEvents.map((event) => formatEvent(event))
         )
-
         return formattedEvents
     } catch (error) {
         if (
@@ -331,7 +332,7 @@ function generateMonthList() {
     const currentYear = now.getFullYear()
     const currentMonth = now.getMonth() + 1 // 1-12
 
-    // Start from July 2022 (The start of the TBWC Facebook events)
+    // Start from July 2022 (when TBWC Facebook page events began)
     const startYear = 2022
     const startMonth = 7
 
@@ -368,7 +369,7 @@ async function main() {
     // Generate list of months to process
     const monthsToProcess = generateMonthList()
     console.log(
-        `📅 Total months to process: ${monthsToProcess.length} (from 2020/01 to previous month)\n`
+        `📅 Total months to process: ${monthsToProcess.length} (from 2022/07 to previous month)\n`
     )
 
     // Filter out already completed months
