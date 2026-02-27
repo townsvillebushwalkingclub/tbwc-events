@@ -42,9 +42,16 @@ export async function GET() {
 
 (function() {
     'use strict';
-    // Inlined events (base64) - avoids a client fetch for faster first paint
+    // Inlined events (base64, UTF-8) - decode bytes as UTF-8 so smart quotes etc. display correctly
     var _b64 = "${inlinedEventsB64}";
-    if (_b64) { try { window.__TBWC_EVENTS__ = JSON.parse(atob(_b64)); } catch (e) {} }
+    if (_b64) {
+      try {
+        var _bin = atob(_b64);
+        var _bytes = new Uint8Array(_bin.length);
+        for (var _i = 0; _i < _bin.length; _i++) _bytes[_i] = _bin.charCodeAt(_i);
+        window.__TBWC_EVENTS__ = JSON.parse(new TextDecoder('utf-8').decode(_bytes));
+      } catch (e) {}
+    }
     
     // Configuration
     const API_BASE_URL = (() => {
@@ -795,7 +802,7 @@ export async function GET() {
 
     return new NextResponse(snippet, {
         headers: {
-            'Content-Type': 'application/javascript',
+            'Content-Type': 'application/javascript; charset=utf-8',
             'Cache-Control':
                 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=3600', // 1 hour (matches inlined event data freshness)
         },
