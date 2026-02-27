@@ -15,7 +15,7 @@ export default async function sitemap() {
         console.error('Error fetching events for sitemap:', error)
     }
 
-    // Homepage entry
+    // Homepage and static pages
     const routes = [
         {
             url: baseUrl,
@@ -23,17 +23,20 @@ export default async function sitemap() {
             changeFrequency: 'daily',
             priority: 1.0,
         },
+        {
+            url: `${baseUrl}/events/all`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.7,
+        },
     ]
 
-    // Add event pages (only within allowed range: 2022 to 3 months ahead)
+    // Add every event page (including cancelled and all date ranges)
     const now = new Date()
-    const minYear = 2022
-    const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 3, 1)
     events.forEach((event) => {
         if (!event || !event.id) return
 
         const eventDate = event.start_time ? new Date(event.start_time) : null
-        if (eventDate && (eventDate.getFullYear() < minYear || eventDate >= maxFutureDate)) return
         const isPast = eventDate && eventDate < now
 
         routes.push({
