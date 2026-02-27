@@ -240,11 +240,34 @@ export async function GET() {
             z-index: 1;
         }
         
-        .tbwc-event-link {
+        .tbwc-event-links {
             margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
         }
-        
-        .tbwc-event-link a {
+
+        .tbwc-event-view-btn {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            color: white;
+            text-decoration: none;
+            font-size: clamp(0.9rem, 1vw + 0.75rem, 1rem);
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.4);
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .tbwc-event-view-btn:hover {
+            background: rgba(255,255,255,0.35);
+            border-color: rgba(255,255,255,0.6);
+            color: white;
+        }
+
+        .tbwc-event-fb-link {
             color: #4facfe;
             text-decoration: none;
             font-size: clamp(0.95rem, 1.1vw + 0.8rem, 1.05rem);
@@ -253,8 +276,8 @@ export async function GET() {
             align-items: center;
             gap: 5px;
         }
-        
-        .tbwc-event-link a:hover {
+
+        .tbwc-event-fb-link:hover {
             text-decoration: underline;
         }
         
@@ -477,6 +500,7 @@ export async function GET() {
         const hasLongDescription = event.description && event.description.length > 150;
         const truncatedDesc = hasLongDescription ? truncateDescription(event.description) : event.description;
         const processedTruncatedDesc = processDescription(truncatedDesc, event.name);
+        const eventPageUrl = \`\${API_BASE_URL}/events/\${event.id}\`;
         const facebookEventUrl = \`https://www.facebook.com/events/\${event.id}/\`;
         let coverImageUrl = event.cover && event.cover.source ? event.cover.source : null;
         
@@ -550,10 +574,9 @@ export async function GET() {
                             <span>👥 \${event.attending_count} attending</span>
                             <span>❤️ \${event.interested_count} interested</span>
                         </div>
-                        <div class="tbwc-event-link">
-                            <a href="\${facebookEventUrl}" target="_blank">
-                                📘 View on Facebook →
-                            </a>
+                        <div class="tbwc-event-links">
+                            <a href="\${eventPageUrl}" target="_blank" rel="noopener noreferrer" class="tbwc-event-view-btn">View Event</a>
+                            <a href="\${facebookEventUrl}" target="_blank" rel="noopener noreferrer" class="tbwc-event-fb-link">📘 View on Facebook →</a>
                         </div>
                     </div>
                 </div>
