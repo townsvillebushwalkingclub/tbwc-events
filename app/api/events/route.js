@@ -20,11 +20,11 @@ export async function GET() {
         // Fetch all upcoming events from Facebook API
         const events = await getFacebookEvents()
 
-        // Security: Filter out events before 2022 or more than 6 months in the future
+        // Security: Filter out events before 2022 or more than 3 months in the future
         const now = new Date()
         const minYear = 2022
-        // Calculate the date 6 months from now (first day of that month)
-        const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 6, 1)
+        // Calculate the date 3 months from now (first day of that month)
+        const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 3, 1)
 
         const filteredEvents = events.filter((event) => {
             if (!event.start_time) return false

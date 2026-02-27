@@ -1,12 +1,30 @@
 import { NextResponse } from 'next/server'
 import { ALLOWED_DOMAINS } from '@/lib/allowed-domains'
+import { getFacebookEvents } from '@/lib/facebook-api.js'
 
-// Cache embed snippet for 1 day (86400 seconds)
-export const revalidate = 86400
+// Cache embed for 1 hour so inlined event data stays reasonably fresh
+export const revalidate = 3600
 
 export async function GET() {
     // Convert allowed domains array to JSON for injection into the script
     const allowedDomainsJson = JSON.stringify(ALLOWED_DOMAINS)
+
+    // Fetch events server-side and inline so embed shows data without a client fetch (faster first paint)
+    let inlinedEventsB64 = ''
+    try {
+        const now = new Date()
+        const minYear = 2022
+        const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 3, 1)
+        const allEvents = await getFacebookEvents()
+        const filtered = allEvents.filter((event) => {
+            if (!event.start_time) return false
+            const eventDate = new Date(event.start_time)
+            return eventDate.getFullYear() >= minYear && eventDate < maxFutureDate
+        })
+        inlinedEventsB64 = Buffer.from(JSON.stringify(filtered), 'utf8').toString('base64')
+    } catch (e) {
+        console.error('Embed: failed to fetch events for inlining', e)
+    }
 
     const snippet = `/**
  * Townsville Bushwalking Club Events Embed
@@ -19,6 +37,9 @@ export async function GET() {
 
 (function() {
     'use strict';
+    // Inlined events (base64) – avoids a client fetch for faster first paint
+    var _b64 = "${inlinedEventsB64}";
+    if (_b64) { try { window.__TBWC_EVENTS__ = JSON.parse(atob(_b64)); } catch (e) {} }
     
     // Configuration
     const API_BASE_URL = (() => {
@@ -319,67 +340,21 @@ export async function GET() {
         };
     }
     
-    // Get list of months to fetch
-    function getMonthsToFetch() {
-        const now = new Date();
-        const currentYear = now.getFullYear();
-        const currentMonth = now.getMonth() + 1;
-        
-        const monthsToFetch = [];
-        
-        // Previous month
-        const prevMonth = currentMonth === 1 ? 12 : currentMonth - 1;
-        const prevYear = currentMonth === 1 ? currentYear - 1 : currentYear;
-        monthsToFetch.push({ year: prevYear, month: prevMonth });
-        
-        // Current month
-        monthsToFetch.push({ year: currentYear, month: currentMonth });
-        
-        // Next month
-        const nextMonth = currentMonth === 12 ? 1 : currentMonth + 1;
-        const nextYear = currentMonth === 12 ? currentYear + 1 : currentYear;
-        monthsToFetch.push({ year: nextYear, month: nextMonth });
-        
-        // Month after next
-        const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1;
-        const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear;
-        monthsToFetch.push({ year: yearAfterNext, month: monthAfterNext });
-        
-        return monthsToFetch;
-    }
-    
-    // Fetch events from a single month
-    async function fetchMonthEvents(year, month) {
+    // Fetch all events in one API call (avoids 4x /api/events/year/month and reduces Facebook API load)
+    async function fetchAllEvents() {
         try {
-            const url = \`\${API_BASE_URL}/api/events/\${year}/\${month}\`;
-            console.log(\`Fetching events from: \${url}\`);
+            const url = \`\${API_BASE_URL}/api/events\`;
             const response = await fetch(url);
-            
             if (response.ok) {
                 const data = await response.json();
-                console.log(\`Events for \${year}/\${month}:\`, data.success ? data.data.length : 'Failed');
-                if (data.success && data.data) {
+                if (data.success && Array.isArray(data.data)) {
                     return data.data;
                 }
-            } else {
-                console.error(\`Failed to fetch events for \${year}/\${month}: \${response.status}\`);
             }
         } catch (error) {
-            console.error(\`Error fetching events for \${year}/\${month}:\`, error);
+            console.error('TBWC Events: Error fetching events:', error);
         }
         return [];
-    }
-    
-    // Fetch events progressively, calling callback for each month
-    async function fetchEventsProgressively(onMonthFetched) {
-        const monthsToFetch = getMonthsToFetch();
-        
-        for (const { year, month } of monthsToFetch) {
-            const events = await fetchMonthEvents(year, month);
-            if (events.length > 0) {
-                onMonthFetched(events);
-            }
-        }
     }
     
     // Filter upcoming events
@@ -752,45 +727,29 @@ export async function GET() {
         // Initialize container with header and loading indicator
         initializeContainer(container);
         
+        // Preconnect to API origin so any fallback fetch or images load faster
         try {
-            // Track all events
-            let allEvents = [];
-            let hasReceivedEvents = false;
+            var _origin = (typeof API_BASE_URL === 'string') ? new URL(API_BASE_URL).origin : '';
+            if (_origin && !document.querySelector('link[rel="preconnect"][href="' + _origin + '"]')) {
+                var _link = document.createElement('link');
+                _link.rel = 'preconnect';
+                _link.href = _origin;
+                document.head.appendChild(_link);
+            }
+        } catch (e) {}
+        
+        try {
+            // Use inlined events if available (no client fetch), else fetch from API
+            var allEvents = window.__TBWC_EVENTS__ && Array.isArray(window.__TBWC_EVENTS__) ? window.__TBWC_EVENTS__ : await fetchAllEvents();
+            var upcomingEvents = filterUpcomingEvents(allEvents);
             
-            // Fetch events progressively, one month at a time
-            await fetchEventsProgressively((monthEvents) => {
-                console.log(\`Received \${monthEvents.length} events from month\`);
-                
-                if (monthEvents.length > 0) {
-                    hasReceivedEvents = true;
-                    
-                    // Add new events to our collection
-                    allEvents = allEvents.concat(monthEvents);
-                    
-                    // Filter and sort all events
-                    const upcomingEvents = filterUpcomingEvents(allEvents);
-                    
-                    console.log(\`Displaying \${upcomingEvents.length} total upcoming events\`);
-                    
-                    // Update the entire list to maintain proper sort order
-                    updateEventsList(upcomingEvents);
-                }
-            });
-            
-            // If no events were received at all, show the no events message
-            if (!hasReceivedEvents || allEvents.length === 0) {
+            if (upcomingEvents.length === 0) {
                 showNoEvents(container);
             } else {
-                // Final check - if after filtering we have no upcoming events
-                const finalUpcomingEvents = filterUpcomingEvents(allEvents);
-                if (finalUpcomingEvents.length === 0) {
-                    showNoEvents(container);
-                }
+                updateEventsList(upcomingEvents);
             }
             
-            console.log('Total events fetched:', allEvents.length);
-            console.log('Upcoming events displayed:', filterUpcomingEvents(allEvents).length);
-            
+            console.log('Total events:', allEvents.length, 'Upcoming displayed:', upcomingEvents.length);
         } catch (error) {
             console.error('TBWC Events Error:', error);
             showError(container, 'Failed to load events. Please check the console for details.');
@@ -810,7 +769,7 @@ export async function GET() {
         headers: {
             'Content-Type': 'application/javascript',
             'Cache-Control':
-                'public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400', // Cache for 1 day
+                'public, max-age=3600, s-maxage=3600, stale-while-revalidate=3600', // 1 hour (matches inlined event data freshness)
         },
     })
 }

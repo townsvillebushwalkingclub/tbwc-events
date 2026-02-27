@@ -25,12 +25,15 @@ export default async function sitemap() {
         },
     ]
 
-    // Add event pages
+    // Add event pages (only within allowed range: 2022 to 3 months ahead)
     const now = new Date()
+    const minYear = 2022
+    const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 3, 1)
     events.forEach((event) => {
         if (!event || !event.id) return
 
         const eventDate = event.start_time ? new Date(event.start_time) : null
+        if (eventDate && (eventDate.getFullYear() < minYear || eventDate >= maxFutureDate)) return
         const isPast = eventDate && eventDate < now
 
         routes.push({

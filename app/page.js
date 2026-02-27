@@ -1,12 +1,13 @@
 import { Suspense } from 'react'
 import Image from 'next/image'
-import { getEventsForMonth } from '@/lib/facebook-api.js'
+import { getEventsForCalendarMonths } from '@/lib/facebook-api.js'
 import Calendar from './components/Calendar'
 import EventSearch from './components/EventSearch'
 import SearchBar from './components/SearchBar'
 
-// Revalidate the homepage daily
-export const revalidate = 86400 // 1 day
+// Revalidate every 6 hours so new/cancelled events appear without hitting Facebook rate limits.
+// Homepage uses a single API call for the calendar (getEventsForCalendarMonths).
+export const revalidate = 21600 // 6 hours
 
 export default async function Home({ searchParams }) {
     // Await searchParams as it's a Promise in Next.js 15+
@@ -37,7 +38,7 @@ export default async function Home({ searchParams }) {
 
     // Security: Apply date range restrictions (same as API)
     const minYear = 2022
-    const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 6, 1)
+    const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 3, 1)
 
     let year = yearParam && yearParam >= minYear ? yearParam : now.getFullYear()
     let month = monthParam
@@ -60,7 +61,7 @@ export default async function Home({ searchParams }) {
     const monthAfterNext = nextMonth === 12 ? 1 : nextMonth + 1
     const yearAfterNext = nextMonth === 12 ? nextYear + 1 : nextYear
 
-    // Fetch events for current month and next 2 months only (exclude previous month)
+    // Fetch events for current month and next 2 months (single Facebook API call to avoid rate limits)
     const monthsToFetch = [
         { year, month },
         { year: nextYear, month: nextMonth },
@@ -68,23 +69,11 @@ export default async function Home({ searchParams }) {
     ]
 
     let allEvents = []
-    const fetchPromises = monthsToFetch.map(
-        async ({ year: fetchYear, month: fetchMonth }) => {
-            try {
-                const events = await getEventsForMonth(fetchYear, fetchMonth)
-                return events || []
-            } catch (error) {
-                console.error(
-                    `Error fetching events for ${fetchYear}/${fetchMonth}:`,
-                    error
-                )
-                return []
-            }
-        }
-    )
-
-    const results = await Promise.all(fetchPromises)
-    allEvents = results.flat()
+    try {
+        allEvents = await getEventsForCalendarMonths(monthsToFetch)
+    } catch (error) {
+        console.error('Error fetching events for calendar:', error)
+    }
 
     // Sort events by start time
     allEvents.sort((a, b) => new Date(a.start_time) - new Date(b.start_time))

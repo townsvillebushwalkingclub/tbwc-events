@@ -31,13 +31,13 @@ export async function GET(request, { params }) {
             )
         }
 
-        // Security: Block requests for dates before 2022 or more than 6 months in the future
+        // Security: Block requests for dates before 2022 or more than 3 months in the future
         const now = new Date()
         const minYear = 2022
         const requestedDate = new Date(year, month - 1, 1)
         
-        // Calculate the date 6 months from now (first day of that month)
-        const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 6, 1)
+        // Calculate the date 3 months from now (first day of that month)
+        const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 3, 1)
 
         if (year < minYear) {
             return NextResponse.json(
@@ -49,12 +49,12 @@ export async function GET(request, { params }) {
             )
         }
 
-        // Block if requested month is beyond 6 months in the future
+        // Block if requested month is beyond 3 months in the future
         if (requestedDate >= maxFutureDate) {
             return NextResponse.json(
                 {
                     success: false,
-                    error: 'Events more than 6 months in the future are not available',
+                    error: 'Events more than 3 months in the future are not available',
                 },
                 { status: 400 }
             )
