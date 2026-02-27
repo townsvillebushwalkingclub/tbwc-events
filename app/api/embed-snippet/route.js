@@ -19,9 +19,14 @@ export async function GET() {
         const filtered = allEvents.filter((event) => {
             if (!event.start_time) return false
             const eventDate = new Date(event.start_time)
-            return eventDate.getFullYear() >= minYear && eventDate < maxFutureDate
+            return (
+                eventDate.getFullYear() >= minYear && eventDate < maxFutureDate
+            )
         })
-        inlinedEventsB64 = Buffer.from(JSON.stringify(filtered), 'utf8').toString('base64')
+        inlinedEventsB64 = Buffer.from(
+            JSON.stringify(filtered),
+            'utf8',
+        ).toString('base64')
     } catch (e) {
         console.error('Embed: failed to fetch events for inlining', e)
     }
@@ -37,7 +42,7 @@ export async function GET() {
 
 (function() {
     'use strict';
-    // Inlined events (base64) – avoids a client fetch for faster first paint
+    // Inlined events (base64) - avoids a client fetch for faster first paint
     var _b64 = "${inlinedEventsB64}";
     if (_b64) { try { window.__TBWC_EVENTS__ = JSON.parse(atob(_b64)); } catch (e) {} }
     
