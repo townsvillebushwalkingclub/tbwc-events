@@ -170,7 +170,7 @@ Embed events on your website with a simple JavaScript snippet. The script automa
 <script src="https://your-domain.com/api/embed-snippet?v=1"></script>
 ```
 
-For local testing, use `http://localhost:3000/api/embed-snippet?v=1`. Test pages available at `/test-embed.html`.
+For local testing, use `http://localhost:3000/api/embed-snippet?v=1`. Test pages available at [/test-embed.html](https://events.townsvillebushwalkingclub.com/test-embed.html).
 
 
 ## Contributing
