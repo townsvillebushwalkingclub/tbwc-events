@@ -1,6 +1,6 @@
 # Townsville Bushwalking Club - Events Calendar
 
-A modern Next.js web application that extracts Facebook events from the Townsville Bushwalking Club page and displays them in a beautiful calendar interface with a REST API.
+A modern Next.js web application (TypeScript) that extracts Facebook events from the Townsville Bushwalking Club page and displays them in a beautiful calendar interface with a REST API.
 
 ## Features
 
@@ -12,7 +12,7 @@ A modern Next.js web application that extracts Facebook events from the Townsvil
 - 🗺️ **Sitemap Generation** - A sitemap listing all event and calendar pages for better search engine indexing.
 - 🔄 **REST API** - JSON endpoints for programmatic access
 - 📱 **Responsive Design** - Works on desktop and mobile devices
-- ⚡ **Modern Tech Stack** - Built with Next.js, React, and Tailwind CSS
+- ⚡ **Modern Tech Stack** - Built with Next.js, React, TypeScript, and Tailwind CSS
 - 🎨 **Beautiful UI** - Modern gradient design with smooth animations
 - 🚀 **Vercel Ready** - Optimized for deployment on Vercel
 - 🔗 **Embed Widget** - JavaScript snippet for embedding events on other websites
@@ -83,29 +83,32 @@ All endpoints return JSON with `success`, `data`, and `timestamp` fields. Events
 
 ```text
 tbwc-events/
-├── app/                   # Next.js App Router
-│   ├── page.js            # Main calendar page
-│   ├── layout.js          # Root layout with metadata
+├── app/                   # Next.js App Router (TypeScript)
+│   ├── page.tsx           # Main calendar page
+│   ├── layout.tsx         # Root layout with metadata
 │   ├── events/            # Event detail pages
 │   │   └── [id]/          # Individual event pages
-│   ├── components/        # React components
-│   │   ├── Calendar.js    # Calendar component
-│   │   └── EventsList.js  # Events list component
-│   └── api/               # API routes
+│   ├── components/        # React components (.tsx)
+│   │   ├── Calendar.tsx   # Calendar component
+│   │   └── EventsList.tsx # Events list component
+│   └── api/               # API routes (.ts)
 │       ├── events/        # Events API endpoints
 │       │   ├── [id]/      # Single event endpoint
 │       │   └── [year]/[month]/ # Monthly events
 │       ├── embed-snippet/ # Embed widget script
 │       └── health/        # Health check endpoint
-├── lib/                   # Library functions
-│   └── facebook-api.js    # Facebook API integration
-├── tools/                 # Utility scripts
-│   ├── get-long-lived-token.js # Token refresh tool
-│   └── download-historical-events.js # Historical data download
+├── lib/                   # Library and shared logic (.ts)
+│   └── facebook-api.ts   # Facebook API integration
+├── types/                 # Shared TypeScript types
+│   └── event.ts           # Event and related types
+├── tools/                 # Utility scripts (TypeScript, run with tsx)
+│   ├── get-long-lived-token.ts      # Token refresh tool
+│   └── download-historical-events.ts # Historical data download
 ├── data/                  # Data storage
 │   └── events/            # Past events JSON files (YYYY/MM.json)
 ├── package.json           # Dependencies and scripts
-├── next.config.js         # Next.js configuration
+├── tsconfig.json          # TypeScript configuration
+├── next.config.ts        # Next.js configuration
 └── .env.local             # Environment variables
 ```
 
@@ -124,7 +127,7 @@ Tokens expire periodically. To refresh:
 npm run token:refresh
 ```
 
-This converts short-lived tokens to long-lived (60 days) or fetches a **Page Access Token** (never expires, recommended for production).
+This runs the TypeScript tool with `tsx` and converts short-lived tokens to long-lived (60 days) or fetches a **Page Access Token** (never expires, recommended for production).
 
 The app handles token expiration gracefully with cached data and clear error messages.
 

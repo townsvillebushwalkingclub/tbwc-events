@@ -8,8 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "token:refresh": "node tools/get-long-lived-token.js",
-    "download:history": "node tools/download-historical-events.js"
+    "token:refresh": "npx tsx tools/get-long-lived-token.ts",
+    "download:history": "npx tsx tools/download-historical-events.ts"
   },
   "keywords": [
     "townsville",
@@ -45,7 +45,9 @@
     "@types/react-dom": "19.2.3",
     "baseline-browser-mapping": "^2.8.32",
     "eslint": "^9.39.2",
-    "eslint-config-next": "16.1.6"
+    "eslint-config-next": "16.1.6",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   },
   "overrides": {
     "@types/react": "19.2.14",

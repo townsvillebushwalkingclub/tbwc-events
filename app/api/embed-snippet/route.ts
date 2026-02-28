@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { ALLOWED_DOMAINS } from '@/lib/allowed-domains'
-import { getFacebookEvents } from '@/lib/facebook-api.js'
+import { getFacebookEvents } from '@/lib/facebook-api'
 
 // Cache embed for 1 hour so inlined event data stays reasonably fresh
 export const revalidate = 3600
