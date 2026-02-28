@@ -118,7 +118,7 @@ export default function EventsList({
                     <EventDateTime
                       event={event}
                       textSize="text-sm"
-                      className="!text-gray-500"
+                      className="text-gray-500!"
                     />
                   </span>
                   <span className="text-sm">(past)</span>
