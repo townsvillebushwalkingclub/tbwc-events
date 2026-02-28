@@ -9,12 +9,15 @@ interface EventSearchProps {
   initialEvents: TBWCEvent[]
   currentDate: Date
   initialSearchQuery?: string | null
+  /** When set, "Clear search" navigates here instead of "/" */
+  clearToPath?: string
 }
 
 export default function EventSearch({
   initialEvents,
   currentDate,
   initialSearchQuery = null,
+  clearToPath = '/',
 }: EventSearchProps) {
   const router = useRouter()
   const [searchResults, setSearchResults] = useState<TBWCEvent[] | null>(null)
@@ -58,7 +61,7 @@ export default function EventSearch({
   }, [initialSearchQuery, runSearch])
 
   const handleClear = () => {
-    router.push('/')
+    router.push(clearToPath)
     setSearchResults(null)
     setSearchTerm('')
   }

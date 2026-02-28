@@ -4,13 +4,12 @@ import Link from 'next/link'
 import { getEventsForCalendarMonths } from '@/lib/facebook-api'
 import Calendar from './components/Calendar'
 import EventSearch from './components/EventSearch'
-import SearchBar from './components/SearchBar'
 import type { TBWCEvent } from '@/types/event'
 
 export const revalidate = 21600 // 6 hours
 
 interface HomeProps {
-  searchParams: Promise<{ year?: string; month?: string; search?: string }>
+  searchParams: Promise<{ year?: string; month?: string }>
 }
 
 export default async function Home({ searchParams }: HomeProps) {
@@ -129,58 +128,47 @@ export default async function Home({ searchParams }: HomeProps) {
               📘 Instagram Profile
             </a>
           </div>
-          <Suspense fallback={null}>
-            <SearchBar />
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-8 shadow-sm">
+          <Suspense
+            fallback={
+              <div className="p-8 text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-2 border-casper-orange border-t-transparent mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading calendar...</p>
+              </div>
+            }
+          >
+            <Calendar
+              currentDate={currentDate}
+              events={allEvents}
+              year={year}
+              month={month}
+              serverTodayDateString={now.toDateString()}
+            />
           </Suspense>
         </div>
 
-        {!params?.search && (
-          <>
-            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-8 shadow-sm">
-              <Suspense
-                fallback={
-                  <div className="p-8 text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-2 border-casper-orange border-t-transparent mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading calendar...</p>
-                  </div>
-                }
-              >
-                <Calendar
-                  currentDate={currentDate}
-                  events={allEvents}
-                  year={year}
-                  month={month}
-                  serverTodayDateString={now.toDateString()}
-                />
-              </Suspense>
-            </div>
+        <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-8 shadow-sm">
+          <EventSearch
+            initialEvents={allEvents}
+            currentDate={currentDate}
+            initialSearchQuery={null}
+          />
+        </div>
 
-            <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-8 shadow-sm">
-              <EventSearch
-                initialEvents={allEvents}
-                currentDate={currentDate}
-                initialSearchQuery={null}
-              />
-            </div>
-          </>
-        )}
-
-        {params?.search && (
-          <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-8 shadow-sm">
-            <EventSearch
-              initialEvents={allEvents}
-              currentDate={currentDate}
-              initialSearchQuery={params.search}
-            />
-          </div>
-        )}
-
-        <p className="mt-12 pt-6 text-center">
+        <p className="mt-12 pt-6 text-center flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
           <Link
             href="/events/all"
             className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
           >
-            All events →
+            All events
+          </Link>
+          <Link
+            href="/events/search"
+            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            Search
           </Link>
         </p>
       </div>

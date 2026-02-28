@@ -3,10 +3,12 @@
 import { useState, useEffect, FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+const SEARCH_PAGE = '/events/search'
+
 export default function SearchBar() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const urlQuery = searchParams.get('search') || ''
+  const urlQuery = searchParams.get('q') || searchParams.get('search') || ''
   const [query, setQuery] = useState(urlQuery)
 
   useEffect(() => {
@@ -17,11 +19,9 @@ export default function SearchBar() {
     e.preventDefault()
     const trimmed = (query || '').trim()
     if (trimmed) {
-      const params = new URLSearchParams(searchParams.toString())
-      params.set('search', trimmed)
-      router.push(`/?${params.toString()}`)
+      router.push(`${SEARCH_PAGE}?q=${encodeURIComponent(trimmed)}`)
     } else {
-      router.push('/')
+      router.push(SEARCH_PAGE)
     }
   }
 
