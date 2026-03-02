@@ -1,5 +1,6 @@
 'use client'
 
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import type { TBWCEvent } from '@/types/event'
@@ -12,32 +13,121 @@ interface CalendarProps {
   serverTodayDateString?: string
 }
 
+// Server sends 3 consecutive months: (year, month), (nextYear, nextMonth), (yearAfterNext, monthAfterNext)
+function isInInitialRange(
+  viewYear: number,
+  viewMonth: number,
+  initialYear: number,
+  initialMonth: number
+): boolean {
+  const a = initialYear * 12 + initialMonth
+  const b = viewYear * 12 + viewMonth
+  return b >= a && b < a + 3
+}
+
 export default function Calendar({
   currentDate,
-  events,
-  year,
-  month,
+  events: serverEvents,
+  year: initialYear,
+  month: initialMonth,
   serverTodayDateString,
 }: CalendarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const navigateToMonth = (newYear: number, newMonth: number) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('year', newYear.toString())
-    params.set('month', newMonth.toString())
-    router.push(`/?${params.toString()}`)
-  }
+  const viewFromUrl = ((): { y: number; m: number } => {
+    const y = searchParams.get('year')
+    const m = searchParams.get('month')
+    if (y && m) {
+      const yi = parseInt(y, 10)
+      const mi = parseInt(m, 10)
+      if (
+        !isNaN(yi) &&
+        !isNaN(mi) &&
+        mi >= 1 &&
+        mi <= 12 &&
+        yi >= 2022 &&
+        yi <= 2100
+      )
+        return { y: yi, m: mi }
+    }
+    return { y: initialYear, m: initialMonth }
+  })()
+
+  const [viewYear, setViewYear] = useState(viewFromUrl.y)
+  const [viewMonth, setViewMonth] = useState(viewFromUrl.m)
+  const [overflowEvents, setOverflowEvents] = useState<TBWCEvent[] | null>(null)
+  const [overflowKey, setOverflowKey] = useState<string | null>(null)
+
+  const inInitialRange = isInInitialRange(
+    viewYear,
+    viewMonth,
+    initialYear,
+    initialMonth
+  )
+  const events = inInitialRange
+    ? serverEvents
+    : overflowEvents ?? []
+
+  const navigateToMonth = useCallback(
+    (newYear: number, newMonth: number) => {
+      if (
+        isInInitialRange(newYear, newMonth, initialYear, initialMonth)
+      ) {
+        setOverflowEvents(null)
+        setOverflowKey(null)
+      }
+      setViewYear(newYear)
+      setViewMonth(newMonth)
+      const params = new URLSearchParams()
+      params.set('year', newYear.toString())
+      params.set('month', newMonth.toString())
+      router.replace(`/?${params.toString()}`, { scroll: false })
+    },
+    [router, initialYear, initialMonth]
+  )
+
+  const overflowKeyForView = `${viewYear}-${viewMonth}`
+  const loading =
+    !inInitialRange && overflowKey !== overflowKeyForView
+
+  useEffect(() => {
+    if (inInitialRange) return
+    const key = overflowKeyForView
+    if (overflowKey === key) return
+    let cancelled = false
+    fetch(`/api/events/${viewYear}/${viewMonth}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return
+        if (data?.success && Array.isArray(data.data)) {
+          setOverflowEvents(data.data)
+          setOverflowKey(key)
+        } else {
+          setOverflowEvents([])
+          setOverflowKey(key)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setOverflowEvents([])
+          setOverflowKey(key)
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [viewYear, viewMonth, inInitialRange, overflowKey, overflowKeyForView])
 
   const previousMonth = () => {
-    const newMonth = month === 1 ? 12 : month - 1
-    const newYear = month === 1 ? year - 1 : year
+    const newMonth = viewMonth === 1 ? 12 : viewMonth - 1
+    const newYear = viewMonth === 1 ? viewYear - 1 : viewYear
     navigateToMonth(newYear, newMonth)
   }
 
   const nextMonth = () => {
-    const newMonth = month === 12 ? 1 : month + 1
-    const newYear = month === 12 ? year + 1 : year
+    const newMonth = viewMonth === 12 ? 1 : viewMonth + 1
+    const newYear = viewMonth === 12 ? viewYear + 1 : viewYear
     navigateToMonth(newYear, newMonth)
   }
 
@@ -46,8 +136,8 @@ export default function Calendar({
     navigateToMonth(now.getFullYear(), now.getMonth() + 1)
   }
 
-  const displayYear = year
-  const displayMonth = month - 1
+  const displayYear = viewYear
+  const displayMonth = viewMonth - 1
   const firstDay = new Date(displayYear, displayMonth, 1)
   const lastDay = new Date(displayYear, displayMonth + 1, 0)
   const startDate = new Date(firstDay)
@@ -112,11 +202,15 @@ export default function Calendar({
             </button>
           </div>
           <div className="text-2xl md:text-3xl font-bold text-gray-900">
-            {new Date(displayYear, displayMonth).toLocaleDateString('en-AU', {
-              month: 'long',
-              year: 'numeric',
-              timeZone: 'Australia/Brisbane',
-            })}
+            {loading ? (
+              <span className="text-gray-500">Loading…</span>
+            ) : (
+              new Date(displayYear, displayMonth).toLocaleDateString('en-AU', {
+                month: 'long',
+                year: 'numeric',
+                timeZone: 'Australia/Brisbane',
+              })
+            )}
           </div>
         </div>
       </div>

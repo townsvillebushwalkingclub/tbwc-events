@@ -6,46 +6,17 @@ import Calendar from './components/Calendar'
 import EventSearch from './components/EventSearch'
 import type { TBWCEvent } from '@/types/event'
 
+// Static generation: no searchParams so the page can be prerendered.
+// Calendar month switching is handled client-side (and fetches from API when needed).
 export const revalidate = 21600 // 6 hours
 
-interface HomeProps {
-  searchParams: Promise<{ year?: string; month?: string }>
-}
-
-export default async function Home({ searchParams }: HomeProps) {
-  const params = await searchParams
+export default async function Home() {
   const now = new Date()
-
-  let yearParam = params?.year ? parseInt(params.year, 10) : null
-  let monthParam = params?.month ? parseInt(params.month, 10) : null
-
-  if (
-    yearParam &&
-    (isNaN(yearParam) || yearParam < 2000 || yearParam > 2100)
-  ) {
-    yearParam = null
-  }
-  if (
-    monthParam &&
-    (isNaN(monthParam) || monthParam < 1 || monthParam > 12)
-  ) {
-    monthParam = null
-  }
-
   const minYear = 2022
   const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 3, 1)
 
-  let year =
-    yearParam && yearParam >= minYear ? yearParam : now.getFullYear()
-  let month = monthParam
-    ? Math.max(1, Math.min(12, monthParam))
-    : now.getMonth() + 1
-
-  const requestedDate = new Date(year, month - 1, 1)
-  if (year < minYear || requestedDate >= maxFutureDate) {
-    year = now.getFullYear()
-    month = now.getMonth() + 1
-  }
+  const year = now.getFullYear()
+  const month = now.getMonth() + 1
 
   const nextMonth = month === 12 ? 1 : month + 1
   const nextYear = month === 12 ? year + 1 : year

@@ -1,6 +1,9 @@
 import { getAllEvents } from '@/lib/facebook-api'
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 3600 // 1 hour
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -36,11 +39,16 @@ export async function GET(request: Request) {
       return ta >= now ? -1 : 1
     })
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       success: true,
       data: matches,
       count: matches.length,
     })
+    response.headers.set(
+      'Cache-Control',
+      'public, s-maxage=3600, stale-while-revalidate=3600'
+    )
+    return response
   } catch (error) {
     console.error('Error searching events:', error)
     return NextResponse.json(

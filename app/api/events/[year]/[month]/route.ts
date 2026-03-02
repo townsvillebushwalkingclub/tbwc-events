@@ -1,7 +1,19 @@
 import { NextResponse } from 'next/server'
-import { getEventsForMonth } from '@/lib/facebook-api'
+import {
+  getEventsForMonth,
+  getPastYearMonthsFromFiles,
+} from '@/lib/facebook-api'
 
 export const revalidate = 86400
+
+/** Prerender API responses for past year/month (they won't change). */
+export async function generateStaticParams() {
+  const pairs = getPastYearMonthsFromFiles()
+  return pairs.map(({ year, month }) => ({
+    year: year.toString(),
+    month: month.toString(),
+  }))
+}
 
 export async function OPTIONS() {
   return new NextResponse(null, {

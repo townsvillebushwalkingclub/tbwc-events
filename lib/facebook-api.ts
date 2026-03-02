@@ -323,6 +323,89 @@ function isPastMonth(year: number, month: number): boolean {
   return false
 }
 
+/**
+ * Returns event IDs from past months' data files only (no API calls).
+ * Used at build time to prerender /api/event/[id] for past events.
+ */
+export function getPastEventIdsFromFiles(): string[] {
+  const ids: string[] = []
+  try {
+    if (!fs.existsSync(DATA_DIR)) return ids
+    const yearDirs = fs
+      .readdirSync(DATA_DIR)
+      .filter((dir) => {
+        const dirPath = path.join(DATA_DIR, dir)
+        return (
+          fs.statSync(dirPath).isDirectory() && /^\d{4}$/.test(dir)
+        )
+      })
+      .map((dir) => parseInt(dir, 10))
+    for (const year of yearDirs) {
+      const yearDir = path.join(DATA_DIR, year.toString())
+      const monthFiles = fs
+        .readdirSync(yearDir)
+        .filter((file) => file.endsWith('.json'))
+        .map((file) => parseInt(file.replace('.json', ''), 10))
+      for (const month of monthFiles) {
+        if (!isPastMonth(year, month)) continue
+        const fileEvents = loadEventsFromFile(year, month)
+        if (fileEvents) {
+          for (const event of fileEvents) {
+            if (event?.id && /^\d{15,16}$/.test(String(event.id))) {
+              ids.push(String(event.id))
+            }
+          }
+        }
+      }
+    }
+    const cancelledIds = getCancelledEventIds()
+    for (const id of cancelledIds) {
+      if (!ids.includes(id)) ids.push(id)
+    }
+  } catch (error) {
+    console.error('Error reading past event IDs from files:', error)
+  }
+  return [...new Set(ids)]
+}
+
+const MIN_YEAR = 2022
+
+/**
+ * Returns (year, month) pairs for past months that have data files.
+ * Used at build time to prerender /api/events/[year]/[month] for past months.
+ */
+export function getPastYearMonthsFromFiles(): Array<{ year: number; month: number }> {
+  const pairs: Array<{ year: number; month: number }> = []
+  try {
+    if (!fs.existsSync(DATA_DIR)) return pairs
+    const yearDirs = fs
+      .readdirSync(DATA_DIR)
+      .filter((dir) => {
+        const dirPath = path.join(DATA_DIR, dir)
+        return (
+          fs.statSync(dirPath).isDirectory() && /^\d{4}$/.test(dir)
+        )
+      })
+      .map((dir) => parseInt(dir, 10))
+      .filter((y) => y >= MIN_YEAR)
+    for (const year of yearDirs) {
+      const yearDir = path.join(DATA_DIR, year.toString())
+      const monthFiles = fs
+        .readdirSync(yearDir)
+        .filter((file) => file.endsWith('.json'))
+        .map((file) => parseInt(file.replace('.json', ''), 10))
+        .filter((m) => m >= 1 && m <= 12)
+      for (const month of monthFiles) {
+        if (!isPastMonth(year, month)) continue
+        pairs.push({ year, month })
+      }
+    }
+  } catch (error) {
+    console.error('Error reading past year/months from files:', error)
+  }
+  return pairs
+}
+
 function getMonthFilePath(year: number, month: number): string {
   const yearDir = path.join(DATA_DIR, year.toString())
   return path.join(yearDir, `${month.toString().padStart(2, '0')}.json`)

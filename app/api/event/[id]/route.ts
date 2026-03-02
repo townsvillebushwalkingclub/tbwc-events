@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server'
-import { getEventById } from '@/lib/facebook-api'
+import { getEventById, getPastEventIdsFromFiles } from '@/lib/facebook-api'
 
 export const revalidate = 86400
+
+/** Prerender API responses for past event IDs (they won't change). */
+export async function generateStaticParams() {
+  const ids = getPastEventIdsFromFiles()
+  return ids.map((id) => ({ id }))
+}
 
 export async function OPTIONS() {
   return new NextResponse(null, {
