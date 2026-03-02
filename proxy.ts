@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
 const RATE_LIMIT_WINDOW = 60 * 1000
-const RATE_LIMIT_MAX_REQUESTS = 30
+const RATE_LIMIT_MAX_REQUESTS = 40
 
 function getClientIP(request: NextRequest): string {
   const cfConnectingIP = request.headers.get('cf-connecting-ip')
