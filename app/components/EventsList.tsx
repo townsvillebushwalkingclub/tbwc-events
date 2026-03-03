@@ -7,7 +7,11 @@ import {
   processDescription,
   normalizeNewlines,
 } from '@/lib/process-description'
-import { getMonthLabel, getFacebookEventUrl } from '@/lib/event-utils'
+import {
+  getMonthLabel,
+  getFacebookEventUrl,
+  getCalendarDateInTimeZone,
+} from '@/lib/event-utils'
 import { EventDateTime } from './EventDateTime'
 import type { TBWCEvent } from '@/types/event'
 
@@ -75,11 +79,11 @@ export default function EventsList({
     if (!event?.start_time || !currentDate) return false
     const now = new Date()
     const eventDate = new Date(event.start_time)
-    const current = new Date(currentDate)
     if (eventDate >= now) return false
+    const eventCal = getCalendarDateInTimeZone(event.start_time)
+    const currentCal = getCalendarDateInTimeZone(currentDate)
     return (
-      eventDate.getFullYear() === current.getFullYear() &&
-      eventDate.getMonth() === current.getMonth()
+      eventCal.year === currentCal.year && eventCal.month === currentCal.month
     )
   }
 

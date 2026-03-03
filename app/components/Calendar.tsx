@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { getCalendarDateInTimeZone } from '@/lib/event-utils'
 import type { TBWCEvent } from '@/types/event'
 
 interface CalendarProps {
@@ -149,31 +150,16 @@ export default function Calendar({
   const todayDateString = serverTodayDateString ?? new Date().toDateString()
 
   const getEventsForDate = (date: Date): TBWCEvent[] => {
+    const cell = getCalendarDateInTimeZone(date)
+    const cellOrd = cell.year * 10000 + cell.month * 100 + cell.day
     return events.filter((event) => {
-      const eventStart = new Date(event.start_time)
-      const eventEnd = event.end_time
-        ? new Date(event.end_time)
-        : eventStart
-      const dateStart = new Date(
-        Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-      )
-      const eventStartDay = new Date(
-        Date.UTC(
-          eventStart.getFullYear(),
-          eventStart.getMonth(),
-          eventStart.getDate()
-        )
-      )
-      const eventEndDay = new Date(
-        Date.UTC(
-          eventEnd.getFullYear(),
-          eventEnd.getMonth(),
-          eventEnd.getDate()
-        )
-      )
-      const isInRange =
-        dateStart >= eventStartDay && dateStart <= eventEndDay
-      return isInRange
+      const start = getCalendarDateInTimeZone(event.start_time)
+      const end = event.end_time
+        ? getCalendarDateInTimeZone(event.end_time)
+        : start
+      const startOrd = start.year * 10000 + start.month * 100 + start.day
+      const endOrd = end.year * 10000 + end.month * 100 + end.day
+      return cellOrd >= startOrd && cellOrd <= endOrd
     })
   }
 

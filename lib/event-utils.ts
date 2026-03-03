@@ -4,6 +4,35 @@
 
 import type { TBWCEvent } from '@/types/event'
 
+const DISPLAY_TIMEZONE = 'Australia/Brisbane'
+
+/**
+ * Get the calendar date (year, month, day) for an instant in a given timezone.
+ * Use this for "which month/day does this event show on?" so events at midnight
+ * in the club's timezone (e.g. March 1 00:00 Brisbane) are not assigned to the
+ * previous day/month when the server runs in UTC.
+ * @param dateOrIso - Date instance or ISO 8601 string (e.g. event.start_time)
+ * @param timeZone - IANA timezone (default Australia/Brisbane)
+ * @returns year (full), month (1-12), day (1-31)
+ */
+export function getCalendarDateInTimeZone(
+  dateOrIso: Date | string,
+  timeZone: string = DISPLAY_TIMEZONE
+): { year: number; month: number; day: number } {
+  const date = typeof dateOrIso === 'string' ? new Date(dateOrIso) : dateOrIso
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+  const parts = formatter.formatToParts(date)
+  const year = parseInt(parts.find((p) => p.type === 'year')!.value, 10)
+  const month = parseInt(parts.find((p) => p.type === 'month')!.value, 10)
+  const day = parseInt(parts.find((p) => p.type === 'day')!.value, 10)
+  return { year, month, day }
+}
+
 /**
  * Get Facebook event URL for an event ID
  */

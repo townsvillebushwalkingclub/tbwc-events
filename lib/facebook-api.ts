@@ -8,6 +8,7 @@ import {
   downloadCoverImage,
   getCoverImagePath,
 } from './download-cover-image'
+import { getCalendarDateInTimeZone } from './event-utils'
 import type { TBWCEvent } from '@/types/event'
 
 const BRISBANE_TIMEZONE = 'Australia/Brisbane'
@@ -498,11 +499,8 @@ export async function getEventsForMonth(
 
     const allEvents = await getFacebookEvents()
     const filteredEvents = allEvents.filter((event) => {
-      const eventDate = new Date(event.start_time)
-      return (
-        eventDate.getFullYear() === year &&
-        eventDate.getMonth() === month - 1
-      )
+      const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
+      return y === year && m === month
     })
 
     if (isPastMonth(year, month) && filteredEvents.length > 0) {
@@ -515,11 +513,8 @@ export async function getEventsForMonth(
       if (existingIds.has(id)) continue
       const event = await fetchEventByIdFromApi(id)
       if (event) {
-        const eventDate = new Date(event.start_time)
-        if (
-          eventDate.getFullYear() === year &&
-          eventDate.getMonth() === month - 1
-        ) {
+        const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
+        if (y === year && m === month) {
           filteredEvents.push(event)
           existingIds.add(event.id)
         }
@@ -546,11 +541,8 @@ export async function getEventsForCalendarMonths(
   for (const { year, month } of months) {
     const key = `${year}-${month}`
     const filtered = allEvents.filter((event) => {
-      const eventDate = new Date(event.start_time)
-      return (
-        eventDate.getFullYear() === year &&
-        eventDate.getMonth() === month - 1
-      )
+      const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
+      return y === year && m === month
     })
     filtered.forEach((e) => existingIds.add(e.id))
     byMonth.set(key, filtered)
@@ -559,9 +551,7 @@ export async function getEventsForCalendarMonths(
     if (existingIds.has(id)) continue
     const event = await fetchEventByIdFromApi(id)
     if (!event) continue
-    const eventDate = new Date(event.start_time)
-    const y = eventDate.getFullYear()
-    const m = eventDate.getMonth() + 1
+    const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
     const key = `${y}-${m}`
     const list = byMonth.get(key)
     if (list) {
