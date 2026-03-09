@@ -5,6 +5,33 @@ import { getEventsForCalendarMonths } from '@/lib/facebook-api'
 import Calendar from './components/Calendar'
 import EventSearch from './components/EventSearch'
 import type { TBWCEvent } from '@/types/event'
+import type { Metadata } from 'next'
+
+const CANONICAL_URL = 'https://events.townsvillebushwalkingclub.com/'
+
+export const metadata: Metadata = {
+  title: 'Upcoming events | Townsville Bushwalking Club',
+  description:
+    'Browse upcoming Townsville Bushwalking Club events, including bushwalks, hikes, social meetups, and outdoor adventures across Townsville and North Queensland.',
+  alternates: {
+    canonical: CANONICAL_URL,
+  },
+  openGraph: {
+    title: 'Upcoming events | Townsville Bushwalking Club',
+    description:
+      'Browse upcoming Townsville Bushwalking Club events, including bushwalks, hikes, social meetups, and outdoor adventures across Townsville and North Queensland.',
+    url: CANONICAL_URL,
+    siteName: 'Townsville Bushwalking Club Events',
+    locale: 'en_AU',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Upcoming events | Townsville Bushwalking Club',
+    description:
+      'Browse upcoming Townsville Bushwalking Club events, including bushwalks, hikes, social meetups, and outdoor adventures across Townsville and North Queensland.',
+  },
+}
 
 // Static generation: no searchParams so the page can be prerendered.
 // Calendar month switching is handled client-side (and fetches from API when needed).
@@ -101,6 +128,24 @@ export default async function Home() {
           </div>
         </div>
 
+        <section
+          className="mb-8 text-center md:text-left max-w-3xl mx-auto"
+          aria-labelledby="events-intro-heading"
+        >
+          <h2
+            id="events-intro-heading"
+            className="text-xl md:text-2xl font-semibold text-[rgb(var(--foreground-rgb))] mb-3"
+          >
+            Upcoming Townsville Bushwalking Club events
+          </h2>
+          <p className="text-gray-600 leading-relaxed">
+            Browse all upcoming Townsville Bushwalking Club events in one place.
+            This page lists upcoming bushwalks, hikes, social catch-ups, and
+            outdoor activities in Townsville and across North Queensland, making
+            it easy for members and visitors to see what is coming up next.
+          </p>
+        </section>
+
         <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden mb-8 shadow-sm">
           <Suspense
             fallback={
@@ -133,7 +178,7 @@ export default async function Home() {
             href="/events/all"
             className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
           >
-            All events
+            All Events
           </Link>
           <Link
             href="/events/search"

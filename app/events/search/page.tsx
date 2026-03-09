@@ -3,11 +3,32 @@ import Image from 'next/image'
 import { Suspense } from 'react'
 import EventSearch from '@/app/components/EventSearch'
 import SearchBar from '@/app/components/SearchBar'
+import type { Metadata } from 'next'
 
-export const metadata = {
+const PAGE_URL = 'https://events.townsvillebushwalkingclub.com/events/search'
+
+export const metadata: Metadata = {
   title: 'Search events – Townsville Bushwalking Club',
   description:
-    'Search events by name, description, or location. Townsville Bushwalking Club.',
+    'Search Townsville Bushwalking Club events by name, description, or location. Find bushwalks, hikes, and outdoor activities in Townsville and North Queensland.',
+  alternates: {
+    canonical: '/events/search',
+  },
+  openGraph: {
+    title: 'Search events – Townsville Bushwalking Club',
+    description:
+      'Search Townsville Bushwalking Club events by name, description, or location. Find bushwalks, hikes, and outdoor activities in Townsville and North Queensland.',
+    url: PAGE_URL,
+    siteName: 'Townsville Bushwalking Club Events',
+    locale: 'en_AU',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Search events – Townsville Bushwalking Club',
+    description:
+      'Search Townsville Bushwalking Club events by name, description, or location.',
+  },
 }
 
 interface SearchPageProps {

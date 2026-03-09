@@ -28,9 +28,7 @@ export const metadata: Metadata = {
     telephone: false,
   },
   metadataBase: new URL('https://events.townsvillebushwalkingclub.com'),
-  alternates: {
-    canonical: '/',
-  },
+  // Canonical is set per-route (homepage and events pages) to avoid wrong defaults.
   openGraph: {
     title: 'Townsville Bushwalking Club - Events Calendar',
     description:

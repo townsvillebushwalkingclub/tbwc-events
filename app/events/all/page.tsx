@@ -1,9 +1,12 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { getAllEvents } from '@/lib/facebook-api'
+import type { Metadata } from 'next'
 
 const MIN_YEAR = 2020
 const BRISBANE_TIMEZONE = 'Australia/Brisbane'
+
+const PAGE_URL = 'https://events.townsvillebushwalkingclub.com/events/all'
 
 function formatListDate(dateString: string): string {
   const d = new Date(dateString)
@@ -17,10 +20,28 @@ function formatListDate(dateString: string): string {
 
 export const revalidate = 21600 // 6 hours
 
-export const metadata = {
-  title: 'All events – Townsville Bushwalking Club',
+export const metadata: Metadata = {
+  title: 'All Events - Townsville Bushwalking Club',
   description:
-    'List of past and upcoming events hosted by the Townsville Bushwalking Club (incomplete).',
+    'List of past and upcoming Townsville Bushwalking Club events: bushwalks, hikes, and outdoor activities in Townsville and North Queensland (from 2020 onward).',
+  alternates: {
+    canonical: '/events/all',
+  },
+  openGraph: {
+    title: 'All Events - Townsville Bushwalking Club',
+    description:
+      'List of past and upcoming Townsville Bushwalking Club events: bushwalks, hikes, and outdoor activities in Townsville and North Queensland.',
+    url: PAGE_URL,
+    siteName: 'Townsville Bushwalking Club Events',
+    locale: 'en_AU',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'All Events - Townsville Bushwalking Club',
+    description:
+      'List of past and upcoming Townsville Bushwalking Club events in Townsville and North Queensland.',
+  },
 }
 
 export default async function AllEventsPage() {
@@ -69,7 +90,7 @@ export default async function AllEventsPage() {
             />
           </Link>
           <h1 className="text-2xl md:text-3xl font-bold text-[rgb(var(--foreground-rgb))]">
-            All events
+            All Events
           </h1>
           <p className="text-gray-600 mt-1">Townsville Bushwalking Club</p>
         </div>

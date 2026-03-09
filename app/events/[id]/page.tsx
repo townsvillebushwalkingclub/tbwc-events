@@ -16,19 +16,32 @@ export async function generateMetadata({
 }) {
   try {
     const { id } = await params
-    if (!id || !/^\d{15,16}$/.test(id)) {
-      return {
+    const getNotFoundMeta = () => ({
+      title: 'Event Not Found - Townsville Bushwalking Club',
+      description: 'The event you are looking for does not exist.',
+      robots: { index: false, follow: true } as const,
+      openGraph: {
         title: 'Event Not Found - Townsville Bushwalking Club',
         description: 'The event you are looking for does not exist.',
-      }
+        url: `https://events.townsvillebushwalkingclub.com/events/${id ?? ''}`,
+        siteName: 'Townsville Bushwalking Club Events',
+        locale: 'en_AU',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary' as const,
+        title: 'Event Not Found - Townsville Bushwalking Club',
+        description: 'The event you are looking for does not exist.',
+      },
+    })
+
+    if (!id || !/^\d{15,16}$/.test(id)) {
+      return getNotFoundMeta()
     }
 
     const event = await getEventById(id)
     if (!event) {
-      return {
-        title: 'Event Not Found - Townsville Bushwalking Club',
-        description: 'The event you are looking for does not exist.',
-      }
+      return getNotFoundMeta()
     }
 
     if (event.start_time) {
@@ -44,10 +57,7 @@ export async function generateMetadata({
         eventDate.getFullYear() < minYear ||
         eventDate > maxFutureDate
       ) {
-        return {
-          title: 'Event Not Found - Townsville Bushwalking Club',
-          description: 'The event you are looking for does not exist.',
-        }
+        return getNotFoundMeta()
       }
     }
 
@@ -104,6 +114,19 @@ export async function generateMetadata({
     return {
       title: 'Event - Townsville Bushwalking Club',
       description: 'View event details for Townsville Bushwalking Club.',
+      robots: { index: false, follow: true },
+      openGraph: {
+        title: 'Event - Townsville Bushwalking Club',
+        description: 'View event details for Townsville Bushwalking Club.',
+        siteName: 'Townsville Bushwalking Club Events',
+        locale: 'en_AU',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary',
+        title: 'Event - Townsville Bushwalking Club',
+        description: 'View event details for Townsville Bushwalking Club.',
+      },
     }
   }
 }
