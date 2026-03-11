@@ -44,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/events/${event.id}`,
       lastModified: eventDate || new Date(),
       changeFrequency: isPast ? 'yearly' : 'daily',
-      priority: isPast ? 0.5 : 0.8,
+      priority: isPast ? 0.5 : 0.9,
     })
   })
 
