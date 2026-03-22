@@ -1,6 +1,12 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { getCalendarDateInTimeZone } from '@/lib/event-utils'
@@ -11,7 +17,6 @@ interface CalendarProps {
   events: TBWCEvent[]
   year: number
   month: number
-  serverTodayDateString?: string
 }
 
 // Server sends 3 consecutive months: (year, month), (nextYear, nextMonth), (yearAfterNext, monthAfterNext)
@@ -31,7 +36,6 @@ export default function Calendar({
   events: serverEvents,
   year: initialYear,
   month: initialMonth,
-  serverTodayDateString,
 }: CalendarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -147,7 +151,28 @@ export default function Calendar({
   startDate.setDate(startDate.getDate() - daysToSubtract)
 
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  const todayDateString = serverTodayDateString ?? new Date().toDateString()
+
+  // "Today" must come from the viewer's clock, not from ISR-cached server HTML
+  // (see app/page.tsx revalidate). Otherwise the highlight stays on yesterday until the next regen.
+  const [todayDateString, setTodayDateString] = useState<string | null>(null)
+  const prevTodayRef = useRef<string | null>(null)
+
+  useLayoutEffect(() => {
+    const syncToday = () => {
+      const next = new Date().toDateString()
+      setTodayDateString(next)
+      if (
+        prevTodayRef.current !== null &&
+        prevTodayRef.current !== next
+      ) {
+        router.refresh()
+      }
+      prevTodayRef.current = next
+    }
+    syncToday()
+    const id = setInterval(syncToday, 60_000)
+    return () => clearInterval(id)
+  }, [router])
 
   const getEventsForDate = (date: Date): TBWCEvent[] => {
     const cell = getCalendarDateInTimeZone(date)
@@ -215,7 +240,9 @@ export default function Calendar({
           const date = new Date(startDate)
           date.setDate(startDate.getDate() + i)
           const isOtherMonth = date.getMonth() !== displayMonth
-          const isToday = date.toDateString() === todayDateString
+          const isToday =
+            todayDateString !== null &&
+            date.toDateString() === todayDateString
           const dayEvents = getEventsForDate(date)
 
           return (
