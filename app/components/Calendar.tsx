@@ -19,6 +19,17 @@ interface CalendarProps {
   month: number
 }
 
+/** Past = last calendar day of the event (Brisbane) is before today (Brisbane). */
+function isEventPastOnCalendar(event: TBWCEvent): boolean {
+  const endCal = event.end_time
+    ? getCalendarDateInTimeZone(event.end_time)
+    : getCalendarDateInTimeZone(event.start_time)
+  const todayCal = getCalendarDateInTimeZone(new Date())
+  const endOrd = endCal.year * 10000 + endCal.month * 100 + endCal.day
+  const todayOrd = todayCal.year * 10000 + todayCal.month * 100 + todayCal.day
+  return endOrd < todayOrd
+}
+
 // Server sends 3 consecutive months: (year, month), (nextYear, nextMonth), (yearAfterNext, monthAfterNext)
 function isInInitialRange(
   viewYear: number,
@@ -345,11 +356,16 @@ export default function Calendar({
                             (1000 * 60 * 60 * 24)
                         ) + 1
 
+                      const past = isEventPastOnCalendar(event)
+                      const multiClass = past
+                        ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 absolute hover:bg-gray-300/90 transition-colors cursor-pointer block'
+                        : 'text-xs bg-sky-light text-gray-800 px-2 py-1 rounded-sm mb-1 border border-sky absolute hover:bg-sky-muted/30 transition-colors cursor-pointer block'
+
                       return (
                         <Link
                           key={`multi-${index}`}
                           href={`/events/${event.id}`}
-                          className="text-xs bg-sky-light text-gray-800 px-2 py-1 rounded-sm mb-1 border border-sky absolute hover:bg-sky-muted/30 transition-colors cursor-pointer block"
+                          className={multiClass}
                           style={{
                             left: '0',
                             right: `${(daysDiff - 1) * -100}%`,
@@ -367,11 +383,16 @@ export default function Calendar({
                       )
                     })}
 
-                    {singleDayEvents.map((event, index) => (
+                    {singleDayEvents.map((event, index) => {
+                      const past = isEventPastOnCalendar(event)
+                      const singleClass = past
+                        ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 hover:bg-gray-300/90 transition-colors cursor-pointer block'
+                        : 'text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block'
+                      return (
                       <Link
                         key={`single-${index}`}
                         href={`/events/${event.id}`}
-                        className="text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block"
+                        className={singleClass}
                         style={{ marginTop: `${index * 16}px` }}
                         title={event.name}
                       >
@@ -380,7 +401,7 @@ export default function Calendar({
                           : event.name}
                         {event.is_cancelled && ' (CANCELLED)'}
                       </Link>
-                    ))}
+                    )})}
                   </>
                 )
               })()}
