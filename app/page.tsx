@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getPreferredCalendarMonth } from '@/lib/event-utils'
 import { getEventsForCalendarMonths } from '@/lib/facebook-api'
 import Calendar from './components/Calendar'
 import EventSearch from './components/EventSearch'
@@ -68,7 +69,8 @@ export default async function Home() {
       new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
   )
 
-  const currentDate = new Date(year, month - 1, 1)
+  const preferred = getPreferredCalendarMonth(allEvents, now)
+  const currentDate = new Date(preferred.year, preferred.month - 1, 1)
 
   return (
     <div className="min-h-screen bg-white">
@@ -158,8 +160,10 @@ export default async function Home() {
             <Calendar
               currentDate={currentDate}
               events={allEvents}
-              year={year}
-              month={month}
+              year={preferred.year}
+              month={preferred.month}
+              prefetchAnchorYear={year}
+              prefetchAnchorMonth={month}
             />
           </Suspense>
         </div>

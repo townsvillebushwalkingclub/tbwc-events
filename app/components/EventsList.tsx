@@ -10,7 +10,7 @@ import {
 import {
   getMonthLabel,
   getFacebookEventUrl,
-  getCalendarDateInTimeZone,
+  isEventPastOnCalendar,
 } from '@/lib/event-utils'
 import { EventDateTime } from './EventDateTime'
 import type { TBWCEvent } from '@/types/event'
@@ -75,17 +75,9 @@ export default function EventsList({
     return paragraphs.length > 2
   }
 
-  const isPastEventInCurrentMonth = (event: TBWCEvent): boolean => {
-    if (!event?.start_time || !currentDate) return false
-    const now = new Date()
-    const eventDate = new Date(event.start_time)
-    if (eventDate >= now) return false
-    const eventCal = getCalendarDateInTimeZone(event.start_time)
-    const currentCal = getCalendarDateInTimeZone(currentDate)
-    return (
-      eventCal.year === currentCal.year && eventCal.month === currentCal.month
-    )
-  }
+  /** Past styling must not depend on `currentDate`’s month (smart default can be April while March events are still in the prefetched list). */
+  const showPastCompactStyle = (event: TBWCEvent) =>
+    !!event?.start_time && isEventPastOnCalendar(event)
 
   return (
     <div>
@@ -105,7 +97,7 @@ export default function EventsList({
       ) : (
         <div className="space-y-6">
           {events.map((event) =>
-            isPastEventInCurrentMonth(event) ? (
+            showPastCompactStyle(event) ? (
               <div
                 key={event.id}
                 className="rounded-2xl p-4 border border-gray-200 bg-gray-100 text-gray-500"

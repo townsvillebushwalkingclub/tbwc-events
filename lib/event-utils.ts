@@ -33,6 +33,65 @@ export function getCalendarDateInTimeZone(
   return { year, month, day }
 }
 
+function toOrdinal(cal: { year: number; month: number; day: number }): number {
+  return cal.year * 10000 + cal.month * 100 + cal.day
+}
+
+/** Past = last calendar day of the event (Brisbane) is before today (Brisbane). */
+export function isEventPastOnCalendar(
+  event: TBWCEvent,
+  now: Date = new Date()
+): boolean {
+  const endCal = event.end_time
+    ? getCalendarDateInTimeZone(event.end_time)
+    : getCalendarDateInTimeZone(event.start_time)
+  const todayCal = getCalendarDateInTimeZone(now)
+  return toOrdinal(endCal) < toOrdinal(todayCal)
+}
+
+/**
+ * Default calendar month: literal current month, or the month of the next
+ * upcoming event when nothing remains in the rest of the current month (Brisbane).
+ * Only considers events in the provided list (e.g. prefetched months).
+ */
+export function getPreferredCalendarMonth(
+  events: TBWCEvent[],
+  now: Date = new Date()
+): { year: number; month: number } {
+  const todayCal = getCalendarDateInTimeZone(now)
+  const endDay = new Date(todayCal.year, todayCal.month, 0).getDate()
+  const todayOrd = toOrdinal(todayCal)
+  const endOfMonthOrd = todayCal.year * 10000 + todayCal.month * 100 + endDay
+
+  const notPast = events.filter((e) => !isEventPastOnCalendar(e, now))
+
+  const overlapsRestOfMonth = notPast.some((event) => {
+    const startCal = getCalendarDateInTimeZone(event.start_time)
+    const endCal = event.end_time
+      ? getCalendarDateInTimeZone(event.end_time)
+      : startCal
+    const startOrd = toOrdinal(startCal)
+    const endOrd = toOrdinal(endCal)
+    return startOrd <= endOfMonthOrd && endOrd >= todayOrd
+  })
+
+  if (overlapsRestOfMonth) {
+    return { year: todayCal.year, month: todayCal.month }
+  }
+
+  if (notPast.length === 0) {
+    return { year: todayCal.year, month: todayCal.month }
+  }
+
+  notPast.sort(
+    (a, b) =>
+      new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+  )
+  const first = notPast[0]
+  const startCal = getCalendarDateInTimeZone(first.start_time)
+  return { year: startCal.year, month: startCal.month }
+}
+
 /**
  * Get Facebook event URL for an event ID
  */

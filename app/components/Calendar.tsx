@@ -9,35 +9,32 @@ import {
 } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { getCalendarDateInTimeZone } from '@/lib/event-utils'
+import {
+  getCalendarDateInTimeZone,
+  getPreferredCalendarMonth,
+  isEventPastOnCalendar,
+} from '@/lib/event-utils'
 import type { TBWCEvent } from '@/types/event'
 
 interface CalendarProps {
   currentDate: Date
   events: TBWCEvent[]
+  /** Default month when URL has no year/month (may be “smart” ahead of anchor). */
   year: number
   month: number
+  /** First month of the 3-month server prefetch; drives in-memory vs API event source. */
+  prefetchAnchorYear: number
+  prefetchAnchorMonth: number
 }
 
-/** Past = last calendar day of the event (Brisbane) is before today (Brisbane). */
-function isEventPastOnCalendar(event: TBWCEvent): boolean {
-  const endCal = event.end_time
-    ? getCalendarDateInTimeZone(event.end_time)
-    : getCalendarDateInTimeZone(event.start_time)
-  const todayCal = getCalendarDateInTimeZone(new Date())
-  const endOrd = endCal.year * 10000 + endCal.month * 100 + endCal.day
-  const todayOrd = todayCal.year * 10000 + todayCal.month * 100 + todayCal.day
-  return endOrd < todayOrd
-}
-
-// Server sends 3 consecutive months: (year, month), (nextYear, nextMonth), (yearAfterNext, monthAfterNext)
-function isInInitialRange(
+// Server prefetches 3 consecutive months from prefetchAnchor (see page.tsx monthsToFetch).
+function isInPrefetchRange(
   viewYear: number,
   viewMonth: number,
-  initialYear: number,
-  initialMonth: number
+  anchorYear: number,
+  anchorMonth: number
 ): boolean {
-  const a = initialYear * 12 + initialMonth
+  const a = anchorYear * 12 + anchorMonth
   const b = viewYear * 12 + viewMonth
   return b >= a && b < a + 3
 }
@@ -47,6 +44,8 @@ export default function Calendar({
   events: serverEvents,
   year: initialYear,
   month: initialMonth,
+  prefetchAnchorYear,
+  prefetchAnchorMonth,
 }: CalendarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -75,20 +74,20 @@ export default function Calendar({
   const [overflowEvents, setOverflowEvents] = useState<TBWCEvent[] | null>(null)
   const [overflowKey, setOverflowKey] = useState<string | null>(null)
 
-  const inInitialRange = isInInitialRange(
+  const inPrefetchRange = isInPrefetchRange(
     viewYear,
     viewMonth,
-    initialYear,
-    initialMonth
+    prefetchAnchorYear,
+    prefetchAnchorMonth
   )
-  const events = inInitialRange
+  const events = inPrefetchRange
     ? serverEvents
     : overflowEvents ?? []
 
   const navigateToMonth = useCallback(
     (newYear: number, newMonth: number) => {
       if (
-        isInInitialRange(newYear, newMonth, initialYear, initialMonth)
+        isInPrefetchRange(newYear, newMonth, prefetchAnchorYear, prefetchAnchorMonth)
       ) {
         setOverflowEvents(null)
         setOverflowKey(null)
@@ -100,15 +99,15 @@ export default function Calendar({
       params.set('month', newMonth.toString())
       router.replace(`/?${params.toString()}`, { scroll: false })
     },
-    [router, initialYear, initialMonth]
+    [router, prefetchAnchorYear, prefetchAnchorMonth]
   )
 
   const overflowKeyForView = `${viewYear}-${viewMonth}`
   const loading =
-    !inInitialRange && overflowKey !== overflowKeyForView
+    !inPrefetchRange && overflowKey !== overflowKeyForView
 
   useEffect(() => {
-    if (inInitialRange) return
+    if (inPrefetchRange) return
     const key = overflowKeyForView
     if (overflowKey === key) return
     let cancelled = false
@@ -133,7 +132,7 @@ export default function Calendar({
     return () => {
       cancelled = true
     }
-  }, [viewYear, viewMonth, inInitialRange, overflowKey, overflowKeyForView])
+  }, [viewYear, viewMonth, inPrefetchRange, overflowKey, overflowKeyForView])
 
   const previousMonth = () => {
     const newMonth = viewMonth === 1 ? 12 : viewMonth - 1
@@ -148,8 +147,8 @@ export default function Calendar({
   }
 
   const goToToday = () => {
-    const now = new Date()
-    navigateToMonth(now.getFullYear(), now.getMonth() + 1)
+    const preferred = getPreferredCalendarMonth(serverEvents)
+    navigateToMonth(preferred.year, preferred.month)
   }
 
   const displayYear = viewYear
