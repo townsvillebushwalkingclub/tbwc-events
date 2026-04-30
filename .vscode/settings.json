@@ -1,6 +1,5 @@
 {
   "snyk.advanced.autoSelectOrganization": true,
   "snyk.cliPath": "/Users/luenwarneke/.nvm/versions/node/v22.20.0/bin/snyk",
-  "snyk.releaseChannel": "stable",
-  "snyk.advanced.organization": "356dce5d-a877-4dc9-a649-bd49df1941fd"
+  "snyk.releaseChannel": "stable"
 }
