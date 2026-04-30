@@ -306,7 +306,7 @@ function getCancelledEventIds(): string[] {
       return ids
         .filter((id) => id != null)
         .map((id) => String(id).trim())
-        .filter((id) => /^\d{15,16}$/.test(id))
+        .filter((id) => /^\d{15,17}$/.test(id))
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
@@ -352,7 +352,7 @@ export function getPastEventIdsFromFiles(): string[] {
         const fileEvents = loadEventsFromFile(year, month)
         if (fileEvents) {
           for (const event of fileEvents) {
-            if (event?.id && /^\d{15,16}$/.test(String(event.id))) {
+            if (event?.id && /^\d{15,17}$/.test(String(event.id))) {
               ids.push(String(event.id))
             }
           }

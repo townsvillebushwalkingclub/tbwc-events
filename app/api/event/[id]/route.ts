@@ -34,7 +34,7 @@ export async function GET(
       )
     }
 
-    if (!/^\d{15,16}$/.test(id)) {
+    if (!/^\d{15,17}$/.test(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid event ID format' },
         { status: 400 }

@@ -1,4 +1,5 @@
 import { getEventById, getAllEvents } from '@/lib/facebook-api'
+import { notFound } from 'next/navigation'
 import EventClient from './EventClient'
 
 function isPastEvent(eventDate: string): boolean {
@@ -35,9 +36,7 @@ export async function generateMetadata({
       },
     })
 
-    if (!id || !/^\d{15,16}$/.test(id)) {
-      return getNotFoundMeta()
-    }
+    if (!id || !/^\d{15,17}$/.test(id)) return getNotFoundMeta()
 
     const event = await getEventById(id)
     if (!event) {
@@ -140,20 +139,10 @@ export default async function EventPage({
   let event = null
 
   try {
-    if (!id || !/^\d{15,16}$/.test(id)) {
-      return (
-        <div className="min-h-screen bg-white flex items-center justify-center">
-          <div className="text-center text-gray-900">
-            <h1 className="text-2xl font-bold mb-4">Event Not Found</h1>
-            <p className="text-gray-600">
-              The event you are looking for does not exist.
-            </p>
-          </div>
-        </div>
-      )
-    }
+    if (!id || !/^\d{15,17}$/.test(id)) notFound()
 
     event = await getEventById(id)
+    if (!event) notFound()
 
     if (event?.start_time) {
       const now = new Date()
@@ -164,24 +153,13 @@ export default async function EventPage({
         now.getMonth() + 4,
         0
       )
-      if (
-        eventDate.getFullYear() < minYear ||
-        eventDate > maxFutureDate
-      ) {
-        return (
-          <div className="min-h-screen bg-white flex items-center justify-center">
-            <div className="text-center text-gray-900">
-              <h1 className="text-2xl font-bold mb-4">Event Not Found</h1>
-              <p className="text-gray-600">
-                The event you are looking for does not exist.
-              </p>
-            </div>
-          </div>
-        )
+      if (eventDate.getFullYear() < minYear || eventDate > maxFutureDate) {
+        notFound()
       }
     }
   } catch (error) {
     console.error('Error fetching event:', error)
+    throw error
   }
 
   return <EventClient initialEvent={event} />
