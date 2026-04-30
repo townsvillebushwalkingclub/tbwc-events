@@ -1,5 +1,6 @@
 import { getEventById, getAllEvents } from '@/lib/facebook-api'
 import { isValidFacebookEventId } from '@/lib/event-id'
+import { absoluteEventShareImageUrl, EVENTS_SITE_ORIGIN } from '@/lib/site'
 import { notFound } from 'next/navigation'
 import EventClient from './EventClient'
 
@@ -25,7 +26,7 @@ export async function generateMetadata({
       openGraph: {
         title: 'Event Not Found - Townsville Bushwalking Club',
         description: 'The event you are looking for does not exist.',
-        url: `https://events.townsvillebushwalkingclub.com/events/${id ?? ''}`,
+        url: `${EVENTS_SITE_ORIGIN}/events/${id ?? ''}`,
         siteName: 'Townsville Bushwalking Club Events',
         locale: 'en_AU',
         type: 'website',
@@ -67,8 +68,8 @@ export async function generateMetadata({
           event.place ? `Location: ${event.place.name}` : ''
         }`
 
-    const coverImageUrl =
-      event.cover?.source ?? null
+    const coverSource = event.cover?.source ?? null
+    const ogImageUrl = absoluteEventShareImageUrl(coverSource)
 
     return {
       title: `${event.name} - Townsville Bushwalking Club`,
@@ -85,13 +86,13 @@ export async function generateMetadata({
         title: event.name,
         description,
         type: 'website',
-        url: `https://events.townsvillebushwalkingclub.com/events/${id}`,
+        url: `${EVENTS_SITE_ORIGIN}/events/${id}`,
         siteName: 'Townsville Bushwalking Club Events',
         locale: 'en_AU',
-        images: coverImageUrl
+        images: ogImageUrl
           ? [
               {
-                url: coverImageUrl,
+                url: ogImageUrl,
                 width: (event.cover as { width?: number })?.width || 1200,
                 height: (event.cover as { height?: number })?.height || 630,
                 alt: event.name,
@@ -100,10 +101,10 @@ export async function generateMetadata({
           : [],
       },
       twitter: {
-        card: coverImageUrl ? 'summary_large_image' : 'summary',
+        card: ogImageUrl ? 'summary_large_image' : 'summary',
         title: event.name,
         description,
-        images: coverImageUrl ? [coverImageUrl] : [],
+        images: ogImageUrl ? [ogImageUrl] : [],
       },
       alternates: {
         canonical: `/events/${id}`,
