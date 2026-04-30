@@ -1,4 +1,5 @@
 import { getEventById, getAllEvents } from '@/lib/facebook-api'
+import { isValidFacebookEventId } from '@/lib/event-id'
 import { notFound } from 'next/navigation'
 import EventClient from './EventClient'
 
@@ -36,7 +37,7 @@ export async function generateMetadata({
       },
     })
 
-    if (!id || !/^\d{15,17}$/.test(id)) return getNotFoundMeta()
+    if (!id || !isValidFacebookEventId(id)) return getNotFoundMeta()
 
     const event = await getEventById(id)
     if (!event) {
@@ -139,7 +140,7 @@ export default async function EventPage({
   let event = null
 
   try {
-    if (!id || !/^\d{15,17}$/.test(id)) notFound()
+    if (!id || !isValidFacebookEventId(id)) notFound()
 
     event = await getEventById(id)
     if (!event) notFound()

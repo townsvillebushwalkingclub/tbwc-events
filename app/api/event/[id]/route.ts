@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getEventById, getPastEventIdsFromFiles } from '@/lib/facebook-api'
+import { isValidFacebookEventId } from '@/lib/event-id'
 
 export const revalidate = 86400
 
@@ -34,7 +35,7 @@ export async function GET(
       )
     }
 
-    if (!/^\d{15,17}$/.test(id)) {
+    if (!isValidFacebookEventId(id)) {
       return NextResponse.json(
         { success: false, error: 'Invalid event ID format' },
         { status: 400 }
