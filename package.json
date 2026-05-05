@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint .",
     "token:refresh": "npx tsx tools/get-long-lived-token.ts",
-    "download:history": "npx tsx tools/download-historical-events.ts"
+    "download:history": "npx tsx tools/download-historical-events.ts",
+    "sync:cancelled": "npx tsx tools/sync-cancelled-events.ts"
   },
   "keywords": [
     "townsville",
