@@ -70,11 +70,11 @@ export async function proxy(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://static.cloudflareinsights.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://static.cloudflareinsights.com",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
-    "connect-src 'self' https://graph.facebook.com https://www.google-analytics.com",
+    "connect-src 'self' https://graph.facebook.com https://www.google-analytics.com https://*.google-analytics.com",
     "frame-ancestors 'none'",
   ].join('; ')
   response.headers.set('Content-Security-Policy', csp)
