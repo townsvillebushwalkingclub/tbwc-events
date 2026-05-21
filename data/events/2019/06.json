@@ -1,0 +1,114 @@
+[
+  {
+    "id": "454969091918444",
+    "name": "Long weekend - 2 day walk",
+    "description": "The proposed walk will ascend up Bullocky Tom's Track and descend Foxlee's Track with an overnight camp at DCK Shelter.\n\nFull details can be provided on request but the ascent and descent will be steep.\nThis will be a full pack walk (minus tent) and participants need to be self sufficient.\n\nTo RSVP please contact Wilfred (details provided via email 12/6 - June Newsletter) or email tsvbush@hotmail.com.",
+    "start_time": "2019-06-30T07:00:00+1000",
+    "end_time": "2019-06-30T18:00:00+1000",
+    "formatted_date": "Sunday 30 June 2019",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "6:00 pm",
+    "formatted_end_date": "Sunday 30 June 2019",
+    "is_multi_day": false,
+    "attending_count": 2,
+    "interested_count": 5,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/454969091918444.jpg",
+      "id": "328758478044773"
+    }
+  },
+  {
+    "id": "1191372617690728",
+    "name": "The Cascades",
+    "description": "The Cascades are in the Palm Creek/St Margaret's Creek area. The walk will include both on track and off track walking, rock hopping and scrambling up the sides of waterfalls.  Along the way we'll be rewarded with some impressive rocks, lovely waterfalls and a great view over the Cromarty Wetlands.\n\nThis will be a full day walk. \n\nCost: members = free, visitors = $5 pp.\nAll participants must be 18+ years of age\n\nRSVP is essential: please contact Phil on the number provided via email on Wed 12/6 (June Newsletter) or email the club on tsvbush@hotmail.com :)\n\nHope to see you on a walk soon!",
+    "start_time": "2019-06-23T07:00:00+1000",
+    "end_time": "2019-06-23T18:00:00+1000",
+    "formatted_date": "Sunday 23 June 2019",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "6:00 pm",
+    "formatted_end_date": "Sunday 23 June 2019",
+    "is_multi_day": false,
+    "attending_count": 0,
+    "interested_count": 21,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/1191372617690728.jpg",
+      "id": "328748841379070"
+    }
+  },
+  {
+    "id": "2322200841389373",
+    "name": "June Bushwalk Planning Meeting",
+    "description": "The Townsville Bushwalking Club June walk planning meeting will be held on Monday 10 June @6pm at Blessed Mary Mackillop Parish meeting room (building behind the Church), 43 Ross River Road Mundingburra. \n\nWe will be discussing walks for the rest of June/beginning of July. If you're interested in joining us on one of these walks please come along.\n\nAll welcome.",
+    "start_time": "2019-06-10T18:00:00+1000",
+    "end_time": "2019-06-10T19:00:00+1000",
+    "formatted_date": "Monday 10 June 2019",
+    "formatted_time": "6:00 pm",
+    "formatted_end_time": "7:00 pm",
+    "formatted_end_date": "Monday 10 June 2019",
+    "is_multi_day": false,
+    "attending_count": 2,
+    "interested_count": 18,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/2322200841389373.jpg",
+      "id": "317052249215396"
+    }
+  },
+  {
+    "id": "2356419667973955",
+    "name": "Bambaroo Track",
+    "description": "Due to many local track closures/restricted access/weather forecast we're heading off to do Bambaroo Track this Sunday.\nThis will be a steep walk on dirt and rainforest tracks (climbing from sea level to approx 750m elevation).\n\nHighlights include the amazing tree in the photo above :) \n\nThis will be an out and back walk and it's anticipated it will take all day eg 8am to 5pm + travel.\n\nWant to come?  Contact Keith (details have been distributed by email) or email tsvbush@hotmail.com by Friday night.",
+    "start_time": "2019-06-09T07:00:00+1000",
+    "end_time": "2019-06-09T19:00:00+1000",
+    "formatted_date": "Sunday 9 June 2019",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "7:00 pm",
+    "formatted_end_date": "Sunday 9 June 2019",
+    "is_multi_day": false,
+    "attending_count": 1,
+    "interested_count": 9,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 67,
+      "source": "/event-covers/2356419667973955.jpg",
+      "id": "323327618587859"
+    }
+  }
+]

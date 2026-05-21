@@ -1,0 +1,58 @@
+[
+  {
+    "id": "1140045782854482",
+    "name": "August Bushwalk Planning Meeting",
+    "description": "The Townsville Bushwalking Club August walk planning meeting will be held on Monday 12 August @ 6pm at Blessed Mary Mackillop Parish meeting room (building behind the Church), 43 Ross River Road Mundingburra. \n\nWe will be discussing walks for the rest of August/beginning of September. If you're interested in joining us on one of these walks please come along.\n\nAll welcome.",
+    "start_time": "2019-08-12T18:00:00+1000",
+    "end_time": "2019-08-12T19:00:00+1000",
+    "formatted_date": "Monday 12 August 2019",
+    "formatted_time": "6:00 pm",
+    "formatted_end_time": "7:00 pm",
+    "formatted_end_date": "Monday 12 August 2019",
+    "is_multi_day": false,
+    "attending_count": 4,
+    "interested_count": 26,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/1140045782854482.jpg",
+      "id": "351417855778835"
+    }
+  },
+  {
+    "id": "613750652446643",
+    "name": "Cape Cleveland weekender",
+    "description": "Our plan is to walk out to Cape Cleveland (groups departing both Friday 2/8 and Saturday 3/8) for the weekend, returning Sunday 4/8.\nThe beauty of this walk is that we can access part of the route through AIMS (no access to the general public) and carry only our day packs.  Enroute we'll have great views over the Cape, Townsville and Maggie Is. If we're lucky we may even spot a whale!  \nThe walk will be partly on rough bush track and offtrack with terrain that is often hilly and rocky with long grass. \nParticipants are required to provide all their equipment though and be self sufficient.  Camping gear and food will be transported to the Cape by boat (see below for cost).\n\nFor a detailed briefing or to RSVP contact Wilfred or Phil (details distributed via email 15/7) or email tsvbush@hotmail.com.\n\nCost: members free, visitors $5pp.\nGear transport fee: $40 return",
+    "start_time": "2019-08-02T07:00:00+1000",
+    "end_time": "2019-08-04T17:00:00+1000",
+    "formatted_date": "Friday 2 August 2019",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "5:00 pm",
+    "formatted_end_date": "Sunday 4 August 2019",
+    "is_multi_day": true,
+    "attending_count": 1,
+    "interested_count": 14,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/613750652446643.jpg",
+      "id": "351415542445733"
+    }
+  }
+]

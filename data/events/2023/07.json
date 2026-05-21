@@ -1,26 +1,34 @@
 [
   {
-    "id": "258780059881713",
-    "is_cancelled": true,
-    "name": "Blackhole Falls - near Tully ",
-    "description": "Weekender- August 19 & 20\nLeader - Luen Warneke\nWalk - Blackhole Falls near Tully Gorge \nRated - moderately hard. bike + hike \nInterested? - email info@townsvillebushwalkingclub.com\n\nJoin the Townsville Bushwalking Club for a two-day hike through the verdant beauty of Tully Gorge National Park, home to the stunning Blackhole Falls and other natural wonders. This off-track adventure is reserved for the most intrepid hikers and nature lovers ready to explore the Queensland wilderness in all its glory.\n\nOn the first day, we'll rendezvous at the Coachable Creek camping area at 7 am. Depending on your preference, you can either ride a bike or walk along the established track to our first point of interest, Elizabeth Grant Falls. We'll dismount and leave the bikes in the forest, then continue on foot.\n\nOur hike will lead us through the emerald-green forest to Blackhole Falls. A Grade 5 difficulty trail awaits us, requiring a keen sense of direction and a taste for off-the-beaten-track exploration. This picturesque setting boasts a breathtaking waterfall and pool, framed by a gorge adorned with vibrant greenery.\n\nAfter soaking in the stunning views and perhaps taking a refreshing swim, we'll find a suitable camping spot to settle down for the night. The evening will be a perfect opportunity to unwind, share stories, and enjoy the tranquillity of nature.\n\nWe may devote the following to exploring other waterfalls in the near vicinity, depending on group.\n\nPrerequisites:\n\nMaximum group size: 10 people\nSelf-sufficient camping gear and an overnight pack\nA camping permit (required for camping in a national park)\nAbility to treat water for consumption\nRisk Assessment:\nPlease be aware that this adventure involves inherent risks. The following safety considerations should be taken into account:\nHazards: The hike includes traversing uneven ground and off-track paths. It is advised to wear proper hiking boots for stability and ankle support.\nWater: As we'll be sourcing water from the natural environment, it's essential to treat it before consumption to avoid any waterborne diseases.\nNavigation: As this hike involves off-track navigation, participants should have a reasonable level of bush navigation skills and stay close together. More on this in the walk briefing. \nWildlife: As we're in a natural park, encounters with wildlife are a possibility. Keep a safe distance and do not feed or provoke any animals.\nCycling: If you choose to cycle part of the route, remember to wear a helmet and follow safety guidelines. The bikes will be left unattended in the forest, so they should not be expensive or valuable.\n\nThis will undoubtedly be a memorable adventure, with plenty of opportunities to witness the exquisite beauty of Tully Gorge National Park. We look forward to your participation and encourage you to sign up quickly due to the limited availability.\n\nPlease note: This land is traditionally Indigenous Territory of the Djirbalngan. We ask that you respect the cultural significance and history of the land during this adventure.\n\nFor more information contact info@townsvillebushwalkingclub.com",
-    "start_time": "2023-08-19T07:00:00+1000",
-    "end_time": "2023-08-20T17:00:00+1000",
-    "formatted_date": "Saturday 19 August 2023",
+    "id": "967881547971039",
+    "name": "Show Day Long Weekend - FULL ",
+    "description": "𝐓𝐡𝐢𝐬 𝐰𝐚𝐥𝐤 𝐢𝐬 𝐧𝐨𝐰 𝐚𝐭 𝐜𝐚𝐩𝐚𝐜𝐢𝐭𝐲. \n\nLeader: Wilfred Karnoll\nFor more information, contact info@townsvillebushwalkingclub.com",
+    "start_time": "2023-07-01T07:00:00+1000",
+    "end_time": "2023-07-03T17:00:00+1000",
+    "formatted_date": "Saturday 1 July 2023",
     "formatted_time": "7:00 am",
     "formatted_end_time": "5:00 pm",
-    "formatted_end_date": "Sunday 20 August 2023",
+    "formatted_end_date": "Monday 3 July 2023",
     "is_multi_day": true,
     "attending_count": 3,
-    "interested_count": 16,
+    "interested_count": 45,
     "place": {
-      "name": "Tully Falls National Park"
+      "name": "Paluma Range National Park",
+      "location": {
+        "city": "Mutarnee",
+        "country": "Australia",
+        "latitude": -19.184407917331,
+        "longitude": 146.37462615967,
+        "state": "QLD",
+        "zip": "4816"
+      },
+      "id": "108173119211041"
     },
     "cover": {
       "offset_x": 50,
-      "offset_y": 69,
-      "source": "/event-covers/258780059881713.jpg",
-      "id": "762406618988955"
+      "offset_y": 50,
+      "source": "/event-covers/967881547971039.jpg",
+      "id": "730155878880696"
     }
   },
   {

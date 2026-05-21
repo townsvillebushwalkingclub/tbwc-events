@@ -1,0 +1,30 @@
+[
+  {
+    "id": "665045553922790",
+    "name": "October Bushwalk Planning Meeting",
+    "description": "The Townsville Bushwalking Club October walk planning meeting will be held on Monday 14 October @ 6pm at Blessed Mary Mackillop Parish meeting room (building behind the Church), 43 Ross River Road Mundingburra. \n\nWe will be discussing walks for the rest of October/beginning of November. If you're interested in joining us on one of these walks please come along.\n\nAll welcome.",
+    "start_time": "2019-10-14T18:00:00+1000",
+    "end_time": "2019-10-14T19:00:00+1000",
+    "formatted_date": "Monday 14 October 2019",
+    "formatted_time": "6:00 pm",
+    "formatted_end_time": "7:00 pm",
+    "formatted_end_date": "Monday 14 October 2019",
+    "is_multi_day": false,
+    "attending_count": 6,
+    "interested_count": 22,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/665045553922790.jpg",
+      "id": "351419625778658"
+    }
+  }
+]

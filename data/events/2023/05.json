@@ -1,5 +1,58 @@
 [
   {
+    "id": "1262026808062571",
+    "name": "Mt Flagstone",
+    "description": "Mingela Range, Mingela Stage Forest\nLeader: Luen Warneke\nFor more information, contact \tinfo@townsvillebushwalkingclub.com\n\nSaturday, 27th May, 2023\nMt Flagstone, Mingela State Park\n \nWho is leading: Luen Warneke\n\nDifficulty: Grade 4\n\nDistance: ~5km circuit\n \nDescription:\nThis walk is accessed via private property .\n\nOur adventure will take us through the stunning Mingela State Forest, covering an area of 7,800 hectares and featuring four named mountains. We will trek towards our primary goal, Mount Flagstone, standing tall at 591 meters. \nAlong the way, you'll be treated to picturesque views of Bowling Green Bay National Park, Pinnacles National Park, Ross River Dam, and Mount Stuart Range. Capture these breathtaking vistas with your camera as we navigate the open grasslands and ridgelines.\n\nAs we explore this untamed landscape, we will also pass by seasonal creeks, which may flow after heavy rains. Please note that there are no marked tracks within Mingela State Forest, so we will rely on our experienced guides to lead the way.\n\nTips:\nThe best time to hike this area is during the cooler months, as summer can be extremely hot and humid.\nAccess to Mingela State Forest may be limited due to surrounding private properties. Our guides will ensure we traverse authorized routes only.\n\nDuring our bushwalk, we will be traversing uneven ground and terrain, which include steep inclines, declines, and loose surfaces. To minimise the risk of falls and injuries, please wear appropriate footwear with good traction, such as hiking boots or trail shoes. \n\nAdditionally, our experienced guides will provide instructions on how to navigate challenging areas safely.\n\nDon't miss this unique opportunity to explore the beautiful Mingela State Forest and conquer Mount Flagstone with fellow bushwalking enthusiasts! Secure your spot today and prepare for an unforgettable adventure.\n \n \nDuration: Full day : 7:00 am to about 5:00 pm. \n \nMeeting Time:\n7:00 am - Meeting location will be emailed closer to the time \n \nWhat do you need:\nWear appropriate footwear, i.e., enclosed sturdy shoes that grip on rocks.\nGaiters are necessary as we will be traversing long grass\nAppropriate clothing - long covered pants and shirts/ tops for sun protection and protection against scratches.\nGloves.\nDrinking water - carry 3-5 litres of water as there are NO REFILL POINTS on trail.  \nThe club also recommends use of electrolytes during the day.\nBring food and snacks to suit your energy needs for a full day hike\nBushwalkers should bring their own personal (minimal) first aid kit, headtorch, and whistle, etc.\nLuen will also have his personal minimal first aid kit and PLB. The club does not provide a group first aid kit.\n\n----------\n\nRegister - Mt Flagstone\nMust be over 18 yrs to participate.   \n\nIf conditions on the day are unsuitable then the route and walk length may be changed at the leader’s discretion. \n \nPlease Note - If you are a new walker/non-member who has not walked with us before – please contact the walk leader before RSVPing. \n\n\nFee: non-members/visitors/-  $5 . TBWC Club members - Free. \nYou can become a TBWC member after 3 walks as a visitor\n\n\n\nTo register for the walk, Please use the form below. \n\nFor Club Members – if the RSVP registration is fully subscribed, contact the leader direct to discuss participation.",
+    "start_time": "2023-05-27T07:00:00+1000",
+    "end_time": "2023-05-28T17:00:00+1000",
+    "formatted_date": "Saturday 27 May 2023",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "5:00 pm",
+    "formatted_end_date": "Sunday 28 May 2023",
+    "is_multi_day": true,
+    "attending_count": 3,
+    "interested_count": 7,
+    "place": {
+      "name": "Mingela State Forest"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/1262026808062571.jpg",
+      "id": "730154845547466"
+    }
+  },
+  {
+    "id": "192103596919268",
+    "name": "Killymoon Creek Bowling Green Bay National Park",
+    "description": "Sunday, 14th May, 2023 \nKillymoon Creek\nBowling Green Bay National Park\n\nLeader: Molly \n\nRated: Medium. hard for those that are not comfortable rock hopping. \n\nMeeting: 7:00 am. Meeting place will be emailed closer to the time. Start and end location are on private property. Those accepted for the will be advised the location via email.\n\nDistance: Approximately 7 kms round trip \n\nWalk Description:\nKillymoon Creek, in the dry season, is a fantastic spot for rock-hopping enthusiasts. This walk start on a fire trail on private property with a few good hills to get everyone warmed up. The creek bed starts as a series of small rocky gullies which soon open up into a spectacular gorge.\nWe will have lunch at the swimming hole, where the polar bears amongst us can have a dip before lunch. This will be our turn around point and we will descend back down the creek from here.\nThis adventure will see us tackling numerous kinds of climbing. You will need to have a suitable level of fitness and coordination.\n\nDuration:\nFull day walk. Estimate back at the car park around 4 pm.\n\nWhat to bring:\nAdvised equipment: Water (at least 4L as we cannot guarantee suitable water from the creek), Lunch (Snacks and electrolytes), Basic first aid, suitable sun safe clothing, sun screen, Mozzie spray and suitable shoes.\n\nSpeciality equipment: I strongly advise gloves as this walk requires a lots of hand work (but that’s just personal preference). You will need boots with plenty of tread for grip.\n\n=================\nRSVP HERE - https://forms.gle/21THgTkCiLkPqnJVA\n==================\nMust be over 18 yrs to participate.   \n\nIf conditions on the day are unsuitable then the route and walk length may be changed at the leader’s discretion. \n \n**Please Note** - If you are a new walker/non-member who has not walked with us before – please contact the walk leader before RSVPing. Email Molly \n\n\nFee: non-members/visitors/-  $5 . TBWC Club members - Free. \nYou can become a TBWC member after 3 walks as a visitor\n \nFor more info, contact the leader - Molly at info@townsvillebushwalkingclub.com",
+    "start_time": "2023-05-14T07:00:00+1000",
+    "formatted_date": "Sunday 14 May 2023",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": null,
+    "formatted_end_date": null,
+    "is_multi_day": null,
+    "attending_count": 5,
+    "interested_count": 62,
+    "place": {
+      "name": "Bowling Green Bay National Park",
+      "location": {
+        "city": "Alligator Creek",
+        "country": "Australia",
+        "latitude": -19.213333333333,
+        "longitude": 147.03388888889,
+        "state": "QLD"
+      },
+      "id": "117365454976666"
+    },
+    "cover": {
+      "offset_x": 51,
+      "offset_y": 46,
+      "source": "/event-covers/192103596919268.jpg",
+      "id": "747900083772942"
+    }
+  },
+  {
     "id": "1881348988900524",
     "name": "Low-Key Rogain",
     "description": "Organiser: Mitch Nissen\nContact us for more information.",

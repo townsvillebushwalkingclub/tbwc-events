@@ -1,0 +1,58 @@
+[
+  {
+    "id": "2004002706563601",
+    "name": "A long weekend on South Molle Island",
+    "description": "Fancy a long weekend in the Whitsunday's? There are 3 spots available to spend the weekending walking, exploring, paddling, MTB'ing, snorkelling or relaxing on South Molle Island. \n\nHow much and what you do is up to you! There are numerous tracks on the island suitable for walking and MTBing which we intend to cover,  as well as shoreline and reef to explore.\n\nWe will be departing Shute harbour mid morning on Sat 26/1 and return to Shute in the evening (approx 6pm TBC) on Monday 28/1.  \n\nCost: $65pp for return boat fare + $5pp visitor fee (if applicable) + camping fees (approx $15pp)\n\nYou will need to fully self sufficient in terms of camping equipment/food etc.\n\nMembers and visitors welcome to come and spots will be allocated on a first in basis.\nTo register or for more info please contact tsvbush@hotmail.com",
+    "start_time": "2019-01-26T10:00:00+1000",
+    "end_time": "2019-01-28T18:00:00+1000",
+    "formatted_date": "Saturday 26 January 2019",
+    "formatted_time": "10:00 am",
+    "formatted_end_time": "6:00 pm",
+    "formatted_end_date": "Monday 28 January 2019",
+    "is_multi_day": true,
+    "attending_count": 4,
+    "interested_count": 7,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/2004002706563601.jpg",
+      "id": "239594860294469"
+    }
+  },
+  {
+    "id": "1717672391670628",
+    "name": "Walk: Paluma Dam to Big Crystal Creek +/- some side trips",
+    "description": "First walk of the year - let's head to Paluma where it should be a bit cooler and enjoy the lushness of the rainforest.\nWalk plan (subject to change depending on attendees): \n* Paluma Dam to Big Crystal Creek Falls\n* +/-Gold Creek Falls\n* +/- Blue Lagoon\n* +/- Rock Garden\nThere will very likely be stops for photography along the way.\n\nThis walk is suitable for all walkers (pending discussion with walk leader). New walkers welcome. Walk leader is Keith.\n \nFor more details and to RSVP please:\n* Club members and past visitors - contact Keith (details in email sent 2/1)\n* New visitors - contact the Club via email tsvbush@hotmail.com\n\nCost: $5 for all visitors\n\nHappy Walking in 2019!\n\nNB: RSVP'ing to this event is not an RSVP to the walk. You MUST contact the walk leader to register your interest.",
+    "start_time": "2019-01-06T08:00:00+1000",
+    "end_time": "2019-01-06T16:00:00+1000",
+    "formatted_date": "Sunday 6 January 2019",
+    "formatted_time": "8:00 am",
+    "formatted_end_time": "4:00 pm",
+    "formatted_end_date": "Sunday 6 January 2019",
+    "is_multi_day": false,
+    "attending_count": 1,
+    "interested_count": 47,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 67,
+      "source": "/event-covers/1717672391670628.jpg",
+      "id": "233122830941672"
+    }
+  }
+]

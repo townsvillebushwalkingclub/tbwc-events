@@ -1,0 +1,35 @@
+[
+  {
+    "id": "3024873504500580",
+    "name": "Magnetic Island Tracks",
+    "description": "Let's go for a walk over on Magnetic Island.  See if we can see a Koala or two, as well as the magical views of Cleveland Bay, the Ocean and the lush vegetation of Maggie.  \n\nWe'll walk along Mandalay St to the tracks, go up and over to the Forts and then down to the Bay's on the other side.  We can have a snack or early lunch there before making our way to Horseshoe Bay.  We can refresh with a swim and/or a cool drink at the nearby pub, before returning to Nelly Bay and our return ferry ride home.  \n\nBring money for the Ferry, refreshments, bus tickets, visitor fees (if a non-member) \n\nDeparting on the 7.45 am ferry.  \nPlease contact tsvbush@hotmail.com to find out more information and to nominate for this walk.  \n\nYou'll need a mask for the public transport we'll be using on the day.",
+    "start_time": "2021-07-11T07:30:00+1000",
+    "end_time": "2021-07-11T18:00:00+1000",
+    "formatted_date": "Sunday 11 July 2021",
+    "formatted_time": "7:30 am",
+    "formatted_end_time": "6:00 pm",
+    "formatted_end_date": "Sunday 11 July 2021",
+    "is_multi_day": false,
+    "attending_count": 0,
+    "interested_count": 16,
+    "place": {
+      "name": "SeaLink North Queensland",
+      "location": {
+        "city": "Townsville",
+        "country": "Australia",
+        "latitude": -19.255021021167,
+        "longitude": 146.82609151339,
+        "state": "QLD",
+        "street": "Breakwater Terminal, Sir Leslie Thiess Drv, Townsville",
+        "zip": "4810"
+      },
+      "id": "399875133394987"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/3024873504500580.jpg",
+      "id": "874439266810022"
+    }
+  }
+]

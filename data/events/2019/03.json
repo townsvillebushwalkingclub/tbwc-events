@@ -1,0 +1,81 @@
+[
+  {
+    "id": "398437510707241",
+    "name": "Paluma Day Walk",
+    "description": "We're heading to Paluma for a full day walk  (7am - 7pm approx) this Sunday.\n* What's planned: From Mt Spec Forestry Road  to Paluma village via Culvert 81 track, Ethel Creek falls, Cloudy Creek (and whatever else our leader throws in - unknown extensions which may involve rock hopping and scrub bashing off the track). \n\nPrimarily a rainforest track walk and suitable for all walkers.\n\n* Weather forecast: 60% chance of showers, chance of a thunderstorm.\n\n* What to bring: Hat, sunscreen, 2L water, sturdy/supportive footwear, insect repellent, food etc.\n\n* Cost: Members - free, Visitors - $5\nAll walkers must be 18+yrs for insurance purposes.\n\nCarpooling from Townsville available but you must be able to get yourself to the meeting point at Hermit Park.\n\nPlease contact the Club before 12pm Friday via email for leader contact details and to discuss your intention to come.",
+    "start_time": "2019-03-31T07:00:00+1000",
+    "end_time": "2019-03-31T19:00:00+1000",
+    "formatted_date": "Sunday 31 March 2019",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "7:00 pm",
+    "formatted_end_date": "Sunday 31 March 2019",
+    "is_multi_day": false,
+    "attending_count": 3,
+    "interested_count": 8,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 51,
+      "source": "/event-covers/398437510707241.jpg",
+      "id": "281392616114693"
+    }
+  },
+  {
+    "id": "421080578455829",
+    "name": "Cockatoo Rock Walk",
+    "description": "If you have walked with us previously and are keen for a hard full day walk, then join us on a boulder hop/scrub bash/steep 'walk' to Cockatoo Rock this Sunday.\n\nTo register or for more details please contact tsvbush@hotmail.com or see details distributed via email.\n\nCost: Members free, visitors that have walked with us previously $5\nNB: if you are allergic to wasps, this is not the walk for you",
+    "start_time": "2019-03-17T07:00:00+1000",
+    "end_time": "2019-03-17T17:00:00+1000",
+    "formatted_date": "Sunday 17 March 2019",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "5:00 pm",
+    "formatted_end_date": "Sunday 17 March 2019",
+    "is_multi_day": false,
+    "attending_count": 1,
+    "interested_count": 5,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/421080578455829.jpg",
+      "id": "274483433472278"
+    }
+  },
+  {
+    "id": "251609202395745",
+    "name": "Townsville Bushwalking Club March Meeting",
+    "description": "If you would like to explore some fabulous places around Townsville then come to our March meeting.\n\nMarch walks are scheduled for 17th & 31st.\n\nWHERE: Blessed Mary Mackillop Parish meeting room (building behind the Church), 43 Ross River Road Mundingburra\nTIME:  6pm. This will also be our AGM so will run a little longer than usual\n\nRSVP: no need to RSVP, just turn up \n\nPlease direct any questions to the Club via email tsvbush@hotmail.com \n\nHappy walking!\nNB: for insurance reasons all walkers must be 18+yrs.",
+    "start_time": "2019-03-11T18:00:00+1000",
+    "end_time": "2019-03-11T19:30:00+1000",
+    "formatted_date": "Monday 11 March 2019",
+    "formatted_time": "6:00 pm",
+    "formatted_end_time": "7:30 pm",
+    "formatted_end_date": "Monday 11 March 2019",
+    "is_multi_day": false,
+    "attending_count": 0,
+    "interested_count": 7,
+    "place": {
+      "name": "Blessed Mary Mackillop Parish meeting room (building behind the Church), 43 Ross River Road Mundingburra"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/251609202395745.jpg",
+      "id": "264078047846150"
+    }
+  }
+]

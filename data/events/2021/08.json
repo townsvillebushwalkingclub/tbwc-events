@@ -1,0 +1,25 @@
+[
+  {
+    "id": "560041328458245",
+    "name": "The Cape Cleveland Light",
+    "description": "If you are interested in joining us on our annual pilgrimage to the Cape Cleveland Lighthouse please feel free to contact the Club via email (tsvbush@hotmail.com).  We'll provide you with all the necessary information for you to know what to expect on the walk and the costs associated with the trip.  You will also find out who to contact to register for the walk.  There are two options: a 3 day or 2 day option.  Registration and approval to attend this walk is required.  We look forward to hearing from you.",
+    "start_time": "2021-08-13T07:00:00+1000",
+    "end_time": "2021-08-15T17:00:00+1000",
+    "formatted_date": "Friday 13 August 2021",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "5:00 pm",
+    "formatted_end_date": "Sunday 15 August 2021",
+    "is_multi_day": true,
+    "attending_count": 0,
+    "interested_count": 5,
+    "place": {
+      "name": "Locations advised once approved to attend"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/560041328458245.jpg",
+      "id": "891327271787888"
+    }
+  }
+]

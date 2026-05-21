@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1096199193915878",
+    "name": "April Walk Planning Meeting",
+    "description": "Long weekends = plenty of exploring and multiday trips \nApril's planning meeting will be held Monday 8 April @ 6pm, Blessed Mary Mackillop Parish meeting room (building behind the Church), 43 Ross River Road Mundingburra\n\nCome along and find out about the club and what walks are planned. All welcome.\n\nWe'll be planning walks and trips for the Easter/ANZAC and May long weekend periods. We have a short list of trips/walks planned but if you have any other suggestions, please email them through (tsvbush@hotmail.com).\nThere may also be day walks depending on interest and leader availability.\nApril walks scheduled for 14th and 28th will be confirmed. \nIt's going to be a very busy walking month after a wet start to the year!",
+    "start_time": "2019-04-08T18:00:00+1000",
+    "end_time": "2019-04-08T19:00:00+1000",
+    "formatted_date": "Monday 8 April 2019",
+    "formatted_time": "6:00 pm",
+    "formatted_end_time": "7:00 pm",
+    "formatted_end_date": "Monday 8 April 2019",
+    "is_multi_day": false,
+    "attending_count": 6,
+    "interested_count": 38,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 62,
+      "source": "/event-covers/1096199193915878.jpg",
+      "id": "283189402601681"
+    }
+  }
+]

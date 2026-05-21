@@ -1,0 +1,25 @@
+[
+  {
+    "id": "304390473755259",
+    "name": "T'ville Bushwalking Club February meeting",
+    "description": "Let's kick the year off with a bang.  Do you have a new year's resolution or intention to get outdoors and explore?\nIf so, come along to the first Club meeting of the year to register your interest in joining a walk in February. \nNext walk is scheduled for 17 February.\n\nWHERE: Blessed Mary Mackillop Parish meeting room (building behind the Church), 43 Ross River Road Mundingburra\nTIME:  6pm (meetings usually go for about 45mins)\n\nRSVP: no need to RSVP, just turn up \n\nPlease direct any questions to the Club via email tsvbush@hotmail.com\n\nHappy walking!",
+    "start_time": "2019-02-11T18:00:00+1000",
+    "end_time": "2019-02-11T19:00:00+1000",
+    "formatted_date": "Monday 11 February 2019",
+    "formatted_time": "6:00 pm",
+    "formatted_end_time": "7:00 pm",
+    "formatted_end_date": "Monday 11 February 2019",
+    "is_multi_day": false,
+    "attending_count": 2,
+    "interested_count": 18,
+    "place": {
+      "name": "Blessed Mary Mackillop Parish meeting room (building behind the Church), 43 Ross River Road, Mundingburra"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/304390473755259.jpg",
+      "id": "239322353655053"
+    }
+  }
+]

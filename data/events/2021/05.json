@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1188123281631480",
+    "name": "Cancelled - Puzzle Creek 3 day walk",
+    "description": "Cancelled again due to conditions",
+    "start_time": "2021-05-01T08:00:00+1000",
+    "end_time": "2021-05-03T17:00:00+1000",
+    "formatted_date": "Saturday 1 May 2021",
+    "formatted_time": "8:00 am",
+    "formatted_end_time": "5:00 pm",
+    "formatted_end_date": "Monday 3 May 2021",
+    "is_multi_day": true,
+    "attending_count": 0,
+    "interested_count": 13,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 37,
+      "source": "/event-covers/1188123281631480.jpg",
+      "id": "822003372053612"
+    }
+  }
+]

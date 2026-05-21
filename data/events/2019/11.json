@@ -1,0 +1,30 @@
+[
+  {
+    "id": "560042594762696",
+    "name": "November Walk Planning Meeting",
+    "description": "Come along to our monthly meeting to hear about the walks we have done in the last month, and plan the adventures in the leadup to Christmas.  We meet at the Parish Meeting room behind St Mary Mackillop Catholic Church in Mundingburra.  Look forward to seeing you on Monday night.",
+    "start_time": "2019-11-11T18:00:00+1000",
+    "end_time": "2019-11-11T19:00:00+1000",
+    "formatted_date": "Monday 11 November 2019",
+    "formatted_time": "6:00 pm",
+    "formatted_end_time": "7:00 pm",
+    "formatted_end_date": "Monday 11 November 2019",
+    "is_multi_day": false,
+    "attending_count": 1,
+    "interested_count": 15,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/560042594762696.jpg",
+      "id": "427873324799954"
+    }
+  }
+]

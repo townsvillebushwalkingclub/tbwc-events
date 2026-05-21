@@ -1,0 +1,58 @@
+[
+  {
+    "id": "2397933406897808",
+    "name": "May Walk Planning Meeting",
+    "description": "The Townsville Bushwalking Club May walk planning meeting will be held on Monday 13 May @6pm at Blessed Mary Mackillop Parish meeting room (building behind the Church), 43 Ross River Road Mundingburra. \n\nWe will be discussing walks for the rest of May/beginning of June. If you're interested in joining us on one of these walks please come along.\n\nAll welcome. \n\nWe'll also have a slide show of photos from some of the recent walks.",
+    "start_time": "2019-05-13T18:00:00+1000",
+    "end_time": "2019-05-13T19:00:00+1000",
+    "formatted_date": "Monday 13 May 2019",
+    "formatted_time": "6:00 pm",
+    "formatted_end_time": "7:00 pm",
+    "formatted_end_date": "Monday 13 May 2019",
+    "is_multi_day": false,
+    "attending_count": 1,
+    "interested_count": 13,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 50,
+      "source": "/event-covers/2397933406897808.jpg",
+      "id": "303104913943463"
+    }
+  },
+  {
+    "id": "2149486118449851",
+    "name": "North Creek (Mt Elliot range) Walk",
+    "description": "This walk is open to members and past visitors only.  It is rated as a hard walk.\n\nThis walk up North Creek will consist of rock hopping, boulder and rockface scrambling / climbing / sliding, bush bashing, long grass, and steep climbs. There are exposed rockfaces to negotiate. We climb to about 600 mr elevation. We will pass several waterfalls and outstanding creek scenery. \n\nFor those used to the usual route, for difference, after lunch we will try same as last year and go below the top waterfall, and scramble down the creek until we reach the ridge exit above the fifth (?) waterfall - it is a hard challenging section but enjoyable.\n\nTo register please contact Keith - see email distributed 3/5/19 for full details. Do not register via email as it isn't being monitored this week.\n\nMembers: free - don't forget membership is due now!\nVisitors: $5 pp.  All walkers must be 18+years.",
+    "start_time": "2019-05-12T07:00:00+1000",
+    "end_time": "2019-05-12T17:00:00+1000",
+    "formatted_date": "Sunday 12 May 2019",
+    "formatted_time": "7:00 am",
+    "formatted_end_time": "5:00 pm",
+    "formatted_end_date": "Sunday 12 May 2019",
+    "is_multi_day": false,
+    "attending_count": 0,
+    "interested_count": 10,
+    "place": {
+      "name": "Townsville Bushwalking Club",
+      "location": {
+        "latitude": -19.2584,
+        "longitude": 146.81476
+      },
+      "id": "192589954994960"
+    },
+    "cover": {
+      "offset_x": 50,
+      "offset_y": 47,
+      "source": "/event-covers/2149486118449851.jpg",
+      "id": "303106920609929"
+    }
+  }
+]
