@@ -431,7 +431,17 @@ function loadEventsFromFile(year: number, month: number): TBWCEvent[] | null {
         }
         return event
       })
-      return updatedEvents
+      const matchingMonth = updatedEvents.filter((event) => {
+        if (!event.start_time) return false
+        const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
+        return y === year && m === month
+      })
+      if (matchingMonth.length !== updatedEvents.length) {
+        console.warn(
+          `Ignored ${updatedEvents.length - matchingMonth.length} event(s) in ${year}/${month.toString().padStart(2, '0')}.json whose start_time is outside that month (Brisbane)`
+        )
+      }
+      return matchingMonth
     }
   } catch (error) {
     console.error(`Error loading events from file for ${year}/${month}:`, error)

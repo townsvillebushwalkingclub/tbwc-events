@@ -6,6 +6,7 @@
 import fs from 'fs'
 import path from 'path'
 import { downloadCoverImage } from '../lib/download-cover-image'
+import { getCalendarDateInTimeZone } from '../lib/event-utils'
 
 function loadEnvFile(): void {
   const envFiles = ['.env.local', '.env']
@@ -149,14 +150,37 @@ async function formatEvent(event: RawEvent): Promise<Record<string, unknown>> {
   }
 }
 
+/** Brisbane month boundaries (+10:00, no DST). Matches lib/event-utils calendar bucketing. */
+function getBrisbaneMonthUnixRange(
+  year: number,
+  month: number
+): { since: number; until: number } {
+  const lastDay = new Date(year, month, 0).getDate()
+  const mm = month.toString().padStart(2, '0')
+  const since = Math.floor(
+    new Date(`${year}-${mm}-01T00:00:00+10:00`).getTime() / 1000
+  )
+  const until = Math.floor(
+    new Date(`${year}-${mm}-${lastDay.toString().padStart(2, '0')}T23:59:59+10:00`).getTime() /
+      1000
+  )
+  return { since, until }
+}
+
+function eventBelongsInMonth(
+  event: { start_time: string },
+  year: number,
+  month: number
+): boolean {
+  const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
+  return y === year && m === month
+}
+
 async function fetchEventsForMonth(
   year: number,
   month: number
 ): Promise<Record<string, unknown>[]> {
-  const startDate = new Date(year, month - 1, 1)
-  const endDate = new Date(year, month, 0, 23, 59, 59)
-  const since = Math.floor(startDate.getTime() / 1000)
-  const until = Math.floor(endDate.getTime() / 1000)
+  const { since, until } = getBrisbaneMonthUnixRange(year, month)
   const allRawEvents: RawEvent[] = []
   let url: string | null = `https://graph.facebook.com/v23.0/${FACEBOOK_PAGE_ID}/events?access_token=${FACEBOOK_ACCESS_TOKEN}&fields=id,name,description,start_time,end_time,place,attending_count,interested_count,cover&limit=100&since=${since}&until=${until}`
 
@@ -191,7 +215,17 @@ async function fetchEventsForMonth(
       }
     }
     if (allRawEvents.length === 0) return []
-    return Promise.all(allRawEvents.map((e) => formatEvent(e)))
+    const formatted = await Promise.all(allRawEvents.map((e) => formatEvent(e)))
+    const inMonth = formatted.filter((e) =>
+      eventBelongsInMonth(e as { start_time: string }, year, month)
+    )
+    const skipped = formatted.length - inMonth.length
+    if (skipped > 0) {
+      console.warn(
+        `   ⚠️  Skipped ${skipped} event(s) whose start_time is not in ${year}/${month.toString().padStart(2, '0')} (Brisbane)`
+      )
+    }
+    return inMonth
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
     if (message === 'RATE_LIMIT' || message === 'TOKEN_EXPIRED') throw err
