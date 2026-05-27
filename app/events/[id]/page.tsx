@@ -1,7 +1,9 @@
 import { getEventById, getAllEvents } from '@/lib/facebook-api'
 import { isValidFacebookEventId } from '@/lib/event-id'
+import { buildEventJsonLdDocument } from '@/lib/event-json-ld'
 import { absoluteEventShareImageUrl, EVENTS_SITE_ORIGIN } from '@/lib/site'
 import { notFound } from 'next/navigation'
+import JsonLd from '@/app/components/JsonLd'
 import EventClient from './EventClient'
 
 function isPastEvent(eventDate: string): boolean {
@@ -164,7 +166,12 @@ export default async function EventPage({
     throw error
   }
 
-  return <EventClient initialEvent={event} />
+  return (
+    <>
+      <JsonLd data={buildEventJsonLdDocument(event)} />
+      <EventClient initialEvent={event} />
+    </>
+  )
 }
 
 export async function generateStaticParams() {
