@@ -4,11 +4,19 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import {
+  getMonthCalendarGrid,
+  getMonthsInGrid,
+  getPrefetchMonths,
+  monthKey,
+  monthsToFetchForGrid,
+} from '@/lib/calendar-grid'
 import {
   getCalendarDateInTimeZone,
   getPreferredCalendarMonth,
@@ -73,6 +81,10 @@ export default function Calendar({
   const [viewMonth, setViewMonth] = useState(viewFromUrl.m)
   const [overflowEvents, setOverflowEvents] = useState<TBWCEvent[] | null>(null)
   const [overflowKey, setOverflowKey] = useState<string | null>(null)
+  const [adjacentEvents, setAdjacentEvents] = useState<TBWCEvent[]>([])
+  const [adjacentKey, setAdjacentKey] = useState<string | null>(null)
+  const [todayDateString, setTodayDateString] = useState<string | null>(null)
+  const prevTodayRef = useRef<string | null>(null)
 
   const inPrefetchRange = isInPrefetchRange(
     viewYear,
@@ -80,9 +92,7 @@ export default function Calendar({
     prefetchAnchorYear,
     prefetchAnchorMonth
   )
-  const events = inPrefetchRange
-    ? serverEvents
-    : overflowEvents ?? []
+  const baseEvents = inPrefetchRange ? serverEvents : overflowEvents ?? []
 
   const navigateToMonth = useCallback(
     (newYear: number, newMonth: number) => {
@@ -92,6 +102,8 @@ export default function Calendar({
         setOverflowEvents(null)
         setOverflowKey(null)
       }
+      setAdjacentEvents([])
+      setAdjacentKey(null)
       setViewYear(newYear)
       setViewMonth(newMonth)
       const params = new URLSearchParams()
@@ -105,6 +117,57 @@ export default function Calendar({
   const overflowKeyForView = `${viewYear}-${viewMonth}`
   const loading =
     !inPrefetchRange && overflowKey !== overflowKeyForView
+
+  const displayYear = viewYear
+  const displayMonth = viewMonth - 1
+  const { startDate, numCells } = useMemo(
+    () => getMonthCalendarGrid(viewYear, viewMonth),
+    [viewYear, viewMonth]
+  )
+  const gridMonths = useMemo(
+    () => getMonthsInGrid(startDate, numCells),
+    [startDate, numCells]
+  )
+  const prefetchedMonths = useMemo(
+    () => getPrefetchMonths(prefetchAnchorYear, prefetchAnchorMonth),
+    [prefetchAnchorYear, prefetchAnchorMonth]
+  )
+  const adjacentMonthsToFetch = useMemo(
+    () =>
+      monthsToFetchForGrid(
+        gridMonths,
+        inPrefetchRange ? prefetchedMonths : [],
+        overflowKey,
+        viewYear,
+        viewMonth
+      ),
+    [
+      gridMonths,
+      inPrefetchRange,
+      prefetchedMonths,
+      overflowKey,
+      viewYear,
+      viewMonth,
+    ]
+  )
+  const adjacentKeyForView = useMemo(
+    () =>
+      adjacentMonthsToFetch
+        .map(({ year, month }) => monthKey(year, month))
+        .sort()
+        .join(','),
+    [adjacentMonthsToFetch]
+  )
+
+  const events = useMemo(() => {
+    const byId = new Map<string, TBWCEvent>()
+    const extra =
+      adjacentMonthsToFetch.length === 0 ? [] : adjacentEvents
+    for (const event of [...baseEvents, ...extra]) {
+      byId.set(event.id, event)
+    }
+    return [...byId.values()]
+  }, [baseEvents, adjacentEvents, adjacentMonthsToFetch])
 
   useEffect(() => {
     if (inPrefetchRange) return
@@ -134,6 +197,45 @@ export default function Calendar({
     }
   }, [viewYear, viewMonth, inPrefetchRange, overflowKey, overflowKeyForView])
 
+  useEffect(() => {
+    if (adjacentMonthsToFetch.length === 0) return
+    if (adjacentKey === adjacentKeyForView) return
+
+    let cancelled = false
+    Promise.all(
+      adjacentMonthsToFetch.map(({ year, month }) =>
+        fetch(`/api/events/${year}/${month}`)
+          .then((res) => res.json())
+          .then((data) =>
+            data?.success && Array.isArray(data.data)
+              ? (data.data as TBWCEvent[])
+              : []
+          )
+          .catch(() => [] as TBWCEvent[])
+      )
+    ).then((results) => {
+      if (cancelled) return
+      const byId = new Map<string, TBWCEvent>()
+      for (const list of results) {
+        for (const event of list) {
+          byId.set(event.id, event)
+        }
+      }
+      setAdjacentEvents([...byId.values()])
+      setAdjacentKey(adjacentKeyForView)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [
+    viewYear,
+    viewMonth,
+    adjacentKey,
+    adjacentKeyForView,
+    adjacentMonthsToFetch,
+  ])
+
   const previousMonth = () => {
     const newMonth = viewMonth === 1 ? 12 : viewMonth - 1
     const newYear = viewMonth === 1 ? viewYear - 1 : viewYear
@@ -151,22 +253,10 @@ export default function Calendar({
     navigateToMonth(preferred.year, preferred.month)
   }
 
-  const displayYear = viewYear
-  const displayMonth = viewMonth - 1
-  const firstDay = new Date(displayYear, displayMonth, 1)
-  const lastDay = new Date(displayYear, displayMonth + 1, 0)
-  const startDate = new Date(firstDay)
-  const dayOfWeek = firstDay.getDay()
-  const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1
-  startDate.setDate(startDate.getDate() - daysToSubtract)
-
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
   // "Today" must come from the viewer's clock, not from ISR-cached server HTML
   // (see app/page.tsx revalidate). Otherwise the highlight stays on yesterday until the next regen.
-  const [todayDateString, setTodayDateString] = useState<string | null>(null)
-  const prevTodayRef = useRef<string | null>(null)
-
   useLayoutEffect(() => {
     const syncToday = () => {
       const next = new Date().toDateString()
@@ -246,10 +336,12 @@ export default function Calendar({
           </div>
         ))}
 
-        {Array.from({ length: 42 }, (_, i) => {
+        {Array.from({ length: numCells }, (_, i) => {
           const date = new Date(startDate)
           date.setDate(startDate.getDate() + i)
-          const isOtherMonth = date.getMonth() !== displayMonth
+          const cellCal = getCalendarDateInTimeZone(date)
+          const isOtherMonth =
+            cellCal.year !== viewYear || cellCal.month !== viewMonth
           const isToday =
             todayDateString !== null &&
             date.toDateString() === todayDateString
