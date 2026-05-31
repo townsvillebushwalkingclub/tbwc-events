@@ -24,6 +24,8 @@ import {
 } from '@/lib/event-utils'
 import type { TBWCEvent } from '@/types/event'
 
+const MULTI_DAY_ROW_HEIGHT = 22
+
 interface CalendarProps {
   currentDate: Date
   events: TBWCEvent[]
@@ -423,6 +425,9 @@ export default function Calendar({
                   )
                 )
 
+                const multiDayRowCount = multiDayEvents.length
+                const singleDayTopOffset = multiDayRowCount * MULTI_DAY_ROW_HEIGHT
+
                 return (
                   <>
                     {multiDayEvents.map((event, index) => {
@@ -462,7 +467,7 @@ export default function Calendar({
                             right: `${(daysDiff - 1) * -100}%`,
                             zIndex: 10 + index,
                             width: `${daysDiff * 100}%`,
-                            top: `${30 + index * 20}px`,
+                            top: `${30 + index * MULTI_DAY_ROW_HEIGHT}px`,
                           }}
                           title={`${event.name} (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
                         >
@@ -474,25 +479,38 @@ export default function Calendar({
                       )
                     })}
 
-                    {singleDayEvents.map((event, index) => {
-                      const past = isEventPastOnCalendar(event)
-                      const singleClass = past
-                        ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 hover:bg-gray-300/90 transition-colors cursor-pointer block'
-                        : 'text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block'
-                      return (
-                      <Link
-                        key={`single-${index}`}
-                        href={`/events/${event.id}`}
-                        className={singleClass}
-                        style={{ marginTop: `${index * 16}px` }}
-                        title={event.name}
-                      >
-                        {event.name.length > 15
-                          ? event.name.substring(0, 15) + '...'
-                          : event.name}
-                        {event.is_cancelled && ' (CANCELLED)'}
-                      </Link>
-                    )})}
+                    <div
+                      style={{
+                        marginTop:
+                          singleDayTopOffset > 0
+                            ? `${singleDayTopOffset}px`
+                            : undefined,
+                      }}
+                    >
+                      {singleDayEvents.map((event, index) => {
+                        const past = isEventPastOnCalendar(event)
+                        const singleClass = past
+                          ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 hover:bg-gray-300/90 transition-colors cursor-pointer block'
+                          : 'text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block'
+                        return (
+                          <Link
+                            key={`single-${index}`}
+                            href={`/events/${event.id}`}
+                            className={singleClass}
+                            style={{
+                              marginTop:
+                                index > 0 ? `${index * 16}px` : undefined,
+                            }}
+                            title={event.name}
+                          >
+                            {event.name.length > 15
+                              ? event.name.substring(0, 15) + '...'
+                              : event.name}
+                            {event.is_cancelled && ' (CANCELLED)'}
+                          </Link>
+                        )
+                      })}
+                    </div>
                   </>
                 )
               })()}
