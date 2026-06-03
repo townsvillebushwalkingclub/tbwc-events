@@ -75,9 +75,17 @@ export default function EventsList({
     return paragraphs.length > 2
   }
 
-  /** Past styling must not depend on `currentDate`’s month (smart default can be April while March events are still in the prefetched list). */
-  const showPastCompactStyle = (event: TBWCEvent) =>
-    !!event?.start_time && isEventPastOnCalendar(event)
+  /** Compact grey row for past or cancelled; not tied to `currentDate` month. */
+  const showCompactStyle = (event: TBWCEvent) =>
+    !!event?.start_time &&
+    (isEventPastOnCalendar(event) || event.is_cancelled === true)
+
+  const compactStatusLabel = (event: TBWCEvent): string | null => {
+    if (!showCompactStyle(event)) return null
+    if (isEventPastOnCalendar(event)) return '(past)'
+    if (event.is_cancelled) return '(cancelled)'
+    return null
+  }
 
   return (
     <div>
@@ -96,8 +104,9 @@ export default function EventsList({
         </div>
       ) : (
         <div className="space-y-6">
-          {events.map((event) =>
-            showPastCompactStyle(event) ? (
+          {events.map((event) => {
+            const statusLabel = compactStatusLabel(event)
+            return showCompactStyle(event) ? (
               <div
                 key={event.id}
                 className="rounded-2xl p-4 border border-gray-200 bg-gray-100 text-gray-500"
@@ -108,7 +117,6 @@ export default function EventsList({
                     className="font-semibold text-gray-600 hover:text-gray-800 transition-colors"
                   >
                     {event.name}
-                    {event.is_cancelled && ' (CANCELLED)'}
                   </Link>
                   <span className="text-sm text-gray-500">
                     <EventDateTime
@@ -117,7 +125,9 @@ export default function EventsList({
                       className="text-gray-500!"
                     />
                   </span>
-                  <span className="text-sm">(past)</span>
+                  {statusLabel && (
+                    <span className="text-sm">{statusLabel}</span>
+                  )}
                   <Link
                     href={`/events/${event.id}`}
                     className="text-sm text-casper-orange hover:text-casper-orange-hover font-medium"
@@ -257,7 +267,7 @@ export default function EventsList({
                 </div>
               </div>
             )
-          )}
+          })}
         </div>
       )}
     </div>
