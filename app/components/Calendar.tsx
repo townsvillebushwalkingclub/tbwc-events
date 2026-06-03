@@ -452,8 +452,9 @@ export default function Calendar({
                             (1000 * 60 * 60 * 24)
                         ) + 1
 
-                      const past = isEventPastOnCalendar(event)
-                      const multiClass = past
+                      const muted =
+                        isEventPastOnCalendar(event) || event.is_cancelled
+                      const multiClass = muted
                         ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 absolute hover:bg-gray-300/90 transition-colors cursor-pointer block'
                         : 'text-xs bg-sky-light text-gray-800 px-2 py-1 rounded-sm mb-1 border border-sky absolute hover:bg-sky-muted/30 transition-colors cursor-pointer block'
 
@@ -488,8 +489,9 @@ export default function Calendar({
                       }}
                     >
                       {singleDayEvents.map((event, index) => {
-                        const past = isEventPastOnCalendar(event)
-                        const singleClass = past
+                        const muted =
+                          isEventPastOnCalendar(event) || event.is_cancelled
+                        const singleClass = muted
                           ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 hover:bg-gray-300/90 transition-colors cursor-pointer block'
                           : 'text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block'
                         return (
