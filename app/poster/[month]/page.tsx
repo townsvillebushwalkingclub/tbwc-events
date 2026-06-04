@@ -2,9 +2,10 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import {
   addMonths,
+  formatPosterExcludeQuery,
   formatPosterMonthLabel,
-  getPosterDensity,
   getPosterEventsForMonth,
+  parsePosterExcludeParam,
   parsePosterMonthParam,
 } from '@/lib/poster-utils'
 import PosterContent from './PosterContent'
@@ -14,6 +15,7 @@ export const revalidate = 21600
 
 interface PageProps {
   params: Promise<{ month: string }>
+  searchParams: Promise<{ exclude?: string | string[] }>
 }
 
 export async function generateMetadata({
@@ -30,25 +32,32 @@ export async function generateMetadata({
   }
 }
 
-export default async function PosterMonthPage({ params }: PageProps) {
+export default async function PosterMonthPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { month } = await params
   const anchor = parsePosterMonthParam(month)
   if (!anchor) notFound()
 
-  const poster = await getPosterEventsForMonth(anchor)
-  const density = getPosterDensity(poster.currentMonth.length)
+  const excludeIds = parsePosterExcludeParam((await searchParams).exclude)
+  const excludeQuery = formatPosterExcludeQuery(excludeIds)
+  const poster = await getPosterEventsForMonth(anchor, excludeIds)
   const prev = addMonths(anchor.year, anchor.month, -1)
   const next = addMonths(anchor.year, anchor.month, 1)
 
   return (
     <>
-      <PosterToolbar anchor={anchor} prev={prev} next={next} />
+      <PosterToolbar
+        prev={prev}
+        next={next}
+        excludeQuery={excludeQuery}
+      />
       <PosterContent
         anchorLabel={poster.anchorLabel}
         currentEvents={poster.currentMonth}
         nextEvents={poster.nextMonth}
         nextMonthLabel={poster.nextMonthLabel}
-        density={density}
       />
     </>
   )

@@ -16,6 +16,7 @@ import {
   type PosterMonth,
 } from '@/lib/poster-month'
 import type { TBWCEvent } from '@/types/event'
+import { isValidFacebookEventId } from '@/lib/event-id'
 
 export { POSTER_QR_URL } from '@/lib/poster-constants'
 export type { PosterMonth } from '@/lib/poster-month'
@@ -27,13 +28,10 @@ export {
   parsePosterMonthParam,
 } from '@/lib/poster-month'
 
-export const POSTER_MAX_CURRENT_MONTH = 20
+export const POSTER_MAX_CURRENT_MONTH = 12
 export const POSTER_MAX_NEXT_MONTH = 5
 
 const BRISBANE = 'Australia/Brisbane'
-
-/** Layout scale for photo-forward event cards (all densities include images). */
-export type PosterDensity = 'feature' | 'balanced' | 'mosaic'
 
 export interface PosterEventsData {
   anchor: PosterMonth
@@ -67,8 +65,32 @@ function eventsInMonth(events: TBWCEvent[], year: number, month: number): TBWCEv
     )
 }
 
+function excludeEvents(events: TBWCEvent[], excludeIds: Set<string>): TBWCEvent[] {
+  if (excludeIds.size === 0) return events
+  return events.filter((event) => !excludeIds.has(event.id))
+}
+
+/** Parse `?exclude=id1,id2` into a set of Facebook event IDs. */
+export function parsePosterExcludeParam(
+  value: string | string[] | undefined
+): Set<string> {
+  const raw = Array.isArray(value) ? value.join(',') : value ?? ''
+  const ids = raw
+    .split(',')
+    .map((part) => part.trim())
+    .filter((id) => id.length > 0 && isValidFacebookEventId(id))
+  return new Set(ids)
+}
+
+/** Build query string to preserve exclude IDs across poster links. */
+export function formatPosterExcludeQuery(excludeIds: Set<string>): string {
+  if (excludeIds.size === 0) return ''
+  return `?exclude=${[...excludeIds].join(',')}`
+}
+
 export async function getPosterEventsForMonth(
-  anchor: PosterMonth
+  anchor: PosterMonth,
+  excludeIds: Set<string> = new Set()
 ): Promise<PosterEventsData> {
   const next = addMonths(anchor.year, anchor.month, 1)
   let all: TBWCEvent[] = []
@@ -79,11 +101,14 @@ export async function getPosterEventsForMonth(
   }
 
   const upcoming = filterUpcoming(all)
-  const currentMonth = eventsInMonth(upcoming, anchor.year, anchor.month).slice(
-    0,
-    POSTER_MAX_CURRENT_MONTH
+  const currentMonth = excludeEvents(
+    eventsInMonth(upcoming, anchor.year, anchor.month),
+    excludeIds
+  ).slice(0, POSTER_MAX_CURRENT_MONTH)
+  const nextMonthRaw = excludeEvents(
+    eventsInMonth(upcoming, next.year, next.month),
+    excludeIds
   )
-  const nextMonthRaw = eventsInMonth(upcoming, next.year, next.month)
   const nextMonthSeen = new Set<string>()
   const nextMonth = nextMonthRaw
     .filter((e) => {
@@ -100,17 +125,6 @@ export async function getPosterEventsForMonth(
     nextMonth,
     nextMonthLabel: formatPosterMonthLabel(next.year, next.month),
   }
-}
-
-export function getPosterDensity(count: number): PosterDensity {
-  if (count <= 4) return 'feature'
-  if (count <= 6) return 'balanced'
-  return 'mosaic'
-}
-
-/** Show description copy only when the month is lightly scheduled. */
-export function showPosterDescription(eventCount: number): boolean {
-  return eventCount > 0 && eventCount <= 4
 }
 
 function formatShortWeekday(date: Date): string {

@@ -1,3 +1,4 @@
+import { absoluteEventPageUrl } from '@/lib/site'
 import { formatPosterNextMonthLine } from '@/lib/poster-utils'
 import type { TBWCEvent } from '@/types/event'
 
@@ -16,7 +17,14 @@ export default function PosterNextMonth({ label, events }: PosterNextMonthProps)
       </p>
       <ul className="poster-next-month-list">
         {events.map((event) => (
-          <li key={event.id}>{formatPosterNextMonthLine(event)}</li>
+          <li key={event.id}>
+            <a
+              href={absoluteEventPageUrl(event.id)}
+              className="poster-next-month-link"
+            >
+              {formatPosterNextMonthLine(event)}
+            </a>
+          </li>
         ))}
       </ul>
     </aside>

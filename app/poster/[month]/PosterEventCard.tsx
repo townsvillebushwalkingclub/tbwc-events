@@ -1,5 +1,5 @@
+import { absoluteEventPageUrl } from '@/lib/site'
 import type { TBWCEvent } from '@/types/event'
-import type { PosterDensity } from '@/lib/poster-utils'
 import {
   formatPosterDateTime,
   formatPosterFeatureDate,
@@ -8,28 +8,20 @@ import {
 
 interface PosterEventCardProps {
   event: TBWCEvent
-  density: PosterDensity
   showDescription: boolean
+  useFeatureDate?: boolean
 }
 
-function EventCover({
-  event,
-  density,
-}: {
-  event: TBWCEvent
-  density: PosterDensity
-}) {
-  const className = `poster-event-cover poster-event-cover--${density}`
-
+function EventCover({ event }: { event: TBWCEvent }) {
   if (event.cover?.source) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={event.cover.source} alt="" className={className} />
+      <img src={event.cover.source} alt="" className="poster-event-cover" />
     )
   }
 
   return (
-    <div className={`${className} poster-event-cover--placeholder`} aria-hidden>
+    <div className="poster-event-cover poster-event-cover--placeholder" aria-hidden>
       <span className="poster-event-cover-icon">🏔️</span>
     </div>
   )
@@ -37,28 +29,30 @@ function EventCover({
 
 export default function PosterEventCard({
   event,
-  density,
   showDescription,
+  useFeatureDate = false,
 }: PosterEventCardProps) {
-  const dateLine =
-    density === 'feature'
-      ? formatPosterFeatureDate(event)
-      : formatPosterDateTime(event)
+  const dateLine = useFeatureDate
+    ? formatPosterFeatureDate(event)
+    : formatPosterDateTime(event)
   const desc =
     showDescription && event.description
       ? truncatePosterDescription(event.description)
       : null
+  const href = absoluteEventPageUrl(event.id)
 
   return (
-    <article
-      className={`poster-card poster-event poster-event--${density}`}
+    <a
+      href={href}
+      className="poster-card poster-event poster-event-link"
+      aria-label={`${event.name} — view event details`}
     >
-      <EventCover event={event} density={density} />
+      <EventCover event={event} />
       <div className="poster-card-body">
         <h3 className="poster-event-name">{event.name}</h3>
         <p className="poster-event-date">{dateLine}</p>
         {desc && <p className="poster-event-desc">{desc}</p>}
       </div>
-    </article>
+    </a>
   )
 }

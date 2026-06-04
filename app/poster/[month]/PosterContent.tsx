@@ -1,5 +1,8 @@
-import type { PosterDensity } from '@/lib/poster-utils'
-import { showPosterDescription } from '@/lib/poster-utils'
+import {
+  getPosterLayout,
+  posterGridClassName,
+  posterLayoutClassName,
+} from '@/lib/poster-layout'
 import type { TBWCEvent } from '@/types/event'
 import PosterEventCard from './PosterEventCard'
 import PosterNextMonth from './PosterNextMonth'
@@ -10,13 +13,6 @@ interface PosterContentProps {
   currentEvents: TBWCEvent[]
   nextEvents: TBWCEvent[]
   nextMonthLabel: string
-  density: PosterDensity
-}
-
-function gridClass(density: PosterDensity): string {
-  if (density === 'mosaic') return 'poster-events-grid poster-events-grid--mosaic'
-  if (density === 'balanced') return 'poster-events-grid'
-  return 'poster-events-stack'
 }
 
 export default function PosterContent({
@@ -24,13 +20,13 @@ export default function PosterContent({
   currentEvents,
   nextEvents,
   nextMonthLabel,
-  density,
 }: PosterContentProps) {
-  const showDescription = showPosterDescription(currentEvents.length)
+  const layout = getPosterLayout(currentEvents.length)
+  const useStack = currentEvents.length > 0 && currentEvents.length < 4
 
   return (
     <main
-      className={`poster-page poster-page--density-${density}`}
+      className={`poster-page ${posterLayoutClassName(currentEvents.length)}${useStack ? ' poster-page--sparse' : ''}`}
       aria-label="Townsville Bushwalking Club events poster"
     >
       <header className="poster-header">
@@ -57,13 +53,19 @@ export default function PosterContent({
         {currentEvents.length === 0 ? (
           <p className="poster-empty">No upcoming events scheduled this month.</p>
         ) : (
-          <div className={gridClass(density)}>
+          <div
+            className={
+              useStack
+                ? 'poster-events-stack'
+                : posterGridClassName(layout.columns)
+            }
+          >
             {currentEvents.map((event) => (
               <PosterEventCard
                 key={event.id}
                 event={event}
-                density={density}
-                showDescription={showDescription}
+                showDescription={layout.showDescription}
+                useFeatureDate={layout.showDescription}
               />
             ))}
           </div>
