@@ -6,16 +6,56 @@
 }
 
 .poster-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem 1rem;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border-bottom: 1px solid #d0d8de;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 0.875rem;
+}
+
+.poster-toolbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: #1a1d21;
+  font-weight: 600;
+  justify-self: start;
+  grid-column: 1;
+}
+
+.poster-toolbar-brand:hover {
+  color: #e85d3a;
+}
+
+.poster-toolbar-brand:hover .poster-toolbar-brand-text {
+  text-decoration: underline;
+}
+
+.poster-toolbar-logo {
+  display: block;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.poster-toolbar-brand-text {
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.poster-toolbar-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 0.75rem 1.25rem;
-  padding: 0.85rem 1rem;
-  background: #fff;
-  border-bottom: 1px solid #d0d8de;
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-size: 0.875rem;
+  grid-column: 2;
+  justify-self: center;
 }
 
 .poster-toolbar button {
