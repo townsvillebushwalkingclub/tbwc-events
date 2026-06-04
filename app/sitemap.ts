@@ -14,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error fetching events for sitemap:', error)
   }
 
+  // Print poster routes (/poster/*) are intentionally omitted (noindex, not for search).
   const routes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
