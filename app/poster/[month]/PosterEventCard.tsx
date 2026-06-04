@@ -10,6 +10,7 @@ interface PosterEventCardProps {
   event: TBWCEvent
   showDescription: boolean
   useFeatureDate?: boolean
+  featured?: boolean
 }
 
 function EventCover({ event }: { event: TBWCEvent }) {
@@ -31,6 +32,7 @@ export default function PosterEventCard({
   event,
   showDescription,
   useFeatureDate = false,
+  featured = false,
 }: PosterEventCardProps) {
   const dateLine = useFeatureDate
     ? formatPosterFeatureDate(event)
@@ -44,7 +46,7 @@ export default function PosterEventCard({
   return (
     <a
       href={href}
-      className="poster-card poster-event poster-event-link"
+      className={`poster-card poster-event poster-event-link${featured ? ' poster-event--featured' : ''}`}
       aria-label={`${event.name} — view event details`}
     >
       <EventCover event={event} />

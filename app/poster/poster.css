@@ -149,6 +149,25 @@
   gap: var(--poster-gap, 2.5mm);
 }
 
+/* 5 events: one featured row + 2×2 grid */
+.poster-events-grid--featured-five {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1.4fr 1fr 1fr;
+  gap: var(--poster-gap, 3mm);
+}
+
+.poster-events-grid--featured-five .poster-event--featured {
+  grid-column: 1 / -1;
+}
+
+.poster-event--featured .poster-event-name {
+  font-size: var(--poster-featured-name-size, 0.95em);
+}
+
+.poster-event--featured .poster-event-date {
+  font-size: var(--poster-featured-date-size, 0.8em);
+}
+
 .poster-card {
   display: flex;
   flex-direction: column;
@@ -317,6 +336,23 @@
   font-weight: 700;
 }
 
+.poster-footer-link {
+  flex: 1;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.poster-footer-link:hover .poster-footer-url {
+  text-decoration: underline;
+}
+
+.poster-footer-link:focus-visible {
+  outline: 2px solid #7eb8da;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 .poster-footer-url {
   margin: 0;
   font-size: 0.72em;
@@ -356,9 +392,11 @@
 
 .poster-page--count-5 {
   --poster-gap: 3mm;
-  --poster-name-size: 0.86em;
-  --poster-date-size: 0.74em;
+  --poster-name-size: 0.84em;
+  --poster-date-size: 0.72em;
   --poster-body-pad: 4px 6px 5px;
+  --poster-featured-name-size: 1em;
+  --poster-featured-date-size: 0.82em;
 }
 
 .poster-page--count-6 {

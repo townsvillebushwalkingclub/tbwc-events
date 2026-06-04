@@ -3,6 +3,7 @@ import {
   posterGridClassName,
   posterLayoutClassName,
 } from '@/lib/poster-layout'
+import { POSTER_QR_URL } from '@/lib/poster-constants'
 import type { TBWCEvent } from '@/types/event'
 import PosterEventCard from './PosterEventCard'
 import PosterNextMonth from './PosterNextMonth'
@@ -57,15 +58,18 @@ export default function PosterContent({
             className={
               useStack
                 ? 'poster-events-stack'
-                : posterGridClassName(layout.columns)
+                : posterGridClassName(layout)
             }
           >
-            {currentEvents.map((event) => (
+            {currentEvents.map((event, index) => (
               <PosterEventCard
                 key={event.id}
                 event={event}
                 showDescription={layout.showDescription}
                 useFeatureDate={layout.showDescription}
+                featured={
+                  layout.gridMode === 'featured-five' && index === 0
+                }
               />
             ))}
           </div>
@@ -75,10 +79,14 @@ export default function PosterContent({
       <div className="poster-bottom">
         <PosterNextMonth label={nextMonthLabel} events={nextEvents} />
         <footer className="poster-footer">
-          <div className="poster-footer-text">
+          <a
+            href={POSTER_QR_URL}
+            className="poster-footer-link"
+            aria-label="Full event details and RSVP on townsvillebushwalkingclub.com"
+          >
             <p className="poster-footer-cta">Full details &amp; RSVP</p>
             <p className="poster-footer-url">townsvillebushwalkingclub.com/calendar/</p>
-          </div>
+          </a>
           <PosterQr />
         </footer>
       </div>
