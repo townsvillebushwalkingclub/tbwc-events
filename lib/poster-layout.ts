@@ -9,7 +9,7 @@ export const A4_PRINT_MARGIN_MM = 8
 
 export type PosterLayoutCount = 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
 
-export type PosterGridMode = 'uniform' | 'featured-five'
+export type PosterGridMode = 'uniform' | 'featured-five' | 'featured-seven'
 
 export interface PosterLayoutConfig {
   count: PosterLayoutCount
@@ -22,7 +22,7 @@ const LAYOUTS: Record<PosterLayoutCount, PosterLayoutConfig> = {
   4: { count: 4, columns: 2, showDescription: true, gridMode: 'uniform' },
   5: { count: 5, columns: 2, showDescription: false, gridMode: 'featured-five' },
   6: { count: 6, columns: 2, showDescription: false, gridMode: 'uniform' },
-  7: { count: 7, columns: 3, showDescription: false, gridMode: 'uniform' },
+  7: { count: 7, columns: 3, showDescription: false, gridMode: 'featured-seven' },
   8: { count: 8, columns: 2, showDescription: false, gridMode: 'uniform' },
   9: { count: 9, columns: 3, showDescription: false, gridMode: 'uniform' },
   10: { count: 10, columns: 2, showDescription: false, gridMode: 'uniform' },
@@ -50,9 +50,16 @@ export function posterLayoutClassName(eventCount: number): string {
   return `poster-page--count-${layout.count} poster-page--cols-${layout.columns}`
 }
 
+export function posterUsesFeaturedFirstEvent(layout: PosterLayoutConfig): boolean {
+  return layout.gridMode === 'featured-five' || layout.gridMode === 'featured-seven'
+}
+
 export function posterGridClassName(layout: PosterLayoutConfig): string {
   if (layout.gridMode === 'featured-five') {
     return 'poster-events-grid poster-events-grid--featured-five'
+  }
+  if (layout.gridMode === 'featured-seven') {
+    return 'poster-events-grid poster-events-grid--featured-seven'
   }
   return layout.columns === 3
     ? 'poster-events-grid poster-events-grid--3'

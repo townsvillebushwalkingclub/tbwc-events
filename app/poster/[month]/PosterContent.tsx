@@ -2,6 +2,7 @@ import {
   getPosterLayout,
   posterGridClassName,
   posterLayoutClassName,
+  posterUsesFeaturedFirstEvent,
 } from '@/lib/poster-layout'
 import { POSTER_QR_URL } from '@/lib/poster-constants'
 import type { TBWCEvent } from '@/types/event'
@@ -67,9 +68,7 @@ export default function PosterContent({
                 event={event}
                 showDescription={layout.showDescription}
                 useFeatureDate={layout.showDescription}
-                featured={
-                  layout.gridMode === 'featured-five' && index === 0
-                }
+                featured={posterUsesFeaturedFirstEvent(layout) && index === 0}
               />
             ))}
           </div>

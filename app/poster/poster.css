@@ -200,6 +200,17 @@
   grid-column: 1 / -1;
 }
 
+/* 7 events: one featured row + 3×2 grid */
+.poster-events-grid--featured-seven {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 1.35fr 1fr 1fr;
+  gap: var(--poster-gap, 2.5mm);
+}
+
+.poster-events-grid--featured-seven .poster-event--featured {
+  grid-column: 1 / -1;
+}
+
 .poster-event--featured .poster-event-name {
   font-size: var(--poster-featured-name-size, 0.95em);
 }
@@ -447,9 +458,10 @@
 
 .poster-page--count-7 {
   --poster-gap: 2.5mm;
-  --poster-name-size: 0.76em;
-  --poster-date-size: 0.66em;
-  --poster-img-min: 12mm;
+  --poster-name-size: 0.78em;
+  --poster-date-size: 0.68em;
+  --poster-featured-name-size: 0.92em;
+  --poster-featured-date-size: 0.76em;
 }
 
 .poster-page--count-8 {
