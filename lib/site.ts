@@ -11,13 +11,12 @@ export function absoluteEventPageUrl(eventId: string): string {
   return `${EVENTS_SITE_ORIGIN}/events/${eventId}`
 }
 
-/** Resolve event cover URL (Facebook CDN or local /event-covers/…) to an absolute URL. */
+/** Resolve a site-hosted cover path (/event-covers/…) to an absolute URL. */
 export function absoluteEventShareImageUrl(
   imageUrl: string | null | undefined
 ): string | null {
   if (!imageUrl?.trim()) return null
   const s = imageUrl.trim()
-  if (/^https?:\/\//i.test(s)) return s
-  const path = s.startsWith('/') ? s : `/${s}`
-  return new URL(path, EVENTS_SITE_ORIGIN).href
+  if (!s.startsWith('/event-covers/')) return null
+  return new URL(s, EVENTS_SITE_ORIGIN).href
 }

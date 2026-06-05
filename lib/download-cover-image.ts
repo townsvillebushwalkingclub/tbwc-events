@@ -120,11 +120,9 @@ export async function downloadCoverImage(
   }
 }
 
-export function getCoverImagePath(
-  eventId: string,
-  originalUrl: string
-): string | null {
-  if (!originalUrl) return null
+/** Local path under /event-covers/ when the file exists on disk. */
+export function getLocalCoverPath(eventId: string): string | null {
+  if (!eventId) return null
   try {
     ensureCoversDirectory()
     const existingFiles = fs.readdirSync(COVERS_DIR)
@@ -133,9 +131,17 @@ export function getCoverImagePath(
     )
     if (existingFile) return `/event-covers/${existingFile}`
   } catch {
-    // fall back to original URL
+    // no local cover
   }
-  return originalUrl
+  return null
+}
+
+/** @deprecated Prefer getLocalCoverPath — second arg is ignored. */
+export function getCoverImagePath(
+  eventId: string,
+  _originalUrl?: string
+): string | null {
+  return getLocalCoverPath(eventId)
 }
 
 export { COVERS_DIR, JPEG_QUALITY }

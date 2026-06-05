@@ -1,7 +1,8 @@
 import { getEventById, getAllEvents } from '@/lib/facebook-api'
 import { isValidFacebookEventId } from '@/lib/event-id'
 import { buildEventJsonLdDocument } from '@/lib/event-json-ld'
-import { absoluteEventShareImageUrl, EVENTS_SITE_ORIGIN } from '@/lib/site'
+import { resolveEventShareImageForMetadata } from '@/lib/event-share-image'
+import { EVENTS_SITE_ORIGIN } from '@/lib/site'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/app/components/JsonLd'
 import EventClient from './EventClient'
@@ -70,8 +71,7 @@ export async function generateMetadata({
           event.place ? `Location: ${event.place.name}` : ''
         }`
 
-    const coverSource = event.cover?.source ?? null
-    const ogImageUrl = absoluteEventShareImageUrl(coverSource)
+    const shareImage = await resolveEventShareImageForMetadata(id)
 
     return {
       title: `${event.name} - Townsville Bushwalking Club`,
@@ -91,22 +91,22 @@ export async function generateMetadata({
         url: `${EVENTS_SITE_ORIGIN}/events/${id}`,
         siteName: 'Townsville Bushwalking Club Events',
         locale: 'en_AU',
-        images: ogImageUrl
+        images: shareImage
           ? [
               {
-                url: ogImageUrl,
-                width: (event.cover as { width?: number })?.width || 1200,
-                height: (event.cover as { height?: number })?.height || 630,
+                url: shareImage.url,
+                width: shareImage.width,
+                height: shareImage.height,
                 alt: event.name,
               },
             ]
           : [],
       },
       twitter: {
-        card: ogImageUrl ? 'summary_large_image' : 'summary',
+        card: shareImage ? 'summary_large_image' : 'summary',
         title: event.name,
         description,
-        images: ogImageUrl ? [ogImageUrl] : [],
+        images: shareImage ? [shareImage.url] : [],
       },
       alternates: {
         canonical: `/events/${id}`,

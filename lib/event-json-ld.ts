@@ -1,5 +1,6 @@
 import type { EventPlace, TBWCEvent } from '@/types/event'
-import { absoluteEventShareImageUrl, EVENTS_SITE_ORIGIN } from '@/lib/site'
+import { resolveEventShareImageFromDisk } from '@/lib/event-share-image'
+import { EVENTS_SITE_ORIGIN } from '@/lib/site'
 
 const SCHEMA_CONTEXT = 'https://schema.org'
 const TBWC_ORGANIZATION_URL = 'https://townsvillebushwalkingclub.com/'
@@ -102,9 +103,9 @@ export function buildEventJsonLd(event: TBWCEvent): EventJsonLd {
     jsonLd.eventStatus = `${SCHEMA_CONTEXT}/EventCancelled`
   }
 
-  const imageUrl = absoluteEventShareImageUrl(event.cover?.source)
-  if (imageUrl) {
-    jsonLd.image = [imageUrl]
+  const shareImage = resolveEventShareImageFromDisk(event.id)
+  if (shareImage) {
+    jsonLd.image = [shareImage.url]
   }
 
   return jsonLd

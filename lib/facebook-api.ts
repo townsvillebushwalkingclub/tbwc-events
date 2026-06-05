@@ -6,8 +6,9 @@ import fs from 'fs'
 import path from 'path'
 import {
   downloadCoverImage,
-  getCoverImagePath,
+  getLocalCoverPath,
 } from './download-cover-image'
+import { applyLocalCoverToEvent } from './event-share-image'
 import { isValidFacebookEventId } from './event-id'
 import { getCalendarDateInTimeZone } from './event-utils'
 import type { TBWCEvent } from '@/types/event'
@@ -188,12 +189,12 @@ async function getFacebookEvents(): Promise<TBWCEvent[]> {
 
         let cover = event.cover || null
         if (cover?.source) {
-          const localPath = getCoverImagePath(event.id, cover.source)
+          const localPath = getLocalCoverPath(event.id)
           if (localPath?.startsWith('/event-covers/')) {
             cover = { ...cover, source: localPath }
           } else {
             await downloadCoverImage(event.id, cover.source)
-            const downloadedPath = getCoverImagePath(event.id, cover.source)
+            const downloadedPath = getLocalCoverPath(event.id)
             if (downloadedPath?.startsWith('/event-covers/')) {
               cover = { ...cover, source: downloadedPath }
             }
@@ -259,12 +260,12 @@ async function fetchEventByIdFromApi(eventId: string): Promise<TBWCEvent | null>
 
     let cover = event.cover || null
     if (cover?.source) {
-      const localPath = getCoverImagePath(event.id, cover.source)
+      const localPath = getLocalCoverPath(event.id)
       if (localPath?.startsWith('/event-covers/')) {
         cover = { ...cover, source: localPath }
       } else {
         await downloadCoverImage(event.id, cover.source)
-        const downloadedPath = getCoverImagePath(event.id, cover.source)
+        const downloadedPath = getLocalCoverPath(event.id)
         if (downloadedPath?.startsWith('/event-covers/')) {
           cover = { ...cover, source: downloadedPath }
         }
@@ -421,7 +422,7 @@ function loadEventsFromFile(year: number, month: number): TBWCEvent[] | null {
       const events = JSON.parse(fileContent) as TBWCEvent[]
       const updatedEvents = events.map((event) => {
         if (event.cover?.source) {
-          const localPath = getCoverImagePath(event.id, event.cover.source)
+          const localPath = getLocalCoverPath(event.id)
           if (localPath?.startsWith('/event-covers/')) {
             return {
               ...event,
@@ -461,7 +462,7 @@ async function saveEventsToFile(
         const src = event.cover.source
         if (src.startsWith('/event-covers/')) return event
         const localPath =
-          getCoverImagePath(event.id, src) ||
+          getLocalCoverPath(event.id) ||
           (await downloadCoverImage(event.id, src))
         if (localPath?.startsWith('/event-covers/')) {
           return { ...event, cover: { ...event.cover, source: localPath } }
@@ -589,7 +590,7 @@ export async function getEventById(eventId: string): Promise<TBWCEvent | null> {
   try {
     if (eventsCache) {
       const cachedEvent = eventsCache.find((e) => e.id === eventId)
-      if (cachedEvent) return cachedEvent
+      if (cachedEvent) return await applyLocalCoverToEvent(cachedEvent)
     }
 
     try {
@@ -618,7 +619,7 @@ export async function getEventById(eventId: string): Promise<TBWCEvent | null> {
             const fileEvents = loadEventsFromFile(year, month)
             if (fileEvents) {
               const event = fileEvents.find((e) => e.id === eventId)
-              if (event) return event
+              if (event) return await applyLocalCoverToEvent(event)
             }
           }
         }
@@ -628,11 +629,11 @@ export async function getEventById(eventId: string): Promise<TBWCEvent | null> {
     }
 
     const fromApi = await fetchEventByIdFromApi(eventId)
-    if (fromApi) return fromApi
+    if (fromApi) return await applyLocalCoverToEvent(fromApi)
 
     const allEvents = await getFacebookEvents()
     const event = allEvents.find((e) => e.id === eventId)
-    return event ?? null
+    return event ? await applyLocalCoverToEvent(event) : null
   } catch (error) {
     console.error('Error getting event by ID:', error)
     throw error
@@ -697,7 +698,7 @@ export async function getAllEvents(): Promise<TBWCEvent[]> {
 
   return allEvents.map((event) => {
     if (event.cover?.source) {
-      const localPath = getCoverImagePath(event.id, event.cover.source)
+      const localPath = getLocalCoverPath(event.id)
       if (localPath?.startsWith('/event-covers/')) {
         return { ...event, cover: { ...event.cover, source: localPath } }
       }
