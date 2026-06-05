@@ -9,7 +9,11 @@ export const A4_PRINT_MARGIN_MM = 8
 
 export type PosterLayoutCount = 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
 
-export type PosterGridMode = 'uniform' | 'featured-five' | 'featured-seven'
+export type PosterGridMode =
+  | 'uniform'
+  | 'featured-five'
+  | 'featured-seven'
+  | 'spread-last-two'
 
 export interface PosterLayoutConfig {
   count: PosterLayoutCount
@@ -26,7 +30,7 @@ const LAYOUTS: Record<PosterLayoutCount, PosterLayoutConfig> = {
   8: { count: 8, columns: 2, showDescription: false, gridMode: 'uniform' },
   9: { count: 9, columns: 3, showDescription: false, gridMode: 'uniform' },
   10: { count: 10, columns: 2, showDescription: false, gridMode: 'uniform' },
-  11: { count: 11, columns: 3, showDescription: false, gridMode: 'uniform' },
+  11: { count: 11, columns: 3, showDescription: false, gridMode: 'spread-last-two' },
   12: { count: 12, columns: 3, showDescription: false, gridMode: 'uniform' },
 }
 
@@ -60,6 +64,9 @@ export function posterGridClassName(layout: PosterLayoutConfig): string {
   }
   if (layout.gridMode === 'featured-seven') {
     return 'poster-events-grid poster-events-grid--featured-seven'
+  }
+  if (layout.gridMode === 'spread-last-two') {
+    return 'poster-events-grid poster-events-grid--spread-last-two'
   }
   return layout.columns === 3
     ? 'poster-events-grid poster-events-grid--3'

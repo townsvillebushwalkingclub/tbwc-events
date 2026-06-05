@@ -211,6 +211,24 @@
   grid-column: 1 / -1;
 }
 
+/* 11 events: 3×3 grid + last row split 50/50 */
+.poster-events-grid--spread-last-two {
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--poster-gap, 2.2mm);
+}
+
+.poster-events-grid--spread-last-two > .poster-event:nth-child(-n + 9) {
+  grid-column: span 2;
+}
+
+.poster-events-grid--spread-last-two > .poster-event:nth-last-child(2) {
+  grid-column: 1 / 4;
+}
+
+.poster-events-grid--spread-last-two > .poster-event:nth-last-child(1) {
+  grid-column: 4 / 7;
+}
+
 .poster-event--featured .poster-event-name {
   font-size: var(--poster-featured-name-size, 0.95em);
 }
