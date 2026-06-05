@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "covers:manifest": "npx tsx tools/generate-cover-manifest.ts",
+    "prebuild": "npm run covers:manifest",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

@@ -4,10 +4,8 @@
 
 import fs from 'fs'
 import path from 'path'
-import {
-  downloadCoverImage,
-  getLocalCoverPath,
-} from './download-cover-image'
+import { downloadCoverImage } from './download-cover-image'
+import { getLocalCoverPath } from './event-cover-path'
 import { applyLocalCoverToEvent } from './event-share-image'
 import { isValidFacebookEventId } from './event-id'
 import { getCalendarDateInTimeZone } from './event-utils'
@@ -590,7 +588,7 @@ export async function getEventById(eventId: string): Promise<TBWCEvent | null> {
   try {
     if (eventsCache) {
       const cachedEvent = eventsCache.find((e) => e.id === eventId)
-      if (cachedEvent) return await applyLocalCoverToEvent(cachedEvent)
+      if (cachedEvent) return applyLocalCoverToEvent(cachedEvent)
     }
 
     try {
@@ -619,7 +617,7 @@ export async function getEventById(eventId: string): Promise<TBWCEvent | null> {
             const fileEvents = loadEventsFromFile(year, month)
             if (fileEvents) {
               const event = fileEvents.find((e) => e.id === eventId)
-              if (event) return await applyLocalCoverToEvent(event)
+              if (event) return applyLocalCoverToEvent(event)
             }
           }
         }
@@ -629,11 +627,11 @@ export async function getEventById(eventId: string): Promise<TBWCEvent | null> {
     }
 
     const fromApi = await fetchEventByIdFromApi(eventId)
-    if (fromApi) return await applyLocalCoverToEvent(fromApi)
+    if (fromApi) return applyLocalCoverToEvent(fromApi)
 
     const allEvents = await getFacebookEvents()
     const event = allEvents.find((e) => e.id === eventId)
-    return event ? await applyLocalCoverToEvent(event) : null
+    return event ? applyLocalCoverToEvent(event) : null
   } catch (error) {
     console.error('Error getting event by ID:', error)
     throw error

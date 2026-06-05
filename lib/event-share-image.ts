@@ -3,9 +3,11 @@ import path from 'path'
 import sharp from 'sharp'
 import {
   downloadCoverImage,
-  getLocalCoverPath,
+  getLocalCoverPathFromFs,
 } from './download-cover-image'
+import { getLocalCoverPath } from './event-cover-path'
 import type { TBWCEvent } from '@/types/event'
+import { getCoverFromManifest } from './event-cover-manifest'
 import { absoluteEventShareImageUrl } from './site'
 
 export type EventShareImage = {
@@ -27,7 +29,7 @@ export async function ensureLocalCoverPath(
   if (source.startsWith('/event-covers/')) return source
 
   await downloadCoverImage(eventId, source)
-  return getLocalCoverPath(eventId)
+  return getLocalCoverPathFromFs(eventId)
 }
 
 export async function getLocalCoverDimensions(
@@ -47,15 +49,11 @@ export async function getLocalCoverDimensions(
   return null
 }
 
-/** Share image from an on-disk cover only (no network download). */
+/** Share image from manifest or disk (no network download). */
 export function resolveEventShareImageFromDisk(
   eventId: string
 ): EventShareImage | null {
-  const localPath = getLocalCoverPath(eventId)
-  if (!localPath) return null
-  const url = absoluteEventShareImageUrl(localPath)
-  if (!url) return null
-  return { url, width: 1200, height: 630 }
+  return resolveEventShareImageForMetadata(eventId, null)
 }
 
 /** Absolute share image on events.townsvillebushwalkingclub.com (never Facebook CDN). */
@@ -85,18 +83,36 @@ export function applyLocalCoverToEvent(event: TBWCEvent): TBWCEvent {
   return event
 }
 
-/** Open Graph image from a committed /event-covers file (no network I/O). */
-export async function resolveEventShareImageForMetadata(
-  eventId: string
-): Promise<EventShareImage | null> {
-  const localPath = getLocalCoverPath(eventId)
+/**
+ * Open Graph image on events.townsvillebushwalkingclub.com (never Facebook CDN).
+ * Uses build-time manifest so this works on Vercel without fs at runtime.
+ */
+export function resolveEventShareImageForMetadata(
+  eventId: string,
+  coverSource?: string | null
+): EventShareImage | null {
+  const fromManifest = getCoverFromManifest(eventId)
+  if (fromManifest) {
+    const url = absoluteEventShareImageUrl(fromManifest.path)
+    if (url) {
+      return {
+        url,
+        width: fromManifest.width,
+        height: fromManifest.height,
+      }
+    }
+  }
+
+  const localSource = coverSource?.trim()
+  if (localSource?.startsWith('/event-covers/')) {
+    const url = absoluteEventShareImageUrl(localSource)
+    if (url) return { url, width: 1200, height: 630 }
+  }
+
+  // Local dev fallback when manifest hasn't been generated yet (no-op on Vercel)
+  const localPath = getLocalCoverPathFromFs(eventId)
   if (!localPath) return null
   const url = absoluteEventShareImageUrl(localPath)
   if (!url) return null
-  const dims = await getLocalCoverDimensions(localPath)
-  return {
-    url,
-    width: dims?.width ?? 1200,
-    height: dims?.height ?? 630,
-  }
+  return { url, width: 1200, height: 630 }
 }

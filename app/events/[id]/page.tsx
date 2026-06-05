@@ -71,7 +71,10 @@ export async function generateMetadata({
           event.place ? `Location: ${event.place.name}` : ''
         }`
 
-    const shareImage = await resolveEventShareImageForMetadata(id)
+    const shareImage = resolveEventShareImageForMetadata(
+      id,
+      event.cover?.source ?? null
+    )
 
     return {
       title: `${event.name} - Townsville Bushwalking Club`,
