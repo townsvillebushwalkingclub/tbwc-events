@@ -43,7 +43,10 @@ async function main(): Promise<void> {
     }
   }
 
-  fs.writeFileSync(OUT_PATH, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8')
+  const sorted = Object.fromEntries(
+    Object.keys(manifest).sort().map((k) => [k, manifest[k]])
+  )
+  fs.writeFileSync(OUT_PATH, `${JSON.stringify(sorted, null, 2)}\n`, 'utf8')
   console.log(`Wrote ${Object.keys(manifest).length} cover(s) to ${OUT_PATH}`)
 }
 
