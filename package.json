@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "covers:sync": "npx tsx tools/sync-covers.ts",
     "covers:manifest": "npx tsx tools/generate-cover-manifest.ts",
     "prebuild": "npm run covers:manifest",
     "build": "next build",

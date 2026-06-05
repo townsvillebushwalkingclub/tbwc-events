@@ -1,0 +1,42 @@
+name: Sync Event Covers
+
+on:
+  schedule:
+    - cron: '0 16 * * *'  # 2am AEST (UTC+10) daily
+  workflow_dispatch:       # allow manual runs from the Actions tab
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download new covers
+        run: npx tsx tools/sync-covers.ts
+        env:
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
+
+      - name: Regenerate cover manifest
+        run: npm run covers:manifest
+
+      - name: Commit and push if changed
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: sync event covers [skip ci]'
+          file_pattern: >-
+            public/event-covers/*.jpg
+            public/event-covers/*.png
+            public/event-covers/*.webp
+            data/event-cover-manifest.json
