@@ -1,0 +1,35 @@
+name: Send Monthly Events Poster
+
+on:
+    schedule:
+        # 2:30am AEST (UTC+10) on the 1st — shortly after sync-month archives the prior month
+        - cron: '30 16 1 * *'
+    workflow_dispatch:
+
+jobs:
+    send-poster:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v6
+
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: '24'
+                  cache: 'npm'
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Generate poster PDF and email
+              run: npm run poster:send
+              env:
+                  POSTER_SITE_URL: https://events.townsvillebushwalkingclub.com
+                  POSTER_MAIL_TO: ${{ secrets.POSTER_MAIL_TO }}
+                  POSTER_MAIL_FROM: ${{ secrets.POSTER_MAIL_FROM }}
+                  POSTER_MAIL_SMTP_HOST: ${{ secrets.POSTER_MAIL_SMTP_HOST }}
+                  POSTER_MAIL_SMTP_PORT: ${{ secrets.POSTER_MAIL_SMTP_PORT }}
+                  POSTER_MAIL_SMTP_USER: ${{ secrets.POSTER_MAIL_SMTP_USER }}
+                  POSTER_MAIL_SMTP_PASSWORD: ${{ secrets.POSTER_MAIL_SMTP_PASSWORD }}
+                  POSTER_MAIL_SMTP_SECURE: ${{ secrets.POSTER_MAIL_SMTP_SECURE }}
+                  POSTER_MAIL_CC: ${{ secrets.POSTER_MAIL_CC }}
