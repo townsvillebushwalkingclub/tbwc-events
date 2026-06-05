@@ -129,7 +129,16 @@ async function fetchEventsForMonth(year: number, month: number): Promise<RawEven
 async function main(): Promise<void> {
   const { year, month } = getPreviousMonth()
   const label = `${year}/${String(month).padStart(2, '0')}`
-  console.log(`Syncing events for ${label}...`)
+
+  const yearDir = path.join(DATA_DIR, String(year))
+  const outPath = path.join(yearDir, `${String(month).padStart(2, '0')}.json`)
+
+  if (fs.existsSync(outPath)) {
+    console.log(`${label} already archived — skipping`)
+    return
+  }
+
+  console.log(`Archiving events for ${label}...`)
 
   const events = await fetchEventsForMonth(year, month)
   console.log(`Found ${events.length} event(s)`)
@@ -144,12 +153,14 @@ async function main(): Promise<void> {
 
       if (cover?.source) {
         const coverId = cover.id ?? cover.source
-        await downloadCoverImage(event.id, cover.source)
+        const localPath = await downloadCoverImage(event.id, cover.source)
         if (!sources[event.id]) {
           sources[event.id] = coverId
           coversDownloaded++
         }
-        cover = { ...cover, source: cover.source }
+        if (localPath?.startsWith('/event-covers/')) {
+          cover = { ...cover, source: localPath }
+        }
       }
 
       return {
@@ -172,10 +183,7 @@ async function main(): Promise<void> {
     })
   )
 
-  // Write event JSON cache
-  const yearDir = path.join(DATA_DIR, String(year))
   fs.mkdirSync(yearDir, { recursive: true })
-  const outPath = path.join(yearDir, `${String(month).padStart(2, '0')}.json`)
   fs.writeFileSync(outPath, `${JSON.stringify(formatted, null, 2)}\n`, 'utf8')
   console.log(`Wrote ${formatted.length} event(s) to ${outPath}`)
 
