@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "covers:sync": "npx tsx tools/sync-covers.ts",
+    "month:sync": "npx tsx tools/sync-month.ts",
     "covers:manifest": "npx tsx tools/generate-cover-manifest.ts",
     "prebuild": "npm run covers:manifest",
     "build": "next build",
