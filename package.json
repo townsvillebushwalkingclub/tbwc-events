@@ -33,12 +33,12 @@
   "author": "Luen Warneke",
   "license": "ISC",
   "dependencies": {
-    "@next/third-parties": "16.2.7",
+    "@next/third-parties": "16.2.9",
     "@tailwindcss/postcss": "^4.3.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "date-fns": "^4.4.0",
-    "next": "16.2.7",
+    "next": "16.2.9",
     "postcss": "^8.5.15",
     "qrcode": "^1.5.4",
     "react": "19.2.7",
@@ -50,17 +50,17 @@
     "@types/node": "^25.9.1",
     "@types/nodemailer": "^8.0.0",
     "@types/qrcode": "^1.5.6",
-    "@types/react": "19.2.16",
+    "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "eslint": "^10.4.1",
-    "eslint-config-next": "16.2.7",
+    "eslint-config-next": "16.2.9",
     "nodemailer": "^8.0.10",
     "puppeteer": "^25.1.0",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   },
   "overrides": {
-    "@types/react": "19.2.16",
+    "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "postcss": "^8.5.15"
   }
