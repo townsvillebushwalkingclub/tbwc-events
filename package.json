@@ -34,7 +34,7 @@
   "license": "ISC",
   "dependencies": {
     "@next/third-parties": "16.2.9",
-    "@tailwindcss/postcss": "^4.3.0",
+    "@tailwindcss/postcss": "^4.3.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "date-fns": "^4.4.0",
@@ -44,7 +44,7 @@
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "sharp": "^0.34.5",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.1"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
