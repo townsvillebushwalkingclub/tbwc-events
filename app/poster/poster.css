@@ -68,6 +68,31 @@
   cursor: pointer;
 }
 
+.poster-toolbar-button--secondary {
+  background: #2c5282;
+}
+
+.poster-toolbar-button--secondary:hover:not(:disabled) {
+  background: #234e77;
+}
+
+.poster-toolbar-button--secondary:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.poster-toolbar-ai-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.poster-toolbar-status {
+  font-size: 0.8rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
 .poster-toolbar a {
   color: #2c5282;
   text-decoration: none;

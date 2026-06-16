@@ -1,13 +1,21 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { getPosterLayout } from '@/lib/poster-layout'
+import type { PosterAiDownloadEvent } from '@/lib/poster-ai-prompt'
 import {
   addMonths,
   formatPosterExcludeQuery,
+  formatPosterDateTime,
+  formatPosterFeatureDate,
   formatPosterMonthLabel,
+  formatPosterMonthSlug,
+  formatPosterNextMonthLine,
   getPosterEventsForMonth,
   parsePosterExcludeParam,
   parsePosterMonthParam,
+  truncatePosterDescription,
 } from '@/lib/poster-utils'
+import type { TBWCEvent } from '@/types/event'
 import PosterContent from './PosterContent'
 import PosterToolbar from './PosterToolbar'
 
@@ -45,6 +53,12 @@ export default async function PosterMonthPage({
   const poster = await getPosterEventsForMonth(anchor, excludeIds)
   const prev = addMonths(anchor.year, anchor.month, -1)
   const next = addMonths(anchor.year, anchor.month, 1)
+  const layout = getPosterLayout(poster.currentMonth.length)
+  const useFeatureDate = layout.showDescription
+
+  const aiDownloadEvents: PosterAiDownloadEvent[] = poster.currentMonth.map(
+    (event) => toAiDownloadEvent(event, useFeatureDate)
+  )
 
   return (
     <>
@@ -52,6 +66,16 @@ export default async function PosterMonthPage({
         prev={prev}
         next={next}
         excludeQuery={excludeQuery}
+        aiDownload={{
+          monthSlug: formatPosterMonthSlug(anchor.year, anchor.month),
+          anchorLabel: poster.anchorLabel,
+          currentEvents: aiDownloadEvents,
+          nextEvents: poster.nextMonth.map((event) => ({
+            name: event.name,
+            dateLine: formatPosterNextMonthLine(event),
+          })),
+          nextMonthLabel: poster.nextMonthLabel,
+        }}
       />
       <PosterContent
         anchorLabel={poster.anchorLabel}
@@ -61,4 +85,25 @@ export default async function PosterMonthPage({
       />
     </>
   )
+}
+
+function toAiDownloadEvent(
+  event: TBWCEvent,
+  useFeatureDate: boolean
+): PosterAiDownloadEvent {
+  const dateLine = useFeatureDate
+    ? formatPosterFeatureDate(event)
+    : formatPosterDateTime(event)
+  const description =
+    useFeatureDate && event.description
+      ? truncatePosterDescription(event.description)
+      : undefined
+
+  return {
+    id: event.id,
+    name: event.name,
+    coverUrl: event.cover?.source ?? null,
+    dateLine,
+    description,
+  }
 }

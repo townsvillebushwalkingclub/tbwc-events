@@ -5,17 +5,22 @@ import {
   formatPosterMonthSlug,
   type PosterMonth,
 } from '@/lib/poster-month'
+import PosterAiDownloadButton, {
+  type PosterAiDownloadProps,
+} from './PosterAiDownloadButton'
 
 interface PosterToolbarProps {
   prev: PosterMonth
   next: PosterMonth
   excludeQuery: string
+  aiDownload: PosterAiDownloadProps
 }
 
 export default function PosterToolbar({
   prev,
   next,
   excludeQuery,
+  aiDownload,
 }: PosterToolbarProps) {
   return (
     <div className="poster-toolbar no-print">
@@ -36,6 +41,7 @@ export default function PosterToolbar({
         <button type="button" onClick={() => window.print()}>
           Print / save as PDF
         </button>
+        <PosterAiDownloadButton {...aiDownload} />
         <Link
           href={`/poster/${formatPosterMonthSlug(prev.year, prev.month)}${excludeQuery}`}
         >

@@ -175,7 +175,6 @@ Embed events on your website with a simple JavaScript snippet. The script automa
 
 For local testing, use `http://localhost:3000/api/embed-snippet?v=1`. Test pages available at [/test-embed.html](https://events.townsvillebushwalkingclub.com/test-embed.html).
 
-
 ## Contributing
 
 1. Fork the repository
@@ -183,6 +182,10 @@ For local testing, use `http://localhost:3000/api/embed-snippet?v=1`. Test pages
 3. Make your changes
 4. Test thoroughly
 5. Submit a pull request
+
+## Assets
+
+[SVG Leaves by Susrut, Vectordad](https://vectordad.com/designs/leaves-svg/)
 
 ## License
 
