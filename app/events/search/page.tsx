@@ -38,7 +38,8 @@ interface SearchPageProps {
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams
   const query = params?.q?.trim() || null
-  const currentDate = new Date()
+  const now = new Date()
+  const currentDate = now
 
   return (
     <div className="min-h-screen bg-white">
@@ -81,6 +82,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             currentDate={currentDate}
             initialSearchQuery={query}
             clearToPath="/events/search"
+            referenceTime={now.toISOString()}
           />
         </div>
 

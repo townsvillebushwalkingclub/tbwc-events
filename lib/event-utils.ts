@@ -6,6 +6,16 @@ import type { TBWCEvent } from '@/types/event'
 
 const DISPLAY_TIMEZONE = 'Australia/Brisbane'
 
+/** Month heading for calendar/list UI; stable across server (UTC) and browser timezones. */
+export function formatCalendarMonthLabel(year: number, month: number): string {
+  const d = new Date(Date.UTC(year, month - 1, 1, 12, 0, 0))
+  return d.toLocaleDateString('en-AU', {
+    month: 'long',
+    year: 'numeric',
+    timeZone: DISPLAY_TIMEZONE,
+  })
+}
+
 /**
  * Get the calendar date (year, month, day) for an instant in a given timezone.
  * Use this for "which month/day does this event show on?" so events at midnight

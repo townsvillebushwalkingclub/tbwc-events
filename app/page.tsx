@@ -167,6 +167,7 @@ export default async function Home() {
               month={preferred.month}
               prefetchAnchorYear={year}
               prefetchAnchorMonth={month}
+              referenceTime={now.toISOString()}
             />
           </Suspense>
         </div>
@@ -176,6 +177,7 @@ export default async function Home() {
             initialEvents={allEvents}
             currentDate={currentDate}
             initialSearchQuery={null}
+            referenceTime={now.toISOString()}
           />
         </div>
 

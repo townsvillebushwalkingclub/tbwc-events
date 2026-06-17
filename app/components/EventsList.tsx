@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   processDescription,
   normalizeNewlines,
@@ -11,6 +11,7 @@ import {
   getMonthLabel,
   getFacebookEventUrl,
   isEventPastOnCalendar,
+  formatCalendarMonthLabel,
 } from '@/lib/event-utils'
 import { EventDateTime } from './EventDateTime'
 import type { TBWCEvent } from '@/types/event'
@@ -19,22 +20,33 @@ interface EventsListProps {
   events: TBWCEvent[]
   currentDate: Date
   titleOverride?: string | null
+  /** ISO timestamp from the server render; keeps past/upcoming layout in sync during hydration. */
+  referenceTime: string
 }
 
 export default function EventsList({
   events,
   currentDate,
   titleOverride = null,
+  referenceTime,
 }: EventsListProps) {
   const [expandedDescriptions, setExpandedDescriptions] = useState<
     Record<string, boolean>
   >({})
+  const [pastCheckTime, setPastCheckTime] = useState(
+    () => new Date(referenceTime)
+  )
 
-  const monthYear = new Date(currentDate).toLocaleDateString('en-AU', {
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'Australia/Brisbane',
-  })
+  useEffect(() => {
+    setPastCheckTime(new Date())
+    const id = setInterval(() => setPastCheckTime(new Date()), 60_000)
+    return () => clearInterval(id)
+  }, [referenceTime])
+
+  const monthYear = formatCalendarMonthLabel(
+    currentDate.getFullYear(),
+    currentDate.getMonth() + 1
+  )
   const heading =
     titleOverride != null
       ? titleOverride
@@ -78,11 +90,11 @@ export default function EventsList({
   /** Compact grey row for past or cancelled; not tied to `currentDate` month. */
   const showCompactStyle = (event: TBWCEvent) =>
     !!event?.start_time &&
-    (isEventPastOnCalendar(event) || event.is_cancelled === true)
+    (isEventPastOnCalendar(event, pastCheckTime) || event.is_cancelled === true)
 
   const compactStatusLabel = (event: TBWCEvent): string | null => {
     if (!showCompactStyle(event)) return null
-    if (isEventPastOnCalendar(event)) return '(past)'
+    if (isEventPastOnCalendar(event, pastCheckTime)) return '(past)'
     if (event.is_cancelled) return '(cancelled)'
     return null
   }

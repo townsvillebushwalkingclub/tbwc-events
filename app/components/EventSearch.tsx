@@ -11,6 +11,8 @@ interface EventSearchProps {
   initialSearchQuery?: string | null
   /** When set, "Clear search" navigates here instead of "/" */
   clearToPath?: string
+  /** ISO timestamp from the server render; passed through for hydration-safe past checks. */
+  referenceTime: string
 }
 
 export default function EventSearch({
@@ -18,6 +20,7 @@ export default function EventSearch({
   currentDate,
   initialSearchQuery = null,
   clearToPath = '/',
+  referenceTime,
 }: EventSearchProps) {
   const router = useRouter()
   const [searchResults, setSearchResults] = useState<TBWCEvent[] | null>(null)
@@ -98,6 +101,7 @@ export default function EventSearch({
         <EventsList
           events={searchReady ? searchResults! : initialEvents}
           currentDate={currentDate}
+          referenceTime={referenceTime}
           titleOverride={
             searchReady
               ? `Search results${searchTerm ? ` for "${searchTerm}"` : ''}`

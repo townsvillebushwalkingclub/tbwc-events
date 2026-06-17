@@ -21,6 +21,7 @@ import {
   getCalendarDateInTimeZone,
   getPreferredCalendarMonth,
   isEventPastOnCalendar,
+  formatCalendarMonthLabel,
 } from '@/lib/event-utils'
 import type { TBWCEvent } from '@/types/event'
 
@@ -35,6 +36,8 @@ interface CalendarProps {
   /** First month of the 3-month server prefetch; drives in-memory vs API event source. */
   prefetchAnchorYear: number
   prefetchAnchorMonth: number
+  /** ISO timestamp from the server render; keeps past/upcoming styling in sync during hydration. */
+  referenceTime: string
 }
 
 // Server prefetches 3 consecutive months from prefetchAnchor (see page.tsx monthsToFetch).
@@ -56,6 +59,7 @@ export default function Calendar({
   month: initialMonth,
   prefetchAnchorYear,
   prefetchAnchorMonth,
+  referenceTime,
 }: CalendarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -86,6 +90,9 @@ export default function Calendar({
   const [adjacentEvents, setAdjacentEvents] = useState<TBWCEvent[]>([])
   const [adjacentKey, setAdjacentKey] = useState<string | null>(null)
   const [todayDateString, setTodayDateString] = useState<string | null>(null)
+  const [pastCheckTime, setPastCheckTime] = useState(
+    () => new Date(referenceTime)
+  )
   const prevTodayRef = useRef<string | null>(null)
 
   const inPrefetchRange = isInPrefetchRange(
@@ -276,6 +283,12 @@ export default function Calendar({
     return () => clearInterval(id)
   }, [router])
 
+  useEffect(() => {
+    setPastCheckTime(new Date())
+    const id = setInterval(() => setPastCheckTime(new Date()), 60_000)
+    return () => clearInterval(id)
+  }, [referenceTime])
+
   const getEventsForDate = (date: Date): TBWCEvent[] => {
     const cell = getCalendarDateInTimeZone(date)
     const cellOrd = cell.year * 10000 + cell.month * 100 + cell.day
@@ -318,11 +331,7 @@ export default function Calendar({
             {loading ? (
               <span className="text-gray-500">Loading…</span>
             ) : (
-              new Date(displayYear, displayMonth).toLocaleDateString('en-AU', {
-                month: 'long',
-                year: 'numeric',
-                timeZone: 'Australia/Brisbane',
-              })
+              formatCalendarMonthLabel(displayYear, viewMonth)
             )}
           </div>
         </div>
@@ -363,7 +372,7 @@ export default function Calendar({
               }`}
             >
               <div className="font-bold text-gray-800 mb-2">
-                {date.getDate()}
+                {cellCal.day}
               </div>
 
               {(() => {
@@ -453,7 +462,8 @@ export default function Calendar({
                         ) + 1
 
                       const muted =
-                        isEventPastOnCalendar(event) || event.is_cancelled
+                        isEventPastOnCalendar(event, pastCheckTime) ||
+                        event.is_cancelled
                       const multiClass = muted
                         ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 absolute hover:bg-gray-300/90 transition-colors cursor-pointer block'
                         : 'text-xs bg-sky-light text-gray-800 px-2 py-1 rounded-sm mb-1 border border-sky absolute hover:bg-sky-muted/30 transition-colors cursor-pointer block'
@@ -490,7 +500,8 @@ export default function Calendar({
                     >
                       {singleDayEvents.map((event, index) => {
                         const muted =
-                          isEventPastOnCalendar(event) || event.is_cancelled
+                          isEventPastOnCalendar(event, pastCheckTime) ||
+                          event.is_cancelled
                         const singleClass = muted
                           ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 hover:bg-gray-300/90 transition-colors cursor-pointer block'
                           : 'text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block'
