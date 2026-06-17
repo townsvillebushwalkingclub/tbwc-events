@@ -53,9 +53,9 @@
 }
 
 .poster-page--theme-nature .poster-decor-leaf--hero {
-  width: 30mm;
-  top: 20mm;
-  right: 0;
+  width: 25mm;
+  top: 14mm;
+  right: 2mm;
   z-index: 1;
   transform: rotate(-12deg);
 }
