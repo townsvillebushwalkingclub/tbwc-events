@@ -150,6 +150,10 @@
   display: none;
 }
 
+.poster-leaves {
+  display: none;
+}
+
 .poster-header {
   position: relative;
   z-index: 2;
@@ -466,6 +470,15 @@
   padding: 2.5mm 6mm 2mm;
 }
 
+.poster-next-month-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.poster-next-month-leaf {
+  display: none;
+}
+
 .poster-next-month-title {
   margin: 0 0 1.5mm;
   font-size: 0.7em;
@@ -726,6 +739,8 @@
   .poster-event-cover,
   .poster-event-cover--placeholder,
   .poster-decor-leaf,
+  .poster-next-month-leaf,
+  .poster-leaves,
   .poster-footer-decor-hills,
   .poster-footer-decor-saint {
     print-color-adjust: exact;

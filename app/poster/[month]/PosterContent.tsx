@@ -32,7 +32,6 @@ export default function PosterContent({
       className={`poster-page ${posterLayoutClassName(currentEvents.length)}${sparseClass} ${posterThemeClassName(theme)}`}
       aria-label="Townsville Bushwalking Club events poster"
     >
-      {theme === 'nature' && <PosterDecorations />}
       <PosterHeader anchorLabel={anchorLabel} />
       <section className="poster-main" aria-label={`Events in ${anchorLabel}`}>
         <PosterEventsArea
@@ -44,6 +43,7 @@ export default function PosterContent({
         nextMonthLabel={nextMonthLabel}
         nextEvents={nextEvents}
       />
+      {theme === 'nature' && <PosterDecorations />}
     </main>
   )
 }

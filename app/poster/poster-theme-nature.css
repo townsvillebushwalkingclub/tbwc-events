@@ -4,6 +4,16 @@
   background-color: #faf8f5;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23d4cfc8' stroke-width='0.6' opacity='0.45'%3E%3Cpath d='M0 40 Q50 20 100 40 T200 40'/%3E%3Cpath d='M0 80 Q50 60 100 80 T200 80'/%3E%3Cpath d='M0 120 Q50 100 100 120 T200 120'/%3E%3Cpath d='M0 160 Q50 140 100 160 T200 160'/%3E%3Cpath d='M20 0 Q40 50 20 100 T20 200'/%3E%3Cpath d='M60 0 Q80 50 60 100 T60 200'/%3E%3Cpath d='M100 0 Q120 50 100 100 T100 200'/%3E%3Cpath d='M140 0 Q160 50 140 100 T140 200'/%3E%3Cpath d='M180 0 Q200 50 180 100 T180 200'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 200px 200px;
+  overflow: visible;
+}
+
+.poster-page--theme-nature .poster-leaves {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  overflow: visible;
 }
 
 .poster-page--theme-nature .poster-decorations {
@@ -43,15 +53,11 @@
 }
 
 .poster-page--theme-nature .poster-decor-leaf--hero {
-  width: 28mm;
-  top: 22mm;
-  right: 2mm;
-  z-index: 3;
+  width: 30mm;
+  top: 20mm;
+  right: 0;
+  z-index: 1;
   transform: rotate(-12deg);
-}
-
-.poster-page--theme-nature .poster-decor-leaf--footer {
-  display: none;
 }
 
 .poster-page--theme-nature .poster-footer {
@@ -75,8 +81,8 @@
 
 .poster-page--theme-nature .poster-footer-decor-hills {
   position: absolute;
-  left: -3mm;
-  bottom: 0;
+  left: 0mm;
+  bottom: -8mm;
   width: 100mm;
   max-height: 100%;
   height: auto;
@@ -88,9 +94,9 @@
 
 .poster-page--theme-nature .poster-footer-decor-saint {
   position: absolute;
-  left: 50%;
+  left: 48%;
   bottom: -10mm;
-  width: 80%;
+  width: 75%;
   height: auto;
   transform: translateX(-50%);
   object-fit: contain;
@@ -257,11 +263,53 @@
 
 .poster-page--theme-nature .poster-next-month {
   position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 5.5mm;
   background: #fde8dc;
   border-bottom: none;
   border-radius: 8px 8px 0 0;
   padding: 2.5mm 6mm 2.5mm;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.poster-page--theme-nature .poster-next-month-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-width: 0;
+}
+
+.poster-page--theme-nature .poster-next-month-leaf {
+  display: block;
+  width: 11mm;
+  height: auto;
+  flex-shrink: 0;
+  margin-top: 0.5mm;
+  margin-left: -1mm;
+  align-self: center;
+  object-fit: contain;
+  filter: brightness(0) saturate(100%) invert(48%) sepia(62%) saturate(497%)
+    hue-rotate(88deg) brightness(92%) contrast(88%);
+  opacity: 0.88;
+  transform: rotate(-8deg);
+  position: relative;
+  z-index: 11;
+}
+
+.poster-page--theme-nature .poster-next-month-title {
+  color: #e85d3a;
+  font-size: 0.78em;
+  margin: 0 0 1.5mm;
+}
+
+.poster-page--theme-nature .poster-next-month-list {
+  position: relative;
+  z-index: 2;
+}
+
+.poster-page--theme-nature .poster-next-month-label {
+  font-size: 1.05em;
 }
 
 .poster-page--theme-nature .poster-next-month::after {
@@ -280,15 +328,6 @@
   pointer-events: none;
 }
 
-.poster-page--theme-nature .poster-next-month-title {
-  color: #e85d3a;
-  font-size: 0.78em;
-}
-
-.poster-page--theme-nature .poster-next-month-label {
-  font-size: 1.05em;
-}
-
 .poster-page--theme-nature .poster-next-month-list li::before {
   content: '• ';
   color: #e85d3a;
@@ -305,7 +344,9 @@
   .poster-page--theme-nature .poster-next-month,
   .poster-page--theme-nature .poster-decor-header-blob,
   .poster-page--theme-nature .poster-footer-decor-hills,
-  .poster-page--theme-nature .poster-footer-decor-saint {
+  .poster-page--theme-nature .poster-footer-decor-saint,
+  .poster-page--theme-nature .poster-decor-leaf,
+  .poster-page--theme-nature .poster-next-month-leaf {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
