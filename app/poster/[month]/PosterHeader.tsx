@@ -24,7 +24,7 @@ export default function PosterHeader({ anchorLabel }: PosterHeaderProps) {
         </div>
         <p className="poster-month-badge">
           <span className="poster-month-badge-icon" aria-hidden>
-            🏔
+          ⛰️
           </span>
           {anchorLabel}
         </p>
