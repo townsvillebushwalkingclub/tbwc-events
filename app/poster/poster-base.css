@@ -183,14 +183,14 @@
 
 .poster-title {
   margin: 0;
-  font-size: 1.12em;
+  font-size: 1.24em;
   font-weight: 700;
   line-height: 1.1;
 }
 
 .poster-subtitle {
   margin: 0.08rem 0 0;
-  font-size: 0.76em;
+  font-size: 0.84em;
 }
 
 .poster-month-badge {
@@ -198,7 +198,7 @@
   margin: 0;
   padding: 0.28em 0.6em;
   border-radius: 999px;
-  font-size: 0.85em;
+  font-size: 0.95em;
   font-weight: 700;
   white-space: nowrap;
   display: inline-flex;
@@ -207,8 +207,15 @@
 }
 
 .poster-month-badge-icon {
+  display: inline-flex;
+  align-items: center;
   font-size: 0.9em;
   line-height: 1;
+}
+
+.poster-month-badge-icon svg {
+  width: 1em;
+  height: 1em;
 }
 
 .poster-main {
@@ -310,6 +317,11 @@
   grid-column: 4 / 7;
 }
 
+/* Lone card on the last row spans full width (nature hero-split grid) */
+.poster-events-grid--spread-last-orphan > .poster-event:last-child {
+  grid-column: 1 / -1;
+}
+
 .poster-section-divider {
   display: none;
   flex-shrink: 0;
@@ -328,8 +340,16 @@
 }
 
 .poster-section-divider-icon {
+  display: inline-flex;
+  align-items: center;
   font-size: 0.85em;
   line-height: 1;
+  color: #e85d3a;
+}
+
+.poster-section-divider-icon svg {
+  width: 1em;
+  height: 1em;
 }
 
 .poster-section-divider-text {
@@ -345,7 +365,7 @@
 }
 
 .poster-event--featured .poster-event-date {
-  font-size: var(--poster-featured-date-size, 0.8em);
+  font-size: var(--poster-featured-date-size, 0.88em);
 }
 
 .poster-card {
@@ -400,8 +420,17 @@
 }
 
 .poster-event-cover-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.4em;
-  opacity: 0.45;
+  color: #4a7a94;
+  opacity: 0.55;
+}
+
+.poster-event-cover-icon svg {
+  width: 1em;
+  height: 1em;
 }
 
 .poster-event-hero-overlay,
@@ -419,7 +448,7 @@
 }
 
 .poster-event-name {
-  margin: 0 0 1px;
+  margin: 0;
   font-weight: 700;
   line-height: 1.15;
   color: #1a1d21;
@@ -431,11 +460,37 @@
 }
 
 .poster-event-date {
-  margin: 0;
-  font-weight: 600;
-  color: #3d6a8a;
-  font-size: var(--poster-date-size, 0.68em);
+  margin: 0 0 2px;
+  font-weight: 700;
+  color: #c94e2b;
+  font-size: var(--poster-date-size, 0.78em);
   line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+.poster-event-contact {
+  margin: 2px 0 0;
+}
+
+.poster-event-leaders,
+.poster-event-emails {
+  margin: 0;
+  font-size: var(--poster-contact-size, 0.68em);
+  line-height: 1.25;
+  color: #3d454d;
+}
+
+.poster-event-emails {
+  margin-top: 1px;
+}
+
+.poster-event-contact-label {
+  font-weight: 700;
+  color: #5c6b78;
+}
+
+.poster-event-email {
+  word-break: break-all;
 }
 
 .poster-event-desc {
@@ -503,11 +558,26 @@
 }
 
 .poster-next-month-list li {
-  font-size: 0.65em;
+  font-size: 0.7em;
   line-height: 1.22;
   color: #3d454d;
   padding-left: 0.55em;
   text-indent: -0.55em;
+}
+
+.poster-next-month-date {
+  font-weight: 700;
+  color: #c94e2b;
+  letter-spacing: 0.01em;
+}
+
+.poster-next-month-sep {
+  font-weight: 400;
+  color: #8a939c;
+}
+
+.poster-next-month-event {
+  font-weight: 500;
 }
 
 .poster-next-month-link {
@@ -536,6 +606,10 @@
 }
 
 .poster-footer-decor {
+  display: none;
+}
+
+.poster-footer-decor-hills--right {
   display: none;
 }
 
@@ -624,7 +698,8 @@
 .poster-page--count-4 {
   --poster-gap: 3.5mm;
   --poster-name-size: 0.92em;
-  --poster-date-size: 0.78em;
+  --poster-date-size: 0.86em;
+  --poster-contact-size: 0.74em;
   --poster-body-pad: 5px 7px 6px;
   --poster-name-lines: 3;
 }
@@ -632,57 +707,57 @@
 .poster-page--count-5 {
   --poster-gap: 3mm;
   --poster-name-size: 0.84em;
-  --poster-date-size: 0.72em;
+  --poster-date-size: 0.8em;
   --poster-body-pad: 4px 6px 5px;
   --poster-featured-name-size: 1em;
-  --poster-featured-date-size: 0.82em;
+  --poster-featured-date-size: 0.9em;
 }
 
 .poster-page--count-6 {
   --poster-gap: 3mm;
   --poster-name-size: 0.82em;
-  --poster-date-size: 0.72em;
+  --poster-date-size: 0.8em;
 }
 
 .poster-page--count-7 {
   --poster-gap: 2.5mm;
   --poster-name-size: 0.78em;
-  --poster-date-size: 0.68em;
+  --poster-date-size: 0.76em;
   --poster-featured-name-size: 0.92em;
-  --poster-featured-date-size: 0.76em;
+  --poster-featured-date-size: 0.84em;
 }
 
 .poster-page--count-8 {
   --poster-gap: 2.8mm;
   --poster-name-size: 0.8em;
-  --poster-date-size: 0.7em;
+  --poster-date-size: 0.78em;
 }
 
 .poster-page--count-9 {
   --poster-gap: 2.5mm;
   --poster-name-size: 0.74em;
-  --poster-date-size: 0.64em;
+  --poster-date-size: 0.72em;
   --poster-img-min: 11mm;
 }
 
 .poster-page--count-10 {
   --poster-gap: 2.5mm;
   --poster-name-size: 0.78em;
-  --poster-date-size: 0.68em;
+  --poster-date-size: 0.76em;
   --poster-body-pad: 3px 4px 4px;
 }
 
 .poster-page--count-11 {
   --poster-gap: 2.2mm;
   --poster-name-size: 0.7em;
-  --poster-date-size: 0.62em;
+  --poster-date-size: 0.7em;
   --poster-img-min: 10mm;
 }
 
 .poster-page--count-12 {
   --poster-gap: 2mm;
   --poster-name-size: 0.68em;
-  --poster-date-size: 0.6em;
+  --poster-date-size: 0.68em;
   --poster-img-min: 9mm;
   --poster-name-lines: 2;
 }
@@ -717,6 +792,8 @@
     margin: 0 auto;
     border-radius: 0;
     box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .poster-header,

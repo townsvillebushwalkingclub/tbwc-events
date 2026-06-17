@@ -15,14 +15,19 @@ import {
   parsePosterMonthParam,
   truncatePosterDescription,
 } from '@/lib/poster-utils'
+import {
+  extractPosterEventContact,
+  stripPosterContactLines,
+} from '@/lib/poster-description-parse'
 import type { TBWCEvent } from '@/types/event'
+import { parsePosterThemeParam } from '@/lib/poster-themes'
 import PosterPage from './PosterPage'
 
 export const revalidate = 21600
 
 interface PageProps {
   params: Promise<{ month: string }>
-  searchParams: Promise<{ exclude?: string | string[] }>
+  searchParams: Promise<{ exclude?: string | string[]; theme?: string | string[] }>
 }
 
 export async function generateMetadata({
@@ -49,6 +54,7 @@ export default async function PosterMonthPage({
 
   const excludeIds = parsePosterExcludeParam((await searchParams).exclude)
   const excludeQuery = formatPosterExcludeQuery(excludeIds)
+  const initialTheme = parsePosterThemeParam((await searchParams).theme)
   const poster = await getPosterEventsForMonth(anchor, excludeIds)
   const prev = addMonths(anchor.year, anchor.month, -1)
   const next = addMonths(anchor.year, anchor.month, 1)
@@ -64,6 +70,7 @@ export default async function PosterMonthPage({
       prev={prev}
       next={next}
       excludeQuery={excludeQuery}
+      initialTheme={initialTheme}
       aiDownload={{
         monthSlug: formatPosterMonthSlug(anchor.year, anchor.month),
         anchorLabel: poster.anchorLabel,
@@ -89,9 +96,10 @@ function toAiDownloadEvent(
   const dateLine = useFeatureDate
     ? formatPosterFeatureDate(event)
     : formatPosterDateTime(event)
+  const contact = extractPosterEventContact(event.description)
   const description =
     useFeatureDate && event.description
-      ? truncatePosterDescription(event.description)
+      ? truncatePosterDescription(stripPosterContactLines(event.description))
       : undefined
 
   return {
@@ -100,5 +108,7 @@ function toAiDownloadEvent(
     coverUrl: event.cover?.source ?? null,
     dateLine,
     description,
+    leaders: contact.leaders,
+    emails: contact.emails,
   }
 }

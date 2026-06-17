@@ -36,6 +36,13 @@ export default function PosterFooter() {
         <p className="poster-footer-url">townsvillebushwalkingclub.com/calendar/</p>
       </a>
       <div className="poster-footer-qr-group">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={POSTER_HILLS_PATH}
+          alt=""
+          className="poster-footer-decor-hills poster-footer-decor-hills--right"
+          aria-hidden
+        />
         <PosterQr />
         <p className="poster-footer-scan-me" aria-hidden>
           Scan me!

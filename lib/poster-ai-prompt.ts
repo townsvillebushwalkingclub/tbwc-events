@@ -10,6 +10,8 @@ export interface PosterAiDownloadEvent {
   coverUrl: string | null
   dateLine: string
   description?: string
+  leaders: string[]
+  emails: string[]
 }
 
 export interface PosterAiPromptInput {
@@ -55,10 +57,23 @@ function photoNote(event: PosterAiDownloadEvent, index: number): string {
     : 'Photo: no image provided — use a tasteful outdoor/hiking placeholder.'
 }
 
+function contactLines(event: PosterAiDownloadEvent): string {
+  const lines: string[] = []
+  if (event.leaders && event.leaders.length > 0) {
+    lines.push(
+      `- Leader${event.leaders.length > 1 ? 's' : ''}: ${event.leaders.join(', ')}`
+    )
+  }
+  if (event.emails && event.emails.length > 0) {
+    lines.push(`- RSVP email${event.emails.length > 1 ? 's' : ''}: ${event.emails.join(', ')}`)
+  }
+  return lines.length > 0 ? `\n${lines.join('\n')}` : ''
+}
+
 function featuredEventBlock(event: PosterAiDownloadEvent, index: number): string {
   return `FEATURED EVENT (large hero banner below header):
 - "${event.name}"
-- Date/time: ${event.dateLine}
+- Date/time: ${event.dateLine}${contactLines(event)}
 - ${photoNote(event, index)}
 - Wide landscape photo with rounded corners
 - Dark semi-transparent overlay strip at bottom-left of photo containing event title in bold white text
@@ -72,7 +87,7 @@ function gridEventBlock(
   number: number
 ): string {
   return `${number}. "${event.name}"
-   Date/time: ${event.dateLine}
+   Date/time: ${event.dateLine}${contactLines(event)}
    ${photoNote(event, index)}
    Card style: rounded photo on top; below photo include a small coloured circular activity icon (hiker, mountain, location pin, or wave — vary per card), event title in dark text, orange calendar icon + date/time line`
 }

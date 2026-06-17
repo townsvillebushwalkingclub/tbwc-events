@@ -18,3 +18,20 @@ export function isPosterThemeId(value: string): value is PosterThemeId {
 export function posterThemeClassName(theme: PosterThemeId): string {
   return `poster-page--theme-${theme}`
 }
+
+export function parsePosterThemeParam(
+  value: string | string[] | undefined
+): PosterThemeId | null {
+  const raw = Array.isArray(value) ? value[0] : value
+  return raw && isPosterThemeId(raw) ? raw : null
+}
+
+/** Append theme to an existing poster query string (`?exclude=…` or ``). */
+export function appendPosterThemeToQuery(
+  query: string,
+  theme: PosterThemeId
+): string {
+  if (theme === DEFAULT_POSTER_THEME) return query
+  const separator = query.includes('?') ? '&' : '?'
+  return `${query}${separator}theme=${theme}`
+}

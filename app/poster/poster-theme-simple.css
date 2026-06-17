@@ -32,6 +32,23 @@
   background: #f4f7f9;
 }
 
+.poster-page--theme-simple .poster-event-date {
+  color: #d94e2b;
+}
+
+.poster-page--theme-simple .poster-event-contact-label {
+  color: #5c6b78;
+}
+
+.poster-page--theme-simple .poster-event-emails {
+  color: #d94e2b;
+  font-weight: 600;
+}
+
+.poster-page--theme-simple .poster-next-month-date {
+  color: #d94e2b;
+}
+
 .poster-page--theme-simple .poster-next-month {
   border-bottom: 1px solid #dce4ea;
 }

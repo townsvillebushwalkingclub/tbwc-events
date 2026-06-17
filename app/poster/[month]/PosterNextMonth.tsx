@@ -1,6 +1,6 @@
 import { POSTER_LEAF_14_PATH } from '@/lib/poster-constants'
 import { absoluteEventPageUrl } from '@/lib/site'
-import { formatPosterNextMonthLine } from '@/lib/poster-format'
+import { formatPosterCompactDate } from '@/lib/poster-format'
 import type { TBWCEvent } from '@/types/event'
 
 interface PosterNextMonthProps {
@@ -31,7 +31,14 @@ export default function PosterNextMonth({ label, events }: PosterNextMonthProps)
                 href={absoluteEventPageUrl(event.id)}
                 className="poster-next-month-link"
               >
-                {formatPosterNextMonthLine(event)}
+                <span className="poster-next-month-date">
+                  {formatPosterCompactDate(event)}
+                </span>
+                <span className="poster-next-month-sep" aria-hidden>
+                  {' '}
+                  —{' '}
+                </span>
+                <span className="poster-next-month-event">{event.name}</span>
               </a>
             </li>
           ))}

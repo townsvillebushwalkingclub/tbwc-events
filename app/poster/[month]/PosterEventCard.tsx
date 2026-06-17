@@ -1,10 +1,20 @@
 import { absoluteEventPageUrl } from '@/lib/site'
 import type { TBWCEvent } from '@/types/event'
 import {
+  extractPosterEventContact,
+  stripPosterContactLines,
+} from '@/lib/poster-description-parse'
+import {
   formatPosterDateTime,
   formatPosterFeatureDate,
   truncatePosterDescription,
 } from '@/lib/poster-format'
+import PosterEventContact from './PosterEventContact'
+import {
+  PosterHeroCalendarIcon,
+  PosterHikerIcon,
+  PosterMountainIcon,
+} from './PosterIcons'
 
 interface PosterEventCardProps {
   event: TBWCEvent
@@ -24,7 +34,7 @@ function EventCover({ event }: { event: TBWCEvent }) {
 
   return (
     <div className="poster-event-cover poster-event-cover--placeholder" aria-hidden>
-      <span className="poster-event-cover-icon">🏔️</span>
+      <PosterMountainIcon className="poster-event-cover-icon" />
     </div>
   )
 }
@@ -39,9 +49,10 @@ export default function PosterEventCard({
   const dateLine = useFeatureDate
     ? formatPosterFeatureDate(event)
     : formatPosterDateTime(event)
+  const contact = extractPosterEventContact(event.description)
   const desc =
     showDescription && event.description
-      ? truncatePosterDescription(event.description)
+      ? truncatePosterDescription(stripPosterContactLines(event.description))
       : null
   const href = absoluteEventPageUrl(event.id)
 
@@ -57,25 +68,27 @@ export default function PosterEventCard({
           <div className="poster-event-hero-overlay">
             <h3 className="poster-event-hero-name">{event.name}</h3>
             <p className="poster-event-hero-date">
-              <span className="poster-event-hero-calendar" aria-hidden>
-                📅
-              </span>
+              <PosterHeroCalendarIcon className="poster-event-hero-calendar" />
               {dateLine}
             </p>
+            <PosterEventContact contact={contact} variant="hero" />
           </div>
         )}
         {heroOverlay && (
           <div className="poster-event-hero-badge" aria-hidden>
-            🥾
+            <PosterHikerIcon className="poster-event-hero-badge-icon" />
           </div>
         )}
       </div>
       <div className={`poster-card-body${heroOverlay ? ' poster-card-body--hero' : ''}`}>
         {!heroOverlay && (
           <>
-            <h3 className="poster-event-name">{event.name}</h3>
             <p className="poster-event-date">{dateLine}</p>
+            <h3 className="poster-event-name">{event.name}</h3>
           </>
+        )}
+        {!heroOverlay && (
+          <PosterEventContact contact={contact} />
         )}
         {desc && <p className="poster-event-desc">{desc}</p>}
       </div>

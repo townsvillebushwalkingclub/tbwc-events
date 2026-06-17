@@ -63,6 +63,16 @@ export function getPosterLayout(eventCount: number): PosterLayoutConfig {
   return LAYOUTS[eventCount as PosterLayoutCount]
 }
 
+/** Grid layout for events after the nature-theme hero (uniform grid only). */
+function getHeroSplitGridLayout(remainderCount: number): PosterLayoutConfig {
+  const layout = getPosterLayout(remainderCount < 4 ? 4 : remainderCount)
+  return {
+    ...layout,
+    showDescription: false,
+    gridMode: 'uniform',
+  }
+}
+
 /** Resolve how events are displayed for a given theme and count. */
 export function getPosterEventsLayout(
   theme: PosterThemeId,
@@ -82,15 +92,12 @@ export function getPosterEventsLayout(
 
   if (theme === 'nature' && eventCount >= 2) {
     const remainderCount = eventCount - 1
-    const gridLayout = getPosterLayout(
-      remainderCount < 4 ? 4 : remainderCount
-    )
     return {
       layout,
       displayMode: 'hero-split',
       showSectionDivider: true,
       heroIndex: 0,
-      gridLayout,
+      gridLayout: getHeroSplitGridLayout(remainderCount),
     }
   }
 
@@ -139,6 +146,14 @@ export function posterGridClassName(layout: PosterLayoutConfig): string {
   return layout.columns === 3
     ? 'poster-events-grid poster-events-grid--3'
     : 'poster-events-grid poster-events-grid--2'
+}
+
+/** Grid class for nature hero-split remainder, stretching a lone last-row card. */
+export function posterHeroSplitGridClassName(remainderCount: number): string {
+  const layout = getHeroSplitGridLayout(remainderCount)
+  const base = posterGridClassName(layout)
+  const hasOrphan = remainderCount > 0 && remainderCount % layout.columns !== 0
+  return hasOrphan ? `${base} poster-events-grid--spread-last-orphan` : base
 }
 
 export function posterIsSparseMonth(eventCount: number): boolean {

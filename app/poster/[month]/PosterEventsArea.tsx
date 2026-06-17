@@ -3,6 +3,7 @@
 import {
   getPosterEventsLayout,
   posterGridClassName,
+  posterHeroSplitGridClassName,
   posterUsesFeaturedFirstEvent,
 } from '@/lib/poster-layout'
 import type { TBWCEvent } from '@/types/event'
@@ -25,7 +26,7 @@ export default function PosterEventsArea({
 }: PosterEventsAreaProps) {
   const { theme } = usePosterTheme()
   const eventsLayout = getPosterEventsLayout(theme, currentEvents.length)
-  const { layout, displayMode, showSectionDivider, gridLayout } = eventsLayout
+  const { layout, displayMode, showSectionDivider } = eventsLayout
 
   if (displayMode === 'empty') {
     return (
@@ -39,9 +40,7 @@ export default function PosterEventsArea({
   if (displayMode === 'hero-split') {
     const heroEvent = currentEvents[0]
     const gridEvents = currentEvents.slice(1)
-    const gridClass = gridLayout
-      ? posterGridClassName(gridLayout)
-      : 'poster-events-grid poster-events-grid--2'
+    const gridClass = posterHeroSplitGridClassName(gridEvents.length)
 
     return (
       <div className="poster-events-hero-split">

@@ -5,7 +5,7 @@ import {
   formatPosterMonthSlug,
   type PosterMonth,
 } from '@/lib/poster-month'
-import { POSTER_THEME_IDS, POSTER_THEMES } from '@/lib/poster-themes'
+import { appendPosterThemeToQuery, POSTER_THEME_IDS, POSTER_THEMES } from '@/lib/poster-themes'
 import PosterAiDownloadButton, {
   type PosterAiDownloadProps,
 } from './PosterAiDownloadButton'
@@ -25,6 +25,7 @@ export default function PosterToolbar({
   aiDownload,
 }: PosterToolbarProps) {
   const { theme, setTheme } = usePosterTheme()
+  const navQuery = appendPosterThemeToQuery(excludeQuery, theme)
 
   return (
     <div className="poster-toolbar no-print">
@@ -64,12 +65,12 @@ export default function PosterToolbar({
         </button>
         <PosterAiDownloadButton {...aiDownload} />
         <Link
-          href={`/poster/${formatPosterMonthSlug(prev.year, prev.month)}${excludeQuery}`}
+          href={`/poster/${formatPosterMonthSlug(prev.year, prev.month)}${navQuery}`}
         >
           Previous month
         </Link>
         <Link
-          href={`/poster/${formatPosterMonthSlug(next.year, next.month)}${excludeQuery}`}
+          href={`/poster/${formatPosterMonthSlug(next.year, next.month)}${navQuery}`}
         >
           Next month
         </Link>

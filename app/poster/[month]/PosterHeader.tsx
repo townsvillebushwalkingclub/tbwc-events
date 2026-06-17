@@ -1,4 +1,5 @@
 import { POSTER_LOGO_PATH } from '@/lib/poster-constants'
+import { PosterMountainIcon } from './PosterIcons'
 
 interface PosterHeaderProps {
   anchorLabel: string
@@ -23,9 +24,7 @@ export default function PosterHeader({ anchorLabel }: PosterHeaderProps) {
           </p>
         </div>
         <p className="poster-month-badge">
-          <span className="poster-month-badge-icon" aria-hidden>
-          ⛰️
-          </span>
+          <PosterMountainIcon className="poster-month-badge-icon" />
           {anchorLabel}
         </p>
       </div>
