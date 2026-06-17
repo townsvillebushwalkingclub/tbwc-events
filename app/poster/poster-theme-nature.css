@@ -1,6 +1,8 @@
 /* Nature theme — contour lines, leaves, mountains, magazine-style layout */
 
 .poster-page--theme-nature {
+  --poster-leaf-filter: brightness(0) saturate(100%) invert(48%) sepia(79%)
+    saturate(2476%) hue-rotate(339deg) brightness(96%) contrast(91%);
   background-color: #faf8f5;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23d4cfc8' stroke-width='0.6' opacity='0.45'%3E%3Cpath d='M0 40 Q50 20 100 40 T200 40'/%3E%3Cpath d='M0 80 Q50 60 100 80 T200 80'/%3E%3Cpath d='M0 120 Q50 100 100 120 T200 120'/%3E%3Cpath d='M0 160 Q50 140 100 160 T200 160'/%3E%3Cpath d='M20 0 Q40 50 20 100 T20 200'/%3E%3Cpath d='M60 0 Q80 50 60 100 T60 200'/%3E%3Cpath d='M100 0 Q120 50 100 100 T100 200'/%3E%3Cpath d='M140 0 Q160 50 140 100 T140 200'/%3E%3Cpath d='M180 0 Q200 50 180 100 T180 200'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 200px 200px;
@@ -47,8 +49,7 @@
 .poster-page--theme-nature .poster-decor-leaf {
   position: absolute;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(48%) sepia(62%) saturate(497%)
-    hue-rotate(88deg) brightness(92%) contrast(88%);
+  filter: var(--poster-leaf-filter);
   opacity: 0.82;
 }
 
@@ -67,7 +68,7 @@
   border-radius: 0 0 6px 6px;
   padding: 4mm 5mm 3mm;
   min-height: 24mm;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .poster-page--theme-nature .poster-footer-decor {
@@ -81,15 +82,42 @@
 
 .poster-page--theme-nature .poster-footer-decor-hills {
   position: absolute;
-  left: 0mm;
+  left: 0;
   bottom: -8mm;
   width: 100mm;
-  max-height: 100%;
+  max-height: none;
   height: auto;
   object-fit: contain;
   object-position: left bottom;
   opacity: 0.95;
   z-index: 1;
+}
+
+.poster-page--theme-nature .poster-footer-decor-hills-mirror {
+  display: block;
+  position: absolute;
+  right: 0;
+  bottom: -14mm;
+  width: 95mm;
+  height: calc(100% + 8mm);
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.poster-page--theme-nature .poster-footer-decor-hills-mirror-inner {
+  width: 100mm;
+  height: 100%;
+  transform: scaleX(-1);
+}
+
+.poster-page--theme-nature .poster-footer-decor-hills-mirror-img {
+  display: block;
+  width: 100mm;
+  height: 100%;
+  object-fit: contain;
+  object-position: left bottom;
+  opacity: 0.95;
 }
 
 .poster-page--theme-nature .poster-footer-decor-saint {
@@ -122,24 +150,6 @@
   z-index: 2;
   flex-direction: column;
   align-items: center;
-  overflow: visible;
-}
-
-.poster-page--theme-nature .poster-footer-decor-hills--right {
-  display: block;
-  position: absolute;
-  right: -4mm;
-  bottom: -10mm;
-  width: 72mm;
-  max-height: none;
-  height: auto;
-  object-fit: contain;
-  object-position: right bottom;
-  transform: scaleX(-1);
-  transform-origin: right bottom;
-  opacity: 0.95;
-  z-index: 0;
-  pointer-events: none;
 }
 
 .poster-page--theme-nature .poster-footer-scan-me {
@@ -359,8 +369,7 @@
   margin-left: -1mm;
   align-self: center;
   object-fit: contain;
-  filter: brightness(0) saturate(100%) invert(48%) sepia(62%) saturate(497%)
-    hue-rotate(88deg) brightness(92%) contrast(88%);
+  filter: var(--poster-leaf-filter);
   opacity: 0.88;
   transform: rotate(-8deg);
   position: relative;
@@ -419,6 +428,9 @@
   .poster-page--theme-nature .poster-decor-header-blob,
   .poster-page--theme-nature .poster-footer-decor,
   .poster-page--theme-nature .poster-footer-decor-hills,
+  .poster-page--theme-nature .poster-footer-decor-hills-mirror,
+  .poster-page--theme-nature .poster-footer-decor-hills-mirror-inner,
+  .poster-page--theme-nature .poster-footer-decor-hills-mirror-img,
   .poster-page--theme-nature .poster-footer-decor-saint,
   .poster-page--theme-nature .poster-leaves,
   .poster-page--theme-nature .poster-decor-leaf,

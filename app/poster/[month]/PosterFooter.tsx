@@ -11,16 +11,26 @@ export default function PosterFooter() {
       <div className="poster-footer-decor" aria-hidden>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={POSTER_HILLS_PATH}
-          alt=""
-          className="poster-footer-decor-hills"
-        />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
           src={POSTER_CASTLE_HILL_PATH}
           alt=""
           className="poster-footer-decor-saint"
         />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={POSTER_HILLS_PATH}
+          alt=""
+          className="poster-footer-decor-hills"
+        />
+        <div className="poster-footer-decor-hills-mirror" aria-hidden>
+          <div className="poster-footer-decor-hills-mirror-inner">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={POSTER_HILLS_PATH}
+              alt=""
+              className="poster-footer-decor-hills-mirror-img"
+            />
+          </div>
+        </div>
       </div>
       <a
         href={POSTER_QR_URL}
@@ -36,13 +46,6 @@ export default function PosterFooter() {
         <p className="poster-footer-url">townsvillebushwalkingclub.com/calendar/</p>
       </a>
       <div className="poster-footer-qr-group">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={POSTER_HILLS_PATH}
-          alt=""
-          className="poster-footer-decor-hills poster-footer-decor-hills--right"
-          aria-hidden
-        />
         <PosterQr />
         <p className="poster-footer-scan-me" aria-hidden>
           Scan me!

@@ -118,7 +118,7 @@ function layoutInstructions(
 
 2. SECTION DIVIDER — centred heading between thin orange horizontal rules:
    "More ${month} Walks & Events"
-   Small mountain/hiker icon centred above or beside the heading; heading text in burnt orange.
+   Heading text in burnt orange between thin orange horizontal rules.
 
 3. EVENT GRID — remaining ${gridCount} event(s) in a ${columns}-column grid
    Uniform smaller cards with rounded corners and subtle drop shadows.

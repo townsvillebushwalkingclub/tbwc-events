@@ -339,19 +339,6 @@
   opacity: 0.55;
 }
 
-.poster-section-divider-icon {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.85em;
-  line-height: 1;
-  color: #e85d3a;
-}
-
-.poster-section-divider-icon svg {
-  width: 1em;
-  height: 1em;
-}
-
 .poster-section-divider-text {
   margin: 0;
   font-size: 0.78em;
@@ -609,7 +596,7 @@
   display: none;
 }
 
-.poster-footer-decor-hills--right {
+.poster-footer-decor-hills-mirror {
   display: none;
 }
 
