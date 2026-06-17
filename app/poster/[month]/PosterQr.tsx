@@ -1,22 +1,28 @@
-import QRCode from 'qrcode'
-import { POSTER_QR_URL } from '@/lib/poster-constants'
+'use client'
 
-export default async function PosterQr() {
-  const svg = await QRCode.toString(POSTER_QR_URL, {
-    type: 'svg',
-    margin: 1,
-    errorCorrectionLevel: 'M',
-  })
+import { useEffect, useState } from 'react'
+import { generatePosterQrSvg } from '@/lib/poster-qr'
+
+export default function PosterQr() {
+  const [svg, setSvg] = useState('')
+
+  useEffect(() => {
+    generatePosterQrSvg().then(setSvg).catch(console.error)
+  }, [])
 
   return (
     <div
       className="poster-qr-wrap"
-      aria-label={`QR code for ${POSTER_QR_URL}`}
+      aria-label="QR code for townsvillebushwalkingclub.com/calendar/"
     >
-      <div
-        className="poster-qr"
-        dangerouslySetInnerHTML={{ __html: svg }}
-      />
+      {svg ? (
+        <div
+          className="poster-qr"
+          dangerouslySetInnerHTML={{ __html: svg }}
+        />
+      ) : (
+        <div className="poster-qr poster-qr--loading" aria-hidden />
+      )}
     </div>
   )
 }

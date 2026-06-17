@@ -5,9 +5,11 @@ import {
   formatPosterMonthSlug,
   type PosterMonth,
 } from '@/lib/poster-month'
+import { POSTER_THEME_IDS, POSTER_THEMES } from '@/lib/poster-themes'
 import PosterAiDownloadButton, {
   type PosterAiDownloadProps,
 } from './PosterAiDownloadButton'
+import { usePosterTheme } from './PosterThemeProvider'
 
 interface PosterToolbarProps {
   prev: PosterMonth
@@ -22,6 +24,8 @@ export default function PosterToolbar({
   excludeQuery,
   aiDownload,
 }: PosterToolbarProps) {
+  const { theme, setTheme } = usePosterTheme()
+
   return (
     <div className="poster-toolbar no-print">
       <Link href="/" className="poster-toolbar-brand">
@@ -38,6 +42,23 @@ export default function PosterToolbar({
         </span>
       </Link>
       <div className="poster-toolbar-actions">
+        <div
+          className="poster-toolbar-theme-toggle"
+          role="group"
+          aria-label="Poster theme"
+        >
+          {POSTER_THEME_IDS.map((id) => (
+            <button
+              key={id}
+              type="button"
+              className={`poster-toolbar-theme-button${theme === id ? ' poster-toolbar-theme-button--active' : ''}`}
+              onClick={() => setTheme(id)}
+              aria-pressed={theme === id}
+            >
+              {POSTER_THEMES[id]}
+            </button>
+          ))}
+        </div>
         <button type="button" onClick={() => window.print()}>
           Print / save as PDF
         </button>

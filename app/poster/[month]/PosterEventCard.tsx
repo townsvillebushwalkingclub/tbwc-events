@@ -4,13 +4,14 @@ import {
   formatPosterDateTime,
   formatPosterFeatureDate,
   truncatePosterDescription,
-} from '@/lib/poster-utils'
+} from '@/lib/poster-format'
 
 interface PosterEventCardProps {
   event: TBWCEvent
   showDescription: boolean
   useFeatureDate?: boolean
   featured?: boolean
+  heroOverlay?: boolean
 }
 
 function EventCover({ event }: { event: TBWCEvent }) {
@@ -33,6 +34,7 @@ export default function PosterEventCard({
   showDescription,
   useFeatureDate = false,
   featured = false,
+  heroOverlay = false,
 }: PosterEventCardProps) {
   const dateLine = useFeatureDate
     ? formatPosterFeatureDate(event)
@@ -46,13 +48,35 @@ export default function PosterEventCard({
   return (
     <a
       href={href}
-      className={`poster-card poster-event poster-event-link${featured ? ' poster-event--featured' : ''}`}
+      className={`poster-card poster-event poster-event-link${featured ? ' poster-event--featured' : ''}${heroOverlay ? ' poster-event--hero-overlay' : ''}`}
       aria-label={`${event.name} — view event details`}
     >
-      <EventCover event={event} />
-      <div className="poster-card-body">
-        <h3 className="poster-event-name">{event.name}</h3>
-        <p className="poster-event-date">{dateLine}</p>
+      <div className="poster-event-media">
+        <EventCover event={event} />
+        {heroOverlay && (
+          <div className="poster-event-hero-overlay">
+            <h3 className="poster-event-hero-name">{event.name}</h3>
+            <p className="poster-event-hero-date">
+              <span className="poster-event-hero-calendar" aria-hidden>
+                📅
+              </span>
+              {dateLine}
+            </p>
+          </div>
+        )}
+        {heroOverlay && (
+          <div className="poster-event-hero-badge" aria-hidden>
+            🥾
+          </div>
+        )}
+      </div>
+      <div className={`poster-card-body${heroOverlay ? ' poster-card-body--hero' : ''}`}>
+        {!heroOverlay && (
+          <>
+            <h3 className="poster-event-name">{event.name}</h3>
+            <p className="poster-event-date">{dateLine}</p>
+          </>
+        )}
         {desc && <p className="poster-event-desc">{desc}</p>}
       </div>
     </a>

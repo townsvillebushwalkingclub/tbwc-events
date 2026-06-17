@@ -1,0 +1,52 @@
+/* Simple theme — original orange-header poster look */
+
+.poster-page--theme-simple .poster-header {
+  background: linear-gradient(135deg, #e85d3a 0%, #d94e2b 100%);
+  color: #fff;
+}
+
+.poster-page--theme-simple .poster-logo {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.poster-page--theme-simple .poster-subtitle {
+  opacity: 0.92;
+}
+
+.poster-page--theme-simple .poster-month-badge {
+  background: rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+.poster-page--theme-simple .poster-month-badge-icon {
+  display: none;
+}
+
+.poster-page--theme-simple .poster-card-body {
+  border-top: 2px solid #e85d3a;
+}
+
+.poster-page--theme-simple .poster-bottom {
+  border-top: 2px solid #e85d3a;
+  background: #f4f7f9;
+}
+
+.poster-page--theme-simple .poster-next-month {
+  border-bottom: 1px solid #dce4ea;
+}
+
+.poster-page--theme-simple .poster-footer-url {
+  color: #e85d3a;
+}
+
+.poster-page--theme-simple .poster-footer-globe {
+  display: none;
+}
+
+@media print {
+  .poster-page--theme-simple .poster-header {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

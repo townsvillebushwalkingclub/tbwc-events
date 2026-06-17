@@ -1,4 +1,4 @@
-/* A4 poster — fixed 210×297mm, flex-fill grid per event count (4–12) */
+/* A4 poster — structural layout (theme-agnostic) */
 
 .poster-root {
   min-height: 100vh;
@@ -81,6 +81,31 @@
   cursor: wait;
 }
 
+.poster-toolbar-theme-toggle {
+  display: inline-flex;
+  border: 1px solid #d0d8de;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.poster-toolbar-theme-button {
+  padding: 0.45rem 0.85rem !important;
+  background: #fff !important;
+  color: #4a5568 !important;
+  border-radius: 0 !important;
+  font-size: 0.8rem !important;
+  border-right: 1px solid #d0d8de;
+}
+
+.poster-toolbar-theme-button:last-child {
+  border-right: none;
+}
+
+.poster-toolbar-theme-button--active {
+  background: #e85d3a !important;
+  color: #fff !important;
+}
+
 .poster-toolbar-ai-download {
   display: inline-flex;
   align-items: center;
@@ -101,6 +126,7 @@
 
 /* Exact A4 canvas */
 .poster-page {
+  position: relative;
   box-sizing: border-box;
   width: 210mm;
   height: 297mm;
@@ -120,10 +146,14 @@
   flex-direction: column;
 }
 
+.poster-decorations {
+  display: none;
+}
+
 .poster-header {
+  position: relative;
+  z-index: 2;
   flex-shrink: 0;
-  background: linear-gradient(135deg, #e85d3a 0%, #d94e2b 100%);
-  color: #fff;
   padding: 4mm 7mm;
 }
 
@@ -138,7 +168,6 @@
   max-height: 36px;
   width: auto;
   object-fit: contain;
-  background: rgba(255, 255, 255, 0.95);
   padding: 3px 6px;
   border-radius: 4px;
 }
@@ -158,22 +187,29 @@
 .poster-subtitle {
   margin: 0.08rem 0 0;
   font-size: 0.76em;
-  opacity: 0.92;
 }
 
 .poster-month-badge {
   flex-shrink: 0;
   margin: 0;
   padding: 0.28em 0.6em;
-  background: rgba(255, 255, 255, 0.22);
-  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 999px;
   font-size: 0.85em;
   font-weight: 700;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+}
+
+.poster-month-badge-icon {
+  font-size: 0.9em;
+  line-height: 1;
 }
 
 .poster-main {
+  position: relative;
+  z-index: 1;
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
@@ -182,7 +218,26 @@
 }
 
 .poster-events-stack,
-.poster-events-grid {
+.poster-events-grid,
+.poster-events-hero-split {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.poster-events-hero-split {
+  display: flex;
+  flex-direction: column;
+  gap: 2mm;
+  min-height: 0;
+}
+
+.poster-events-hero {
+  flex: 0 0 auto;
+  min-height: 0;
+  max-height: 38%;
+}
+
+.poster-events-hero-split .poster-events-grid {
   flex: 1 1 auto;
   min-height: 0;
 }
@@ -214,7 +269,6 @@
   gap: var(--poster-gap, 2.5mm);
 }
 
-/* 5 events: one featured row + 2×2 grid */
 .poster-events-grid--featured-five {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1.4fr 1fr 1fr;
@@ -225,7 +279,6 @@
   grid-column: 1 / -1;
 }
 
-/* 7 events: one featured row + 3×2 grid */
 .poster-events-grid--featured-seven {
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 1.35fr 1fr 1fr;
@@ -236,7 +289,6 @@
   grid-column: 1 / -1;
 }
 
-/* 11 events: 3×3 grid + last row split 50/50 */
 .poster-events-grid--spread-last-two {
   grid-template-columns: repeat(6, 1fr);
   gap: var(--poster-gap, 2.2mm);
@@ -252,6 +304,36 @@
 
 .poster-events-grid--spread-last-two > .poster-event:nth-last-child(1) {
   grid-column: 4 / 7;
+}
+
+.poster-section-divider {
+  display: none;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 2mm;
+  padding: 1mm 0;
+}
+
+.poster-section-divider-line {
+  flex: 1;
+  max-width: 22mm;
+  height: 1px;
+  background: #e85d3a;
+  opacity: 0.55;
+}
+
+.poster-section-divider-icon {
+  font-size: 0.85em;
+  line-height: 1;
+}
+
+.poster-section-divider-text {
+  margin: 0;
+  font-size: 0.78em;
+  font-weight: 700;
+  color: #e85d3a;
+  white-space: nowrap;
 }
 
 .poster-event--featured .poster-event-name {
@@ -273,6 +355,14 @@
   overflow: hidden;
   break-inside: avoid;
   box-shadow: 0 1px 3px rgba(30, 60, 90, 0.07);
+}
+
+.poster-event-media {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .poster-event-link {
@@ -310,10 +400,18 @@
   opacity: 0.45;
 }
 
+.poster-event-hero-overlay,
+.poster-event-hero-badge {
+  display: none;
+}
+
 .poster-card-body {
   flex-shrink: 0;
   padding: var(--poster-body-pad, 3px 5px 4px);
-  border-top: 2px solid #e85d3a;
+}
+
+.poster-card-body--hero {
+  display: none;
 }
 
 .poster-event-name {
@@ -358,15 +456,14 @@
 }
 
 .poster-bottom {
+  position: relative;
+  z-index: 2;
   flex-shrink: 0;
-  border-top: 2px solid #e85d3a;
-  background: #f4f7f9;
   break-inside: avoid;
 }
 
 .poster-next-month {
   padding: 2.5mm 6mm 2mm;
-  border-bottom: 1px solid #dce4ea;
 }
 
 .poster-next-month-title {
@@ -417,6 +514,7 @@
 }
 
 .poster-footer {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -424,13 +522,27 @@
   padding: 2.5mm 6mm 3mm;
 }
 
+.poster-footer-decor {
+  display: none;
+}
+
 .poster-footer-cta {
   margin: 0;
   font-size: 0.74em;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
+.poster-footer-globe {
+  font-size: 1.1em;
+  line-height: 1;
 }
 
 .poster-footer-link {
+  position: relative;
+  z-index: 2;
   flex: 1;
   min-width: 0;
   text-decoration: none;
@@ -451,7 +563,23 @@
   margin: 0;
   font-size: 0.72em;
   font-weight: 600;
-  color: #e85d3a;
+}
+
+.poster-footer-qr-group {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.poster-footer-scan-me {
+  display: none;
+  margin: 0;
+  font-size: 0.7em;
+  font-family: 'Segoe Script', 'Brush Script MT', cursive;
+  white-space: nowrap;
 }
 
 .poster-qr-wrap {
@@ -472,6 +600,10 @@
   width: 100%;
   height: 100%;
   display: block;
+}
+
+.poster-qr--loading {
+  background: #e2e8ee;
 }
 
 /* ── Per-count templates (4–12) ── */
@@ -574,7 +706,9 @@
     box-shadow: none;
   }
 
-  .poster-header {
+  .poster-header,
+  .poster-bottom,
+  .poster-decorations {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -590,7 +724,10 @@
 
   .poster-logo,
   .poster-event-cover,
-  .poster-event-cover--placeholder {
+  .poster-event-cover--placeholder,
+  .poster-decor-leaf,
+  .poster-footer-decor-hills,
+  .poster-footer-decor-saint {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }

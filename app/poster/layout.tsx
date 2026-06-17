@@ -1,4 +1,6 @@
-import './poster.css'
+import './poster-base.css'
+import './poster-theme-simple.css'
+import './poster-theme-nature.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

@@ -3,6 +3,8 @@
  * Each preset defines grid columns and typography; row heights flex to fill the sheet.
  */
 
+import type { PosterThemeId } from '@/lib/poster-themes'
+
 export const A4_WIDTH_MM = 210
 export const A4_HEIGHT_MM = 297
 export const A4_PRINT_MARGIN_MM = 8
@@ -20,6 +22,18 @@ export interface PosterLayoutConfig {
   columns: 2 | 3
   showDescription: boolean
   gridMode: PosterGridMode
+}
+
+export type PosterEventsDisplayMode = 'empty' | 'stack' | 'grid' | 'hero-split'
+
+export interface PosterEventsLayout {
+  layout: PosterLayoutConfig
+  displayMode: PosterEventsDisplayMode
+  showSectionDivider: boolean
+  /** When displayMode is hero-split, index of the hero event (always 0). */
+  heroIndex: number | null
+  /** Grid layout for remaining events after hero (hero-split only). */
+  gridLayout: PosterLayoutConfig | null
 }
 
 const LAYOUTS: Record<PosterLayoutCount, PosterLayoutConfig> = {
@@ -49,12 +63,66 @@ export function getPosterLayout(eventCount: number): PosterLayoutConfig {
   return LAYOUTS[eventCount as PosterLayoutCount]
 }
 
+/** Resolve how events are displayed for a given theme and count. */
+export function getPosterEventsLayout(
+  theme: PosterThemeId,
+  eventCount: number
+): PosterEventsLayout {
+  const layout = getPosterLayout(eventCount)
+
+  if (eventCount === 0) {
+    return {
+      layout,
+      displayMode: 'empty',
+      showSectionDivider: false,
+      heroIndex: null,
+      gridLayout: null,
+    }
+  }
+
+  if (theme === 'nature' && eventCount >= 2) {
+    const remainderCount = eventCount - 1
+    const gridLayout = getPosterLayout(
+      remainderCount < 4 ? 4 : remainderCount
+    )
+    return {
+      layout,
+      displayMode: 'hero-split',
+      showSectionDivider: true,
+      heroIndex: 0,
+      gridLayout,
+    }
+  }
+
+  if (eventCount < 4) {
+    return {
+      layout,
+      displayMode: 'stack',
+      showSectionDivider: false,
+      heroIndex: null,
+      gridLayout: null,
+    }
+  }
+
+  return {
+    layout,
+    displayMode: 'grid',
+    showSectionDivider: false,
+    heroIndex: null,
+    gridLayout: null,
+  }
+}
+
 export function posterLayoutClassName(eventCount: number): string {
   const layout = getPosterLayout(eventCount)
   return `poster-page--count-${layout.count} poster-page--cols-${layout.columns}`
 }
 
-export function posterUsesFeaturedFirstEvent(layout: PosterLayoutConfig): boolean {
+export function posterUsesFeaturedFirstEvent(
+  layout: PosterLayoutConfig,
+  theme: PosterThemeId = 'simple'
+): boolean {
+  if (theme === 'nature') return false
   return layout.gridMode === 'featured-five' || layout.gridMode === 'featured-seven'
 }
 
@@ -71,4 +139,8 @@ export function posterGridClassName(layout: PosterLayoutConfig): string {
   return layout.columns === 3
     ? 'poster-events-grid poster-events-grid--3'
     : 'poster-events-grid poster-events-grid--2'
+}
+
+export function posterIsSparseMonth(eventCount: number): boolean {
+  return eventCount > 0 && eventCount < 4
 }

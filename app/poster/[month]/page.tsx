@@ -16,8 +16,7 @@ import {
   truncatePosterDescription,
 } from '@/lib/poster-utils'
 import type { TBWCEvent } from '@/types/event'
-import PosterContent from './PosterContent'
-import PosterToolbar from './PosterToolbar'
+import PosterPage from './PosterPage'
 
 export const revalidate = 21600
 
@@ -61,29 +60,25 @@ export default async function PosterMonthPage({
   )
 
   return (
-    <>
-      <PosterToolbar
-        prev={prev}
-        next={next}
-        excludeQuery={excludeQuery}
-        aiDownload={{
-          monthSlug: formatPosterMonthSlug(anchor.year, anchor.month),
-          anchorLabel: poster.anchorLabel,
-          currentEvents: aiDownloadEvents,
-          nextEvents: poster.nextMonth.map((event) => ({
-            name: event.name,
-            dateLine: formatPosterNextMonthLine(event),
-          })),
-          nextMonthLabel: poster.nextMonthLabel,
-        }}
-      />
-      <PosterContent
-        anchorLabel={poster.anchorLabel}
-        currentEvents={poster.currentMonth}
-        nextEvents={poster.nextMonth}
-        nextMonthLabel={poster.nextMonthLabel}
-      />
-    </>
+    <PosterPage
+      prev={prev}
+      next={next}
+      excludeQuery={excludeQuery}
+      aiDownload={{
+        monthSlug: formatPosterMonthSlug(anchor.year, anchor.month),
+        anchorLabel: poster.anchorLabel,
+        currentEvents: aiDownloadEvents,
+        nextEvents: poster.nextMonth.map((event) => ({
+          name: event.name,
+          dateLine: formatPosterNextMonthLine(event),
+        })),
+        nextMonthLabel: poster.nextMonthLabel,
+      }}
+      anchorLabel={poster.anchorLabel}
+      currentEvents={poster.currentMonth}
+      nextEvents={poster.nextMonth}
+      nextMonthLabel={poster.nextMonthLabel}
+    />
   )
 }
 

@@ -1,5 +1,5 @@
 import { absoluteEventPageUrl } from '@/lib/site'
-import { formatPosterNextMonthLine } from '@/lib/poster-utils'
+import { formatPosterNextMonthLine } from '@/lib/poster-format'
 import type { TBWCEvent } from '@/types/event'
 
 interface PosterNextMonthProps {

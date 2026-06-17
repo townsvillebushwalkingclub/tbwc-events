@@ -1,13 +1,11 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import JSZip from 'jszip'
 import {
   buildPosterAiPrompt,
-  posterCoverFilename,
   type PosterAiDownloadEvent,
 } from '@/lib/poster-ai-prompt'
-import { POSTER_LOGO_FILENAME, POSTER_LOGO_PATH } from '@/lib/poster-constants'
+import { buildPosterAiKitZip } from '@/lib/poster-ai-download'
 
 export interface PosterAiDownloadProps {
   monthSlug: string
@@ -68,32 +66,7 @@ export default function PosterAiDownloadButton({
       await copyToClipboard(prompt)
       setStatusMessage('Copied! Downloading…')
 
-      const zip = new JSZip()
-
-      const logoResponse = await fetch(POSTER_LOGO_PATH)
-      if (logoResponse.ok) {
-        zip.file(POSTER_LOGO_FILENAME, await logoResponse.blob())
-      } else {
-        console.warn(`Failed to fetch club logo: ${logoResponse.status}`)
-      }
-
-      for (let i = 0; i < currentEvents.length; i++) {
-        const event = currentEvents[i]
-        const filename = posterCoverFilename(i, event)
-        if (!filename || !event.coverUrl) continue
-
-        const response = await fetch(event.coverUrl)
-        if (!response.ok) {
-          console.warn(`Failed to fetch cover for ${event.name}: ${response.status}`)
-          continue
-        }
-        const blob = await response.blob()
-        zip.file(filename, blob)
-      }
-
-      zip.file('poster-ai-prompt.txt', prompt)
-
-      const zipBlob = await zip.generateAsync({ type: 'blob' })
+      const zipBlob = await buildPosterAiKitZip({ prompt, currentEvents })
       triggerDownload(zipBlob, `tbwc-poster-${monthSlug}-ai-kit.zip`)
 
       setStatus('done')

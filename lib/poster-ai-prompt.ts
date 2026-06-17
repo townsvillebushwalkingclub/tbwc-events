@@ -2,7 +2,7 @@
  * AI image-generation prompt builder for the TBWC events poster.
  */
 
-import { POSTER_LOGO_FILENAME, POSTER_QR_URL } from '@/lib/poster-constants'
+import { POSTER_LOGO_FILENAME, POSTER_QR_FILENAME, POSTER_QR_URL } from '@/lib/poster-constants'
 
 export interface PosterAiDownloadEvent {
   id: string
@@ -150,6 +150,7 @@ ${nextEvents.map((e) => `  • ${e.dateLine}`).join('\n')}
 
   const attachmentsNote = `\nATTACHED ASSETS:
 - Club logo: "${POSTER_LOGO_FILENAME}" — use in the top-left header beside the club name.
+- QR code: "${POSTER_QR_FILENAME}" — place in the footer beside "Scan me!" text; use the attached image exactly.
 ${
   coverList.length > 0
     ? `- Cover photos (${coverList.length} file(s)) — use each exactly for its matching event:\n${coverList.map((f) => `  - ${f}`).join('\n')}`
@@ -179,7 +180,7 @@ ${nextMonthSection}
 
 FOOTER (solid burnt-orange bar, full width):
 - Left: white globe icon + "Full details & RSVP" in white bold text, with URL "${calendarUrl}" below in white
-- Right: large high-contrast white QR code placeholder + handwritten-style white "Scan me!" text with a small arrow pointing at the QR code
+- Right: use attached "${POSTER_QR_FILENAME}" QR image + handwritten-style white "Scan me!" text with a small arrow pointing at the QR code
 ${attachmentsNote}
 
 EVENT DETAILS FOR ${anchorLabel.toUpperCase()} (${currentEvents.length} event(s)):
