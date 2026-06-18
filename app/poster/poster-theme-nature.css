@@ -272,21 +272,26 @@
   min-height: 22mm;
 }
 
+.poster-page--theme-nature .poster-events-hero .poster-event--hero-overlay .poster-event-media {
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
 .poster-page--theme-nature .poster-events-hero .poster-event--hero-overlay .poster-event-media::after {
   content: '';
   position: absolute;
-  left: 0;
-  bottom: 0;
+  inset: 0;
   z-index: 1;
-  height: 50%;
-  width: 70%;
   pointer-events: none;
-  border-radius: 0;
-  /* Layered gradients (not mask-image) — masks look correct on screen but
-     often fail in print/PDF, rendering as a solid dark rectangle instead. */
-  background:
-    linear-gradient(to top right, rgba(0, 0, 0, 0.4) 20%, rgba(0, 0, 0, 0.01) 50%, transparent 90%),
-    linear-gradient(to top right, rgba(0, 0, 0, 0.4) 20%, rgba(0, 0, 0, 0.01) 50%, transparent 90%);
+  /* Radial fade from bottom-left — no rectangular layer box, so print/PDF
+     won't draw hard borders at top/right like a sized ::after block does. */
+  background: radial-gradient(
+    ellipse 78% 62% at 0% 100%,
+    rgba(0, 0, 0, 0.62) 0%,
+    rgba(0, 0, 0, 0.28) 36%,
+    rgba(0, 0, 0, 0.06) 56%,
+    transparent 72%
+  );
 }
 
 .poster-page--theme-nature .poster-event-hero-overlay {
