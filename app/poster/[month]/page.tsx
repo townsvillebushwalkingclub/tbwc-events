@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/facebook-api'
 import { getPosterLayout } from '@/lib/poster-layout'
 import type { PosterAiDownloadEvent } from '@/lib/poster-ai-prompt'
 import {
@@ -23,7 +22,7 @@ import type { TBWCEvent } from '@/types/event'
 import PosterPage from './PosterPage'
 
 /** Match Facebook events in-memory cache (24h) for instant ISR loads. */
-export const revalidate = FACEBOOK_EVENTS_REVALIDATE_SECONDS
+export const revalidate = 86400
 
 interface PageProps {
   params: Promise<{ month: string }>

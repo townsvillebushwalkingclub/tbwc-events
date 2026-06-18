@@ -75,10 +75,14 @@ const sampleEvents: TBWCEvent[] =
       ]
     : []
 
-/** In-memory Facebook events cache TTL — keep page `revalidate` values in sync. */
-export const FACEBOOK_EVENTS_CACHE_DURATION_MS = 24 * 60 * 60 * 1000
-export const FACEBOOK_EVENTS_REVALIDATE_SECONDS =
-  FACEBOOK_EVENTS_CACHE_DURATION_MS / 1000
+import {
+  FACEBOOK_EVENTS_CACHE_DURATION_MS,
+} from '@/lib/cache-constants'
+
+export {
+  FACEBOOK_EVENTS_CACHE_DURATION_MS,
+  FACEBOOK_EVENTS_REVALIDATE_SECONDS,
+} from '@/lib/cache-constants'
 
 let eventsCache: TBWCEvent[] | null = null
 let cacheTimestamp: number | null = null
