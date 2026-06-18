@@ -279,15 +279,11 @@
   z-index: 1;
   pointer-events: none;
   border-radius: 0;
-  background: rgba(0, 0, 0, 0.6);
-  -webkit-mask-image:
-    linear-gradient(to top, #000 0%, #000 16%, transparent 68%),
-    linear-gradient(to right, #000 0%, #000 20%, transparent 76%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to top, #000 0%, #000 16%, transparent 68%),
-    linear-gradient(to right, #000 0%, #000 20%, transparent 76%);
-  mask-composite: intersect;
+  /* Layered gradients (not mask-image) — masks look correct on screen but
+     often fail in print/PDF, rendering as a solid dark rectangle instead. */
+  background:
+    linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.18) 42%, transparent 68%),
+    linear-gradient(to right, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.1) 48%, transparent 76%);
 }
 
 .poster-page--theme-nature .poster-event-hero-overlay {
