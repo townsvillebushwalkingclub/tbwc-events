@@ -275,15 +275,18 @@
 .poster-page--theme-nature .poster-events-hero .poster-event--hero-overlay .poster-event-media::after {
   content: '';
   position: absolute;
-  inset: 0;
+  left: 0;
+  bottom: 0;
   z-index: 1;
+  height: 50%;
+  width: 70%;
   pointer-events: none;
   border-radius: 0;
   /* Layered gradients (not mask-image) — masks look correct on screen but
      often fail in print/PDF, rendering as a solid dark rectangle instead. */
   background:
-    linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.18) 42%, transparent 68%),
-    linear-gradient(to right, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.1) 48%, transparent 76%);
+    linear-gradient(to top right, rgba(0, 0, 0, 0.4) 20%, rgba(0, 0, 0, 0.01) 50%, transparent 90%),
+    linear-gradient(to top right, rgba(0, 0, 0, 0.4) 20%, rgba(0, 0, 0, 0.01) 50%, transparent 90%);
 }
 
 .poster-page--theme-nature .poster-event-hero-overlay {
