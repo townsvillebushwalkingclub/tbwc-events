@@ -9,7 +9,7 @@
     "formatted_time": "6:30 am",
     "formatted_end_time": null,
     "formatted_end_date": null,
-    "is_multi_day": null,
+    "is_multi_day": false,
     "attending_count": 4,
     "interested_count": 11,
     "place": {
@@ -20,6 +20,7 @@
       "offset_y": 82,
       "source": "/event-covers/875828604327724.jpg",
       "id": "932367811992834"
-    }
+    },
+    "end_time": null
   }
 ]
