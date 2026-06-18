@@ -1,17 +1,17 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/facebook-api'
 import { getPosterLayout } from '@/lib/poster-layout'
 import type { PosterAiDownloadEvent } from '@/lib/poster-ai-prompt'
 import {
   addMonths,
-  formatPosterExcludeQuery,
   formatPosterDateTime,
   formatPosterFeatureDate,
   formatPosterMonthLabel,
   formatPosterMonthSlug,
   formatPosterNextMonthLine,
+  getCurrentPosterMonth,
   getPosterEventsForMonth,
-  parsePosterExcludeParam,
   parsePosterMonthParam,
   truncatePosterDescription,
 } from '@/lib/poster-utils'
@@ -20,14 +20,21 @@ import {
   stripPosterContactLines,
 } from '@/lib/poster-description-parse'
 import type { TBWCEvent } from '@/types/event'
-import { parsePosterThemeParam } from '@/lib/poster-themes'
 import PosterPage from './PosterPage'
 
-export const revalidate = 21600
+/** Match Facebook events in-memory cache (24h) for instant ISR loads. */
+export const revalidate = FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 interface PageProps {
   params: Promise<{ month: string }>
-  searchParams: Promise<{ exclude?: string | string[]; theme?: string | string[] }>
+}
+
+export function generateStaticParams() {
+  const { year, month } = getCurrentPosterMonth()
+  return [-2, -1, 0, 1, 2].map((delta) => {
+    const { year: y, month: m } = addMonths(year, month, delta)
+    return { month: formatPosterMonthSlug(y, m) }
+  })
 }
 
 export async function generateMetadata({
@@ -44,18 +51,12 @@ export async function generateMetadata({
   }
 }
 
-export default async function PosterMonthPage({
-  params,
-  searchParams,
-}: PageProps) {
+export default async function PosterMonthPage({ params }: PageProps) {
   const { month } = await params
   const anchor = parsePosterMonthParam(month)
   if (!anchor) notFound()
 
-  const excludeIds = parsePosterExcludeParam((await searchParams).exclude)
-  const excludeQuery = formatPosterExcludeQuery(excludeIds)
-  const initialTheme = parsePosterThemeParam((await searchParams).theme)
-  const poster = await getPosterEventsForMonth(anchor, excludeIds)
+  const poster = await getPosterEventsForMonth(anchor)
   const prev = addMonths(anchor.year, anchor.month, -1)
   const next = addMonths(anchor.year, anchor.month, 1)
   const layout = getPosterLayout(poster.currentMonth.length)
@@ -69,8 +70,6 @@ export default async function PosterMonthPage({
     <PosterPage
       prev={prev}
       next={next}
-      excludeQuery={excludeQuery}
-      initialTheme={initialTheme}
       aiDownload={{
         monthSlug: formatPosterMonthSlug(anchor.year, anchor.month),
         anchorLabel: poster.anchorLabel,

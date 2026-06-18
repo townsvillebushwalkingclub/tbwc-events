@@ -1,18 +1,22 @@
 'use client'
 
+import { useMemo } from 'react'
+import { formatPosterExcludeQuery } from '@/lib/poster-exclude'
+import { formatPosterNextMonthLine } from '@/lib/poster-format'
 import { PosterThemeProvider } from './PosterThemeProvider'
 import PosterContent from './PosterContent'
 import PosterToolbar from './PosterToolbar'
 import type { PosterAiDownloadProps } from './PosterAiDownloadButton'
 import type { PosterMonth } from '@/lib/poster-month'
-import type { PosterThemeId } from '@/lib/poster-themes'
 import type { TBWCEvent } from '@/types/event'
+import {
+  filterPosterExcludedEvents,
+  usePosterExcludeIds,
+} from './usePosterExclude'
 
 export interface PosterPageProps {
   prev: PosterMonth
   next: PosterMonth
-  excludeQuery: string
-  initialTheme: PosterThemeId | null
   aiDownload: PosterAiDownloadProps
   anchorLabel: string
   currentEvents: TBWCEvent[]
@@ -23,26 +27,49 @@ export interface PosterPageProps {
 export default function PosterPage({
   prev,
   next,
-  excludeQuery,
-  initialTheme,
   aiDownload,
   anchorLabel,
   currentEvents,
   nextEvents,
   nextMonthLabel,
 }: PosterPageProps) {
+  const excludeIds = usePosterExcludeIds()
+  const excludeQuery = formatPosterExcludeQuery(excludeIds)
+
+  const filteredCurrentEvents = useMemo(
+    () => filterPosterExcludedEvents(currentEvents, excludeIds),
+    [currentEvents, excludeIds]
+  )
+  const filteredNextEvents = useMemo(
+    () => filterPosterExcludedEvents(nextEvents, excludeIds),
+    [nextEvents, excludeIds]
+  )
+  const filteredAiDownload = useMemo(
+    (): PosterAiDownloadProps => ({
+      ...aiDownload,
+      currentEvents: aiDownload.currentEvents.filter(
+        (event) => !excludeIds.has(event.id)
+      ),
+      nextEvents: filteredNextEvents.map((event) => ({
+        name: event.name,
+        dateLine: formatPosterNextMonthLine(event),
+      })),
+    }),
+    [aiDownload, excludeIds, filteredNextEvents]
+  )
+
   return (
-    <PosterThemeProvider initialTheme={initialTheme}>
+    <PosterThemeProvider>
       <PosterToolbar
         prev={prev}
         next={next}
         excludeQuery={excludeQuery}
-        aiDownload={aiDownload}
+        aiDownload={filteredAiDownload}
       />
       <PosterContent
         anchorLabel={anchorLabel}
-        currentEvents={currentEvents}
-        nextEvents={nextEvents}
+        currentEvents={filteredCurrentEvents}
+        nextEvents={filteredNextEvents}
         nextMonthLabel={nextMonthLabel}
       />
     </PosterThemeProvider>

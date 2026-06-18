@@ -75,9 +75,14 @@ const sampleEvents: TBWCEvent[] =
       ]
     : []
 
+/** In-memory Facebook events cache TTL — keep page `revalidate` values in sync. */
+export const FACEBOOK_EVENTS_CACHE_DURATION_MS = 24 * 60 * 60 * 1000
+export const FACEBOOK_EVENTS_REVALIDATE_SECONDS =
+  FACEBOOK_EVENTS_CACHE_DURATION_MS / 1000
+
 let eventsCache: TBWCEvent[] | null = null
 let cacheTimestamp: number | null = null
-const CACHE_DURATION = 24 * 60 * 60 * 1000
+const CACHE_DURATION = FACEBOOK_EVENTS_CACHE_DURATION_MS
 
 function isTokenExpiredError(errorData: string | unknown): boolean {
   try {

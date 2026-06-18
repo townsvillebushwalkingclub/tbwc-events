@@ -37,6 +37,17 @@ function readStoredTheme(): PosterThemeId {
   return stored && isPosterThemeId(stored) ? stored : DEFAULT_POSTER_THEME
 }
 
+function readThemeFromUrl(): PosterThemeId | null {
+  if (typeof window === 'undefined') return null
+  const raw = new URLSearchParams(window.location.search).get('theme')
+  return raw && isPosterThemeId(raw) ? raw : null
+}
+
+function readInitialTheme(initialTheme: PosterThemeId | null): PosterThemeId {
+  if (initialTheme) return initialTheme
+  return readThemeFromUrl() ?? readStoredTheme()
+}
+
 function syncThemeToUrl(theme: PosterThemeId): void {
   const url = new URL(window.location.href)
   if (theme === DEFAULT_POSTER_THEME) {
@@ -51,8 +62,8 @@ export function PosterThemeProvider({
   children,
   initialTheme = null,
 }: PosterThemeProviderProps) {
-  const [theme, setThemeState] = useState<PosterThemeId>(
-    () => initialTheme ?? DEFAULT_POSTER_THEME
+  const [theme, setThemeState] = useState<PosterThemeId>(() =>
+    readInitialTheme(initialTheme)
   )
   const savedTitleRef = useRef<string | null>(null)
 
@@ -61,9 +72,10 @@ export function PosterThemeProvider({
       localStorage.setItem(POSTER_THEME_STORAGE_KEY, initialTheme)
       return
     }
-    const stored = readStoredTheme()
-    setThemeState(stored)
-    syncThemeToUrl(stored)
+    const resolved = readInitialTheme(null)
+    setThemeState(resolved)
+    localStorage.setItem(POSTER_THEME_STORAGE_KEY, resolved)
+    syncThemeToUrl(resolved)
   }, [initialTheme])
 
   useEffect(() => {

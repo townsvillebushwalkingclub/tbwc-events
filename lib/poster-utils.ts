@@ -4,6 +4,10 @@
 
 import { getFacebookEvents } from '@/lib/facebook-api'
 import {
+  formatPosterExcludeQuery,
+  parsePosterExcludeParam,
+} from '@/lib/poster-exclude'
+import {
   formatPosterCompactDate,
   formatPosterDateTime,
   formatPosterFeatureDate,
@@ -21,9 +25,12 @@ import {
   type PosterMonth,
 } from '@/lib/poster-month'
 import type { TBWCEvent } from '@/types/event'
-import { isValidFacebookEventId } from '@/lib/event-id'
 
 export { POSTER_QR_URL } from '@/lib/poster-constants'
+export {
+  formatPosterExcludeQuery,
+  parsePosterExcludeParam,
+} from '@/lib/poster-exclude'
 export type { PosterMonth } from '@/lib/poster-month'
 export {
   addMonths,
@@ -73,24 +80,6 @@ function eventsInMonth(events: TBWCEvent[], year: number, month: number): TBWCEv
 function excludeEvents(events: TBWCEvent[], excludeIds: Set<string>): TBWCEvent[] {
   if (excludeIds.size === 0) return events
   return events.filter((event) => !excludeIds.has(event.id))
-}
-
-/** Parse `?exclude=id1,id2` into a set of Facebook event IDs. */
-export function parsePosterExcludeParam(
-  value: string | string[] | undefined
-): Set<string> {
-  const raw = Array.isArray(value) ? value.join(',') : value ?? ''
-  const ids = raw
-    .split(',')
-    .map((part) => part.trim())
-    .filter((id) => id.length > 0 && isValidFacebookEventId(id))
-  return new Set(ids)
-}
-
-/** Build query string to preserve exclude IDs across poster links. */
-export function formatPosterExcludeQuery(excludeIds: Set<string>): string {
-  if (excludeIds.size === 0) return ''
-  return `?exclude=${[...excludeIds].join(',')}`
 }
 
 export async function getPosterEventsForMonth(
