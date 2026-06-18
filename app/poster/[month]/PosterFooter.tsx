@@ -3,6 +3,7 @@ import {
   POSTER_HILLS_PATH,
   POSTER_QR_URL,
 } from '@/lib/poster-constants'
+import { PosterHeroCalendarIcon } from './PosterIcons'
 import PosterQr from './PosterQr'
 
 export default function PosterFooter() {
@@ -38,18 +39,13 @@ export default function PosterFooter() {
         aria-label="Full event details and RSVP on townsvillebushwalkingclub.com"
       >
         <p className="poster-footer-cta">
-          <span className="poster-footer-globe" aria-hidden>
-            🌐
-          </span>
+          <PosterHeroCalendarIcon className="poster-footer-globe" />
           Full details &amp; RSVP
         </p>
         <p className="poster-footer-url">townsvillebushwalkingclub.com/calendar/</p>
       </a>
       <div className="poster-footer-qr-group">
         <PosterQr />
-        <p className="poster-footer-scan-me" aria-hidden>
-          Scan me!
-        </p>
       </div>
     </footer>
   )

@@ -14,8 +14,8 @@ export default function PosterHeader({ anchorLabel }: PosterHeaderProps) {
           src={POSTER_LOGO_PATH}
           alt="Townsville Bushwalking Club"
           className="poster-logo"
-          width={200}
-          height={44}
+          width={230}
+          height={50}
         />
         <div className="poster-header-text">
           <h1 className="poster-title">Townsville Bushwalking Club</h1>

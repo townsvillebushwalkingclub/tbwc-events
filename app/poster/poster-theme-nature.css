@@ -3,6 +3,10 @@
 .poster-page--theme-nature {
   --poster-leaf-filter: brightness(0) saturate(100%) invert(48%) sepia(79%)
     saturate(2476%) hue-rotate(339deg) brightness(96%) contrast(91%);
+  --poster-name-size: 0.87em;
+  --poster-date-size: 0.87em;
+  --poster-contact-size: 0.76em;
+  --poster-body-pad: 5px 8px 6px;
   background-color: #faf8f5;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23d4cfc8' stroke-width='0.6' opacity='0.45'%3E%3Cpath d='M0 40 Q50 20 100 40 T200 40'/%3E%3Cpath d='M0 80 Q50 60 100 80 T200 80'/%3E%3Cpath d='M0 120 Q50 100 100 120 T200 120'/%3E%3Cpath d='M0 160 Q50 140 100 160 T200 160'/%3E%3Cpath d='M20 0 Q40 50 20 100 T20 200'/%3E%3Cpath d='M60 0 Q80 50 60 100 T60 200'/%3E%3Cpath d='M100 0 Q120 50 100 100 T100 200'/%3E%3Cpath d='M140 0 Q160 50 140 100 T140 200'/%3E%3Cpath d='M180 0 Q200 50 180 100 T180 200'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 200px 200px;
@@ -66,9 +70,10 @@
   background: linear-gradient(135deg, #e85d3a 0%, #d94e2b 100%);
   color: #fff;
   border-radius: 0 0 6px 6px;
-  padding: 4mm 5mm 3mm;
-  min-height: 24mm;
+  padding: 5mm 5mm 3.5mm;
+  min-height: 28mm;
   overflow: hidden;
+  margin-top: 0;
 }
 
 .poster-page--theme-nature .poster-footer-decor {
@@ -89,7 +94,7 @@
   height: auto;
   object-fit: contain;
   object-position: left bottom;
-  opacity: 0.95;
+  opacity: 0.8;
   z-index: 1;
 }
 
@@ -117,7 +122,7 @@
   height: 100%;
   object-fit: contain;
   object-position: left bottom;
-  opacity: 0.95;
+  opacity: 0.8;
 }
 
 .poster-page--theme-nature .poster-footer-decor-saint {
@@ -129,7 +134,7 @@
   transform: translateX(-50%);
   object-fit: contain;
   object-position: center bottom;
-  opacity: 0.95;
+  opacity: 0.8;
   z-index: 0;
 }
 
@@ -137,25 +142,40 @@
   color: #fff;
   position: relative;
   z-index: 2;
-  padding-left: 24mm;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  padding-left: 22mm;
+}
+
+.poster-page--theme-nature .poster-footer-cta {
+  font-size: 0.95em;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.45),
+    0 0 8px rgba(0, 0, 0, 0.25);
 }
 
 .poster-page--theme-nature .poster-footer-url {
   color: rgba(255, 255, 255, 0.92);
+  font-size: 0.88em;
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.45),
+    0 0 8px rgba(0, 0, 0, 0.25);
+}
+
+.poster-page--theme-nature .poster-footer-globe {
+  display: inline-flex;
+  align-items: center;
+  color: #fff;
+  font-size: 1.25em;
+  line-height: 1;
+}
+
+.poster-page--theme-nature .poster-footer-globe svg {
+  width: 1em;
+  height: 1em;
 }
 
 .poster-page--theme-nature .poster-footer-qr-group {
-  position: relative;
-  z-index: 2;
-  flex-direction: column;
-  align-items: center;
-}
-
-.poster-page--theme-nature .poster-footer-scan-me {
-  display: block;
-  color: #fff;
-  margin-top: 1px;
   position: relative;
   z-index: 2;
 }
@@ -172,21 +192,22 @@
 .poster-page--theme-nature .poster-header {
   background: transparent;
   color: #1a1d21;
-  padding-top: 5mm;
+  padding-top: 4mm;
 }
 
 .poster-page--theme-nature .poster-logo {
   background: transparent;
   padding: 0;
+  max-height: 42px;
 }
 
 .poster-page--theme-nature .poster-title {
   color: #e85d3a;
-  font-size: 1.32em;
+  font-size: 1.42em;
 }
 
 .poster-page--theme-nature .poster-subtitle {
-  color: #6b7280;
+  color: #525860;
   font-style: italic;
   opacity: 1;
   font-size: 0.9em;
@@ -196,9 +217,9 @@
   background: #e85d3a;
   border: none;
   color: #fff;
-  padding: 0.4em 0.9em;
-  font-size: 1.5em;
-  line-height: 1.1;
+  padding: 0.28em 0.75em;
+  font-size: 1.35em;
+  line-height: 1;
 }
 
 .poster-page--theme-nature .poster-main {
@@ -207,6 +228,20 @@
 
 .poster-page--theme-nature .poster-section-divider {
   display: flex;
+  padding: 0.5mm 0;
+  gap: 1.5mm;
+}
+
+.poster-page--theme-nature .poster-section-divider-line {
+  height: 2px;
+  max-width: 28mm;
+  opacity: 0.85;
+  background: #d94e2b;
+}
+
+.poster-page--theme-nature .poster-section-divider-text {
+  font-size: 0.85em;
+  color: #d94e2b;
 }
 
 .poster-page--theme-nature .poster-card {
@@ -219,6 +254,10 @@
   border-top: none;
 }
 
+.poster-page--theme-nature .poster-events-grid .poster-card-body {
+  padding: var(--poster-body-pad, 5px 8px 6px);
+}
+
 .poster-page--theme-nature .poster-events-hero .poster-card {
   border-radius: 12px;
 }
@@ -226,7 +265,29 @@
 .poster-page--theme-nature .poster-event--hero-overlay .poster-event-cover,
 .poster-page--theme-nature .poster-event--hero-overlay .poster-event-cover--placeholder {
   border-radius: 12px 12px 0 0;
+}
+
+.poster-page--theme-nature .poster-events-stack .poster-event--hero-overlay .poster-event-cover,
+.poster-page--theme-nature .poster-events-stack .poster-event--hero-overlay .poster-event-cover--placeholder {
   min-height: 22mm;
+}
+
+.poster-page--theme-nature .poster-events-hero .poster-event--hero-overlay .poster-event-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.6);
+  -webkit-mask-image:
+    linear-gradient(to top, #000 0%, #000 16%, transparent 68%),
+    linear-gradient(to right, #000 0%, #000 20%, transparent 76%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to top, #000 0%, #000 16%, transparent 68%),
+    linear-gradient(to right, #000 0%, #000 20%, transparent 76%);
+  mask-composite: intersect;
 }
 
 .poster-page--theme-nature .poster-event-hero-overlay {
@@ -235,14 +296,9 @@
   left: 0;
   bottom: 0;
   right: 0;
-  padding: 3mm 4mm 3.5mm;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.88) 0%,
-    rgba(0, 0, 0, 0.72) 28%,
-    rgba(0, 0, 0, 0.35) 52%,
-    transparent 78%
-  );
+  z-index: 2;
+  padding: 4mm 4mm 4.5mm;
+  background: none;
 }
 
 .poster-page--theme-nature .poster-event-hero-name {
@@ -271,7 +327,7 @@
 .poster-page--theme-nature .poster-event-contact--hero .poster-event-leaders,
 .poster-page--theme-nature .poster-event-contact--hero .poster-event-emails {
   color: rgba(255, 255, 255, 0.95);
-  font-size: 0.78em;
+  font-size: 0.87em;
   font-weight: 600;
 }
 
@@ -311,11 +367,18 @@
 }
 
 .poster-page--theme-nature .poster-next-month-list li {
-  font-size: 0.74em;
+  font-size: 0.8em;
+  break-inside: avoid;
+  margin-bottom: 1.2mm;
 }
 
 .poster-page--theme-nature .poster-next-month-date {
   color: #e85d3a;
+  font-weight: 700;
+}
+
+.poster-page--theme-nature .poster-next-month-event {
+  font-weight: 500;
 }
 
 .poster-page--theme-nature .poster-event-hero-badge {
@@ -338,7 +401,22 @@
 .poster-page--theme-nature .poster-bottom {
   border-top: none;
   background: transparent;
-  margin-top: 1mm;
+  margin-top: 2mm;
+}
+
+.poster-page--theme-nature .poster-events-hero-split {
+  gap: 5mm;
+}
+
+.poster-page--theme-nature .poster-events-hero {
+  flex: 0 0 28%;
+  max-height: 28%;
+  min-height: 0;
+}
+
+.poster-page--theme-nature .poster-events-hero-split .poster-events-grid {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .poster-page--theme-nature .poster-next-month {
@@ -349,7 +427,8 @@
   background: #fde8dc;
   border-bottom: none;
   border-radius: 8px 8px 0 0;
-  padding: 2.5mm 6mm 2.5mm;
+  padding: 4mm 6mm 3.5mm;
+  margin-bottom: 0;
   overflow: visible;
 }
 
@@ -378,13 +457,16 @@
 
 .poster-page--theme-nature .poster-next-month-title {
   color: #e85d3a;
-  font-size: 0.78em;
-  margin: 0 0 1.5mm;
+  font-size: 0.85em;
+  margin: 0 0 2.5mm;
 }
 
 .poster-page--theme-nature .poster-next-month-list {
   position: relative;
   z-index: 2;
+  display: block;
+  column-count: 2;
+  column-gap: 10mm;
 }
 
 .poster-page--theme-nature .poster-next-month-label {
@@ -412,6 +494,73 @@
   color: #e85d3a;
 }
 
+/* Per-count typography and spacing overrides */
+.poster-page--theme-nature.poster-page--count-4 {
+  --poster-gap: 4.5mm;
+  --poster-name-size: 1.03em;
+  --poster-date-size: 0.96em;
+  --poster-contact-size: 0.83em;
+}
+
+.poster-page--theme-nature.poster-page--count-5 {
+  --poster-gap: 4mm;
+  --poster-name-size: 0.94em;
+  --poster-date-size: 0.9em;
+  --poster-featured-name-size: 1.12em;
+  --poster-featured-date-size: 1.01em;
+}
+
+.poster-page--theme-nature.poster-page--count-6 {
+  --poster-gap: 4mm;
+  --poster-name-size: 0.92em;
+  --poster-date-size: 0.9em;
+}
+
+.poster-page--theme-nature.poster-page--count-7 {
+  --poster-gap: 3.5mm;
+  --poster-name-size: 0.87em;
+  --poster-date-size: 0.85em;
+  --poster-contact-size: 0.76em;
+  --poster-featured-name-size: 1.03em;
+  --poster-featured-date-size: 0.94em;
+}
+
+.poster-page--theme-nature.poster-page--count-8 {
+  --poster-gap: 3.8mm;
+  --poster-name-size: 0.9em;
+  --poster-date-size: 0.87em;
+}
+
+.poster-page--theme-nature.poster-page--count-9 {
+  --poster-gap: 3.5mm;
+  --poster-name-size: 0.83em;
+  --poster-date-size: 0.81em;
+  --poster-img-min: 10mm;
+}
+
+.poster-page--theme-nature.poster-page--count-10 {
+  --poster-gap: 3.5mm;
+  --poster-name-size: 0.87em;
+  --poster-date-size: 0.85em;
+  --poster-body-pad: 4px 7px 5px;
+}
+
+.poster-page--theme-nature.poster-page--count-11 {
+  --poster-gap: 3.2mm;
+  --poster-name-size: 0.78em;
+  --poster-date-size: 0.78em;
+  --poster-body-pad: 4px 6px 5px;
+  --poster-img-min: 9mm;
+}
+
+.poster-page--theme-nature.poster-page--count-12 {
+  --poster-gap: 3mm;
+  --poster-name-size: 0.76em;
+  --poster-date-size: 0.76em;
+  --poster-body-pad: 4px 6px 4px;
+  --poster-img-min: 8mm;
+}
+
 @media print {
   .poster-page--theme-nature {
     background-color: #faf8f5;
@@ -435,6 +584,7 @@
   .poster-page--theme-nature .poster-leaves,
   .poster-page--theme-nature .poster-decor-leaf,
   .poster-page--theme-nature .poster-next-month-leaf,
+  .poster-page--theme-nature .poster-events-hero .poster-event--hero-overlay .poster-event-media::after,
   .poster-page--theme-nature .poster-event-hero-overlay {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
