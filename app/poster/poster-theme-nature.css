@@ -70,7 +70,7 @@
   background: linear-gradient(135deg, #e85d3a 0%, #d94e2b 100%);
   color: #fff;
   border-radius: 0 0 6px 6px;
-  padding: 5mm 5mm 3.5mm;
+  padding: 5mm 8mm 3.5mm;
   min-height: 28mm;
   overflow: hidden;
   margin-top: 0;
@@ -128,7 +128,7 @@
 .poster-page--theme-nature .poster-footer-decor-saint {
   position: absolute;
   left: 48%;
-  bottom: -10mm;
+  bottom: -11mm;
   width: 75%;
   height: auto;
   transform: translateX(-50%);
@@ -146,20 +146,21 @@
 }
 
 .poster-page--theme-nature .poster-footer-cta {
-  font-size: 0.95em;
+  font-size: 1.2em;
   font-weight: 800;
   letter-spacing: 0.01em;
   text-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.45),
-    0 0 8px rgba(0, 0, 0, 0.25);
+    0 1px 3px rgba(0, 0, 0, 0.55),
+    0 0 8px rgba(0, 0, 0, 0.55);
 }
 
 .poster-page--theme-nature .poster-footer-url {
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 0.88em;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.94em;
+  font-weight: 700;
   text-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.45),
-    0 0 8px rgba(0, 0, 0, 0.25);
+    0 1px 3px rgba(0, 0, 0, 0.55),
+    0 0 8px rgba(0, 0, 0, 0.55);
 }
 
 .poster-page--theme-nature .poster-footer-globe {
