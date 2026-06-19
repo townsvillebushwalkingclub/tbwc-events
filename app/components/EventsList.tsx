@@ -94,8 +94,8 @@ export default function EventsList({
 
   const compactStatusLabel = (event: TBWCEvent): string | null => {
     if (!showCompactStyle(event)) return null
-    if (isEventPastOnCalendar(event, pastCheckTime)) return '(past)'
     if (event.is_cancelled) return '(cancelled)'
+    if (isEventPastOnCalendar(event, pastCheckTime)) return '(past)'
     return null
   }
 
