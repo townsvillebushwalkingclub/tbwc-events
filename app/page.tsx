@@ -7,6 +7,7 @@ import { getEventsForCalendarMonths } from '@/lib/facebook-api'
 import Calendar from './components/Calendar'
 import EventSearch from './components/EventSearch'
 import JsonLd from './components/JsonLd'
+import SocialLinks from './components/SocialLinks'
 import type { TBWCEvent } from '@/types/event'
 import type { Metadata } from 'next'
 
@@ -97,40 +98,7 @@ export default async function Home() {
               Events Calendar & Activities
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row justify-center gap-3 mb-1 flex-wrap">
-            <a
-              href="https://townsvillebushwalkingclub.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-casper-orange hover:bg-casper-orange-hover text-white px-6 py-3 rounded-full font-semibold transition-colors shadow-sm"
-            >
-              🌐 Visit Official Website
-            </a>
-            <a
-              href="https://www.facebook.com/townsvillebushwalkingclub/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-gray-300 hover:border-gray-400 text-gray-800 px-6 py-3 rounded-full font-semibold transition-colors bg-white"
-            >
-              📘 Facebook Page
-            </a>
-            <a
-              href="https://www.facebook.com/groups/townsvillebushwalking"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-gray-300 hover:border-gray-400 text-gray-800 px-6 py-3 rounded-full font-semibold transition-colors bg-white"
-            >
-              👥 Facebook Group
-            </a>
-            <a
-              href="https://instagram.com/townsvillebushwalkingclub/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-gray-300 hover:border-gray-400 text-gray-800 px-6 py-3 rounded-full font-semibold transition-colors bg-white"
-            >
-              📘 Instagram Profile
-            </a>
-          </div>
+          <SocialLinks />
         </div>
 
         <section
