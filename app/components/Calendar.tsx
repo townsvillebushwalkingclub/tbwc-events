@@ -362,7 +362,7 @@ export default function Calendar({
           return (
             <div
               key={i}
-              className={`min-h-[120px] p-3 relative transition-all duration-300 ${
+              className={`min-h-[120px] min-w-0 p-3 relative transition-all duration-300 ${
                 isOtherMonth
                   ? 'bg-gray-50 text-gray-400'
                   : 'bg-white hover:bg-gray-50'
@@ -453,17 +453,13 @@ export default function Calendar({
                       if (!segment) return null
 
                       const { segmentDays } = segment
-                      const displayName =
-                        event.name.length > 25
-                          ? event.name.substring(0, 25) + '...'
-                          : event.name
 
                       const muted =
                         isEventPastOnCalendar(event, pastCheckTime) ||
                         event.is_cancelled
                       const multiClass = muted
-                        ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 absolute hover:bg-gray-300/90 transition-colors cursor-pointer block'
-                        : 'text-xs bg-sky-light text-gray-800 px-2 py-1 rounded-sm mb-1 border border-sky absolute hover:bg-sky-muted/30 transition-colors cursor-pointer block'
+                        ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 absolute hover:bg-gray-300/90 transition-colors cursor-pointer block truncate'
+                        : 'text-xs bg-sky-light text-gray-800 px-2 py-1 rounded-sm mb-1 border border-sky absolute hover:bg-sky-muted/30 transition-colors cursor-pointer block truncate'
 
                       return (
                         <Link
@@ -480,7 +476,7 @@ export default function Calendar({
                           }}
                           title={`${event.name} (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
                         >
-                          {displayName}
+                          {event.name}
                           {event.is_cancelled && ' (CANCELLED)'} (Multi-day)
                         </Link>
                       )
@@ -499,8 +495,8 @@ export default function Calendar({
                           isEventPastOnCalendar(event, pastCheckTime) ||
                           event.is_cancelled
                         const singleClass = muted
-                          ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 hover:bg-gray-300/90 transition-colors cursor-pointer block'
-                          : 'text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block'
+                          ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 hover:bg-gray-300/90 transition-colors cursor-pointer block truncate'
+                          : 'text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block truncate'
                         return (
                           <Link
                             key={`single-${index}`}
@@ -512,9 +508,7 @@ export default function Calendar({
                             }}
                             title={event.name}
                           >
-                            {event.name.length > 15
-                              ? event.name.substring(0, 15) + '...'
-                              : event.name}
+                            {event.name}
                             {event.is_cancelled && ' (CANCELLED)'}
                           </Link>
                         )
