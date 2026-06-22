@@ -19,6 +19,7 @@ import {
   monthsToFetchForGrid,
 } from '@/lib/calendar-grid'
 import {
+  buildCalendarEventLabel,
   getCalendarDateInTimeZone,
   getPreferredCalendarMonth,
   isEventPastOnCalendar,
@@ -27,6 +28,21 @@ import {
 import type { TBWCEvent } from '@/types/event'
 
 const MULTI_DAY_ROW_HEIGHT = 22
+const MOBILE_MIN_NAME_CHARS = 8
+const MOBILE_MAX_NAME_CHARS = 20
+const MOBILE_MAX_NAME_CHARS_WIDE = 28
+
+const CALENDAR_EVENT_TEXT_CLASS = 'truncate whitespace-nowrap'
+
+const CALENDAR_EVENT_PADDING_CLASS = 'px-1.5 py-1 lg:px-2'
+
+function getMobileNameLimits(segmentDays = 1) {
+  return {
+    minNameLength: MOBILE_MIN_NAME_CHARS,
+    maxNameLength:
+      segmentDays > 1 ? MOBILE_MAX_NAME_CHARS_WIDE : MOBILE_MAX_NAME_CHARS,
+  }
+}
 
 interface CalendarProps {
   currentDate: Date
@@ -94,6 +110,7 @@ export default function Calendar({
   const [pastCheckTime, setPastCheckTime] = useState(
     () => new Date(referenceTime)
   )
+  const [isMobileCalendar, setIsMobileCalendar] = useState(false)
   const prevTodayRef = useRef<string | null>(null)
 
   const inPrefetchRange = isInPrefetchRange(
@@ -290,6 +307,25 @@ export default function Calendar({
     return () => clearInterval(id)
   }, [referenceTime])
 
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 1023px)')
+    const update = () => setIsMobileCalendar(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
+
+  const getEventLabelOptions = useCallback(
+    (multiDay: boolean, segmentDays = 1) => {
+      if (!isMobileCalendar) return { multiDay }
+      return {
+        multiDay: false,
+        ...getMobileNameLimits(multiDay ? segmentDays : 1),
+      }
+    },
+    [isMobileCalendar]
+  )
+
   const getEventsForDate = (date: Date): TBWCEvent[] => {
     const cell = getCalendarDateInTimeZone(date)
     const cellOrd = cell.year * 10000 + cell.month * 100 + cell.day
@@ -362,7 +398,7 @@ export default function Calendar({
           return (
             <div
               key={i}
-              className={`min-h-[120px] min-w-0 p-3 relative transition-all duration-300 ${
+              className={`min-h-[120px] min-w-0 p-1.5 sm:p-2 lg:p-3 relative transition-all duration-300 ${
                 isOtherMonth
                   ? 'bg-gray-50 text-gray-400'
                   : 'bg-white hover:bg-gray-50'
@@ -431,7 +467,10 @@ export default function Calendar({
                   cellCal.year * 10000 + cellCal.month * 100 + cellCal.day
 
                 const multiDayRowCount = multiDayEvents.length
-                const singleDayTopOffset = multiDayRowCount * MULTI_DAY_ROW_HEIGHT
+                const singleDayTopOffset =
+                  multiDayRowCount > 0
+                    ? multiDayRowCount * MULTI_DAY_ROW_HEIGHT
+                    : undefined
 
                 return (
                   <>
@@ -458,8 +497,8 @@ export default function Calendar({
                         isEventPastOnCalendar(event, pastCheckTime) ||
                         event.is_cancelled
                       const multiClass = muted
-                        ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 absolute hover:bg-gray-300/90 transition-colors cursor-pointer block truncate'
-                        : 'text-xs bg-sky-light text-gray-800 px-2 py-1 rounded-sm mb-1 border border-sky absolute hover:bg-sky-muted/30 transition-colors cursor-pointer block truncate'
+                        ? `text-xs bg-gray-200/90 text-gray-700 ${CALENDAR_EVENT_PADDING_CLASS} rounded-sm mb-1 border border-gray-400/60 absolute hover:bg-gray-300/90 transition-colors cursor-pointer block ${CALENDAR_EVENT_TEXT_CLASS}`
+                        : `text-xs bg-sky-light text-gray-800 ${CALENDAR_EVENT_PADDING_CLASS} rounded-sm mb-1 border border-sky absolute hover:bg-sky-muted/30 transition-colors cursor-pointer block ${CALENDAR_EVENT_TEXT_CLASS}`
 
                       return (
                         <Link
@@ -476,8 +515,10 @@ export default function Calendar({
                           }}
                           title={`${event.name} (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
                         >
-                          {event.is_cancelled && '(CANCELLED) '}
-                          (Multi-day) {event.name}
+                          {buildCalendarEventLabel(
+                            event,
+                            getEventLabelOptions(true, segmentDays)
+                          )}
                         </Link>
                       )
                     })}
@@ -485,7 +526,7 @@ export default function Calendar({
                     <div
                       style={{
                         marginTop:
-                          singleDayTopOffset > 0
+                          singleDayTopOffset !== undefined
                             ? `${singleDayTopOffset}px`
                             : undefined,
                       }}
@@ -495,8 +536,8 @@ export default function Calendar({
                           isEventPastOnCalendar(event, pastCheckTime) ||
                           event.is_cancelled
                         const singleClass = muted
-                          ? 'text-xs bg-gray-200/90 text-gray-700 px-2 py-1 rounded-sm mb-1 border border-gray-400/60 hover:bg-gray-300/90 transition-colors cursor-pointer block truncate'
-                          : 'text-xs bg-casper-orange/15 text-gray-800 px-2 py-1 rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block truncate'
+                          ? `text-xs bg-gray-200/90 text-gray-700 ${CALENDAR_EVENT_PADDING_CLASS} rounded-sm mb-1 border border-gray-400/60 hover:bg-gray-300/90 transition-colors cursor-pointer block ${CALENDAR_EVENT_TEXT_CLASS}`
+                          : `text-xs bg-casper-orange/15 text-gray-800 ${CALENDAR_EVENT_PADDING_CLASS} rounded-sm mb-1 border border-casper-orange/40 hover:bg-casper-orange/25 transition-colors cursor-pointer block ${CALENDAR_EVENT_TEXT_CLASS}`
                         return (
                           <Link
                             key={`single-${index}`}
@@ -508,8 +549,10 @@ export default function Calendar({
                             }}
                             title={event.name}
                           >
-                            {event.is_cancelled && '(CANCELLED) '}
-                            {event.name}
+                            {buildCalendarEventLabel(
+                              event,
+                              getEventLabelOptions(false)
+                            )}
                           </Link>
                         )
                       })}

@@ -132,6 +132,35 @@ export function getMonthLabel(
 }
 
 /**
+ * Calendar event label with status tags prefixed so truncation keeps them visible.
+ */
+export function buildCalendarEventLabel(
+  event: Pick<TBWCEvent, 'name' | 'is_cancelled'>,
+  options: {
+    multiDay?: boolean
+    maxNameLength?: number
+    minNameLength?: number
+  } = {}
+): string {
+  const tags: string[] = []
+  if (event.is_cancelled) tags.push('(CANCELLED)')
+  if (options.multiDay) tags.push('(Multi-day)')
+  const prefix = tags.length > 0 ? `${tags.join(' ')}\u00A0` : ''
+
+  let name = event.name
+  if (
+    options.maxNameLength != null &&
+    name.length > options.maxNameLength
+  ) {
+    const minLen = options.minNameLength ?? 8
+    const cutAt = Math.max(minLen, options.maxNameLength)
+    name = `${name.slice(0, cutAt).trimEnd()}…`
+  }
+
+  return `${prefix}${name}`
+}
+
+/**
  * Check if an event is a multi-day event
  */
 export function isMultiDayEvent(event: TBWCEvent): boolean {
