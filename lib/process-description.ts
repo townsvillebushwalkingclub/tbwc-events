@@ -1,5 +1,39 @@
 import { isAllowedDomain } from './allowed-domains'
 
+/** Australian mobile: 04XX XXX XXX, 04XXXXXXXX, +61 4XX XXX XXX, etc. */
+const AU_MOBILE_PATTERN =
+  /(?<![\d+])(?:\+61[\s.-]?4(?:[\s.-]?\d){8}|0?4(?:[\s.-]?\d){2}(?:[\s.-]?\d){3}(?:[\s.-]?\d){3}|0?4\d{8})(?![\d])/g
+
+function toTelHref(phone: string): string {
+  const compact = phone.replace(/[\s.-]/g, '')
+  if (compact.startsWith('+61')) {
+    return 'tel:' + compact
+  }
+  if (compact.startsWith('61') && compact.length === 11) {
+    return 'tel:+' + compact
+  }
+  if (compact.startsWith('0')) {
+    return 'tel:' + compact
+  }
+  if (compact.startsWith('4') && compact.length === 9) {
+    return 'tel:0' + compact
+  }
+  return 'tel:' + compact
+}
+
+function linkifyAustralianMobileNumbers(text: string): string {
+  return text.replace(AU_MOBILE_PATTERN, (match) => {
+    const href = toTelHref(match)
+    return (
+      '<a href="' +
+      href +
+      '" class="text-blue-600 hover:text-blue-800 underline break-all">' +
+      match +
+      '</a>'
+    )
+  })
+}
+
 /**
  * Normalize newlines for consistent spacing
  */
@@ -9,7 +43,7 @@ export function normalizeNewlines(text: string): string {
 }
 
 /**
- * Process description to add hyperlinks for emails and URLs
+ * Process description to add hyperlinks for emails, phone numbers, and URLs
  */
 export function processDescription(
   description: string,
@@ -45,6 +79,8 @@ export function processDescription(
       )
     }
   )
+
+  processed = linkifyAustralianMobileNumbers(processed)
 
   processed = processed.replace(
     /\(([A-Za-z0-9][A-Za-z0-9.-]*\.[A-Z|a-z]{2,})\)/g,

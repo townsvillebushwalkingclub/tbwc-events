@@ -407,7 +407,24 @@ export async function GET() {
             .slice(0, MAX_EVENTS);
     }
     
-    // Process description to add hyperlinks for emails and URLs
+  // Process description to add hyperlinks for emails, phone numbers, and URLs
+    function toTelHref(phone) {
+        const compact = phone.replace(/[\\s.-]/g, '');
+        if (compact.startsWith('+61')) {
+            return 'tel:' + compact;
+        }
+        if (compact.startsWith('61') && compact.length === 11) {
+            return 'tel:+' + compact;
+        }
+        if (compact.startsWith('0')) {
+            return 'tel:' + compact;
+        }
+        if (compact.startsWith('4') && compact.length === 9) {
+            return 'tel:0' + compact;
+        }
+        return 'tel:' + compact;
+    }
+
     function processDescription(description, eventTitle) {
         if (!description) return '';
         
@@ -426,6 +443,14 @@ export async function GET() {
                 const subject = eventTitle ? encodeURIComponent('Re: ' + eventTitle) : '';
                 const mailtoLink = subject ? 'mailto:' + match + '?subject=' + subject : 'mailto:' + match;
                 return '<a href="' + mailtoLink + '" style="color: #4facfe; text-decoration: underline;">' + match + '</a>';
+            }
+        );
+
+        // Convert Australian mobile numbers to tel: links
+        processed = processed.replace(
+            /(?<![\\d+])(?:\\+61[\\s.-]?4(?:[\\s.-]?\\d){8}|0?4(?:[\\s.-]?\\d){2}(?:[\\s.-]?\\d){3}(?:[\\s.-]?\\d){3}|0?4\\d{8})(?![\\d])/g,
+            function(match) {
+                return '<a href="' + toTelHref(match) + '" style="color: #4facfe; text-decoration: underline;">' + match + '</a>';
             }
         );
         
