@@ -13,6 +13,7 @@ import Link from 'next/link'
 import {
   getMonthCalendarGrid,
   getMonthsInGrid,
+  getMultiDayEventSegment,
   getPrefetchMonths,
   monthKey,
   monthsToFetchForGrid,
@@ -426,13 +427,8 @@ export default function Calendar({
                   )
                 })
 
-                const dateStart = new Date(
-                  Date.UTC(
-                    date.getFullYear(),
-                    date.getMonth(),
-                    date.getDate()
-                  )
-                )
+                const cellOrd =
+                  cellCal.year * 10000 + cellCal.month * 100 + cellCal.day
 
                 const multiDayRowCount = multiDayEvents.length
                 const singleDayTopOffset = multiDayRowCount * MULTI_DAY_ROW_HEIGHT
@@ -444,22 +440,23 @@ export default function Calendar({
                       const eventEnd = event.end_time
                         ? new Date(event.end_time)
                         : eventStart
-                      const eventStartDay = new Date(
-                        Date.UTC(
-                          eventStart.getFullYear(),
-                          eventStart.getMonth(),
-                          eventStart.getDate()
-                        )
+                      const startCal = getCalendarDateInTimeZone(event.start_time)
+                      const endCal = event.end_time
+                        ? getCalendarDateInTimeZone(event.end_time)
+                        : startCal
+                      const segment = getMultiDayEventSegment(
+                        cellCal,
+                        startCal,
+                        endCal,
+                        date
                       )
-                      const isFirstDay =
-                        dateStart.getTime() === eventStartDay.getTime()
-                      if (!isFirstDay) return null
+                      if (!segment) return null
 
-                      const daysDiff =
-                        Math.ceil(
-                          (eventEnd.getTime() - eventStart.getTime()) /
-                            (1000 * 60 * 60 * 24)
-                        ) + 1
+                      const { segmentDays } = segment
+                      const displayName =
+                        event.name.length > 25
+                          ? event.name.substring(0, 25) + '...'
+                          : event.name
 
                       const muted =
                         isEventPastOnCalendar(event, pastCheckTime) ||
@@ -470,21 +467,20 @@ export default function Calendar({
 
                       return (
                         <Link
-                          key={`multi-${index}`}
+                          key={`multi-${event.id}-${cellOrd}`}
                           href={`/events/${event.id}`}
                           className={multiClass}
                           style={{
                             left: '0',
-                            right: `${(daysDiff - 1) * -100}%`,
+                            right: `${(segmentDays - 1) * -100}%`,
                             zIndex: 10 + index,
-                            width: `${daysDiff * 100}%`,
+                            width: `${segmentDays * 100}%`,
                             top: `${30 + index * MULTI_DAY_ROW_HEIGHT}px`,
+                            minHeight: `${MULTI_DAY_ROW_HEIGHT}px`,
                           }}
                           title={`${event.name} (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
                         >
-                          {event.name.length > 25
-                            ? event.name.substring(0, 25) + '...'
-                            : event.name}
+                          {displayName}
                           {event.is_cancelled && ' (CANCELLED)'} (Multi-day)
                         </Link>
                       )

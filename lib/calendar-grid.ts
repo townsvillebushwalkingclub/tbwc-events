@@ -1,5 +1,60 @@
 import { getCalendarDateInTimeZone } from './event-utils'
 
+export interface CalendarDate {
+  year: number
+  month: number
+  day: number
+}
+
+export interface MultiDayEventSegment {
+  segmentDays: number
+  isFirstSegment: boolean
+}
+
+function toOrdinal(cal: CalendarDate): number {
+  return cal.year * 10000 + cal.month * 100 + cal.day
+}
+
+function daysBetweenInclusive(
+  startCal: CalendarDate,
+  endCal: CalendarDate
+): number {
+  const startMs = Date.UTC(startCal.year, startCal.month - 1, startCal.day)
+  const endMs = Date.UTC(endCal.year, endCal.month - 1, endCal.day)
+  return Math.round((endMs - startMs) / 86_400_000) + 1
+}
+
+/**
+ * For a multi-day event, returns segment info when `cellCal` is the start of a
+ * week-row segment (event start day, or Monday continuation after a row break).
+ */
+export function getMultiDayEventSegment(
+  cellCal: CalendarDate,
+  startCal: CalendarDate,
+  endCal: CalendarDate,
+  cellDate: Date
+): MultiDayEventSegment | null {
+  const cellOrd = toOrdinal(cellCal)
+  const startOrd = toOrdinal(startCal)
+  const endOrd = toOrdinal(endCal)
+
+  if (cellOrd < startOrd || cellOrd > endOrd) return null
+
+  const jsDay = cellDate.getDay()
+  const mondayStartCol = jsDay === 0 ? 6 : jsDay - 1
+  const isMonday = mondayStartCol === 0
+  const isFirstSegment = cellOrd === startOrd
+  const isContinuationStart = isMonday && cellOrd > startOrd
+
+  if (!isFirstSegment && !isContinuationStart) return null
+
+  const daysUntilWeekEnd = 6 - mondayStartCol
+  const daysRemaining = daysBetweenInclusive(cellCal, endCal)
+  const segmentDays = Math.min(daysUntilWeekEnd + 1, daysRemaining)
+
+  return { segmentDays, isFirstSegment }
+}
+
 export interface MonthCalendarGrid {
   startDate: Date
   endDate: Date
