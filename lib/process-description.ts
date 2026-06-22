@@ -1,4 +1,7 @@
 import { isAllowedDomain } from './allowed-domains'
+import { tagOutboundRef } from './outbound-ref'
+
+const BRISBANE_TIMEZONE = 'Australia/Brisbane'
 
 /** Australian mobile: 04XX XXX XXX, 04XXXXXXXX, +61 4XX XXX XXX, etc. */
 const AU_MOBILE_PATTERN =
@@ -42,12 +45,40 @@ export function normalizeNewlines(text: string): string {
   return text.replace(/\n\s*\n+/g, '\n\n').replace(/\r\n/g, '\n')
 }
 
+function formatMailtoDatePart(startTime?: string | null): string | null {
+  if (!startTime) return null
+  try {
+    const date = new Date(startTime)
+    if (isNaN(date.getTime())) return null
+    return date.toLocaleDateString('en-AU', {
+      day: 'numeric',
+      month: 'long',
+      timeZone: BRISBANE_TIMEZONE,
+    })
+  } catch {
+    return null
+  }
+}
+
+export function buildMailtoSubject(
+  eventTitle: string,
+  startTime?: string | null
+): string {
+  if (!eventTitle) return ''
+  const datePart = formatMailtoDatePart(startTime)
+  if (datePart) {
+    return `Re: ${datePart} - ${eventTitle}`
+  }
+  return `Re: ${eventTitle}`
+}
+
 /**
  * Process description to add hyperlinks for emails, phone numbers, and URLs
  */
 export function processDescription(
   description: string,
   eventTitle: string,
+  startTime?: string | null,
   normalizeFirst = true
 ): string {
   if (!description) return ''
@@ -64,8 +95,9 @@ export function processDescription(
   processed = processed.replace(
     /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
     function (match) {
-      const subject = eventTitle
-        ? encodeURIComponent('Re: ' + eventTitle)
+      const subjectText = buildMailtoSubject(eventTitle, startTime)
+      const subject = subjectText
+        ? encodeURIComponent(subjectText)
         : ''
       const mailtoLink = subject
         ? 'mailto:' + match + '?subject=' + subject
@@ -89,7 +121,7 @@ export function processDescription(
         const normalizedDomain = domain.toLowerCase().replace(/^www\./, '')
         const fullDomain = domain.toLowerCase()
         if (isAllowedDomain(fullDomain)) {
-          const url = 'https://' + fullDomain
+          const url = tagOutboundRef('https://' + fullDomain)
           return (
             '(<a href="' +
             url +
@@ -110,9 +142,10 @@ export function processDescription(
       const url = new URL(match)
       const hostname = url.hostname
       if (isAllowedDomain(hostname)) {
+        const tagged = tagOutboundRef(match)
         return (
           '<a href="' +
-          match +
+          tagged +
           '" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 underline break-all">' +
           match +
           '</a>'

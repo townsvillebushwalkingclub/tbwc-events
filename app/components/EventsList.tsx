@@ -226,10 +226,15 @@ export default function EventsList({
                               expandedDescriptions[event.id] ||
                               event.is_cancelled ||
                               !isDescriptionLong(event.description)
-                                ? processDescription(event.description, event.name)
+                                ? processDescription(
+                                    event.description,
+                                    event.name,
+                                    event.start_time
+                                  )
                                 : processDescription(
                                     truncateDescription(event.description),
-                                    event.name
+                                    event.name,
+                                    event.start_time
                                   ),
                           }}
                         />

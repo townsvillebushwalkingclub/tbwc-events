@@ -179,7 +179,11 @@ export default function EventClient({ initialEvent }: EventClientProps) {
                 <div
                   className="text-gray-700 leading-relaxed"
                   dangerouslySetInnerHTML={{
-                    __html: processDescription(event.description, event.name),
+                    __html: processDescription(
+                      event.description,
+                      event.name,
+                      event.start_time
+                    ),
                   }}
                 />
               </div>

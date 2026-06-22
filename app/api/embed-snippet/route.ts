@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { ALLOWED_DOMAINS } from '@/lib/allowed-domains'
 import { getFacebookEvents } from '@/lib/facebook-api'
+import { OUTBOUND_REF } from '@/lib/outbound-ref'
 
 // Cache embed for 1 hour so inlined event data stays reasonably fresh
 export const revalidate = 3600
@@ -8,6 +9,7 @@ export const revalidate = 3600
 export async function GET() {
     // Convert allowed domains array to JSON for injection into the script
     const allowedDomainsJson = JSON.stringify(ALLOWED_DOMAINS)
+    const outboundRefJson = JSON.stringify(OUTBOUND_REF)
 
     // Fetch events server-side and inline so embed shows data without a client fetch (faster first paint)
     let inlinedEventsB64 = ''
@@ -425,7 +427,44 @@ export async function GET() {
         return 'tel:' + compact;
     }
 
-    function processDescription(description, eventTitle) {
+    function tagOutboundRef(href) {
+        try {
+            const url = new URL(href);
+            if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+                return href;
+            }
+            if (url.hostname.toLowerCase() === ${outboundRefJson}) {
+                return href;
+            }
+            if (url.searchParams.has('ref')) {
+                return href;
+            }
+            url.searchParams.set('ref', ${outboundRefJson});
+            return url.toString();
+        } catch (e) {
+            return href;
+        }
+    }
+
+    function buildMailtoSubject(eventTitle, startTime) {
+        if (!eventTitle) return '';
+        if (startTime) {
+            try {
+                const date = new Date(startTime);
+                if (!isNaN(date.getTime())) {
+                    const datePart = date.toLocaleDateString('en-AU', {
+                        day: 'numeric',
+                        month: 'long',
+                        timeZone: 'Australia/Brisbane',
+                    });
+                    return 'Re: ' + datePart + ' - ' + eventTitle;
+                }
+            } catch (e) {}
+        }
+        return 'Re: ' + eventTitle;
+    }
+
+    function processDescription(description, eventTitle, eventStartTime) {
         if (!description) return '';
         
         // First, escape any existing HTML to prevent conflicts
@@ -440,7 +479,8 @@ export async function GET() {
         processed = processed.replace(
             /\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b/g,
             function(match) {
-                const subject = eventTitle ? encodeURIComponent('Re: ' + eventTitle) : '';
+                const subjectText = buildMailtoSubject(eventTitle, eventStartTime);
+                const subject = subjectText ? encodeURIComponent(subjectText) : '';
                 const mailtoLink = subject ? 'mailto:' + match + '?subject=' + subject : 'mailto:' + match;
                 return '<a href="' + mailtoLink + '" style="color: #4facfe; text-decoration: underline;">' + match + '</a>';
             }
@@ -474,7 +514,7 @@ export async function GET() {
                     
                     if (isAllowed) {
                         // Create the full URL
-                        const url = 'https://' + fullDomain;
+                        const url = tagOutboundRef('https://' + fullDomain);
                         return '(<a href="' + url + '" target="_blank" style="color: #4facfe; text-decoration: underline;">' + domain + '</a>)';
                     } else {
                         // Return as-is if not allowed
@@ -504,7 +544,8 @@ export async function GET() {
                     );
                     
                     if (isAllowed) {
-                        return '<a href="' + match + '" target="_blank" style="color: #4facfe; text-decoration: underline;">' + match + '</a>';
+                        const tagged = tagOutboundRef(match);
+                        return '<a href="' + tagged + '" target="_blank" style="color: #4facfe; text-decoration: underline;">' + match + '</a>';
                     } else {
                         // Return the URL as plain text if not allowed
                         return match;
@@ -531,7 +572,7 @@ export async function GET() {
     function createEventHTML(event) {
         const hasLongDescription = event.description && event.description.length > 150;
         const truncatedDesc = hasLongDescription ? truncateDescription(event.description) : event.description;
-        const processedTruncatedDesc = processDescription(truncatedDesc, event.name);
+        const processedTruncatedDesc = processDescription(truncatedDesc, event.name, event.start_time);
         const eventPageUrl = \`\${API_BASE_URL}/events/\${event.id}\`;
         const facebookEventUrl = \`https://www.facebook.com/events/\${event.id}/\`;
         let coverImageUrl = event.cover && event.cover.source ? event.cover.source : null;
@@ -586,7 +627,7 @@ export async function GET() {
         }
         
         return \`
-            <li class="tbwc-event-item">
+            <li class="tbwc-event-item" data-start-time="\${event.start_time}">
                 <div class="tbwc-event-content">
                     <div class="tbwc-event-thumbnail">
                         \${coverImageUrl ? \`<img src="\${coverImageUrl}" alt="\${event.name}">\` : \`<div class="tbwc-event-thumbnail-placeholder">🏔️</div>\`}
@@ -629,7 +670,8 @@ export async function GET() {
                 // Get event name from the parent event item
                 const eventItem = descElement.closest('.tbwc-event-item');
                 const eventTitle = eventItem ? eventItem.querySelector('.tbwc-event-title').textContent.trim() : '';
-                descElement.innerHTML = processDescription(truncatedText, eventTitle);
+                const eventStartTime = eventItem ? eventItem.getAttribute('data-start-time') : '';
+                descElement.innerHTML = processDescription(truncatedText, eventTitle, eventStartTime);
             }
             toggleElement.textContent = 'Read more';
         } else {
@@ -639,7 +681,8 @@ export async function GET() {
                 // Get event name from the parent event item
                 const eventItem = descElement.closest('.tbwc-event-item');
                 const eventTitle = eventItem ? eventItem.querySelector('.tbwc-event-title').textContent.trim() : '';
-                descElement.innerHTML = processDescription(fullText, eventTitle);
+                const eventStartTime = eventItem ? eventItem.getAttribute('data-start-time') : '';
+                descElement.innerHTML = processDescription(fullText, eventTitle, eventStartTime);
             }
             toggleElement.textContent = 'Read less';
         }
