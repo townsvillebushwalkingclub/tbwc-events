@@ -476,8 +476,8 @@ export default function Calendar({
                           }}
                           title={`${event.name} (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
                         >
-                          {event.name}
-                          {event.is_cancelled && ' (CANCELLED)'} (Multi-day)
+                          {event.is_cancelled && '(CANCELLED) '}
+                          (Multi-day) {event.name}
                         </Link>
                       )
                     })}
@@ -508,8 +508,8 @@ export default function Calendar({
                             }}
                             title={event.name}
                           >
+                            {event.is_cancelled && '(CANCELLED) '}
                             {event.name}
-                            {event.is_cancelled && ' (CANCELLED)'}
                           </Link>
                         )
                       })}
