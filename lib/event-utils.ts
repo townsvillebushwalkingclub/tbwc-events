@@ -161,13 +161,23 @@ export function buildCalendarEventLabel(
 }
 
 /**
- * Check if an event is a multi-day event
+ * Whether start/end fall on different calendar days in the club timezone.
+ */
+export function isMultiDayByTimes(
+  startTime: string,
+  endTime: string | null | undefined
+): boolean {
+  if (!endTime) return false
+  const start = getCalendarDateInTimeZone(startTime)
+  const end = getCalendarDateInTimeZone(endTime)
+  return toOrdinal(start) !== toOrdinal(end)
+}
+
+/**
+ * Check if an event is a multi-day event (Brisbane calendar days).
  */
 export function isMultiDayEvent(event: TBWCEvent): boolean {
-  return !!(
-    event.formatted_end_date &&
-    event.formatted_end_date !== event.formatted_date
-  )
+  return isMultiDayByTimes(event.start_time, event.end_time)
 }
 
 export interface FormatEventDateTimeResult {

@@ -23,6 +23,7 @@ import {
   getCalendarDateInTimeZone,
   getPreferredCalendarMonth,
   isEventPastOnCalendar,
+  isMultiDayEvent,
   formatCalendarMonthLabel,
 } from '@/lib/event-utils'
 import type { TBWCEvent } from '@/types/event'
@@ -413,55 +414,13 @@ export default function Calendar({
               </div>
 
               {(() => {
-                const multiDayEvents = dayEvents.filter((event) => {
-                  const eventStart = new Date(event.start_time)
-                  const eventEnd = event.end_time
-                    ? new Date(event.end_time)
-                    : eventStart
-                  const eventStartDay = new Date(
-                    Date.UTC(
-                      eventStart.getFullYear(),
-                      eventStart.getMonth(),
-                      eventStart.getDate()
-                    )
-                  )
-                  const eventEndDay = new Date(
-                    Date.UTC(
-                      eventEnd.getFullYear(),
-                      eventEnd.getMonth(),
-                      eventEnd.getDate()
-                    )
-                  )
-                  return (
-                    event.is_multi_day ||
-                    eventStartDay.getTime() !== eventEndDay.getTime()
-                  )
-                })
+                const multiDayEvents = dayEvents.filter((event) =>
+                  isMultiDayEvent(event)
+                )
 
-                const singleDayEvents = dayEvents.filter((event) => {
-                  const eventStart = new Date(event.start_time)
-                  const eventEnd = event.end_time
-                    ? new Date(event.end_time)
-                    : eventStart
-                  const eventStartDay = new Date(
-                    Date.UTC(
-                      eventStart.getFullYear(),
-                      eventStart.getMonth(),
-                      eventStart.getDate()
-                    )
-                  )
-                  const eventEndDay = new Date(
-                    Date.UTC(
-                      eventEnd.getFullYear(),
-                      eventEnd.getMonth(),
-                      eventEnd.getDate()
-                    )
-                  )
-                  return !(
-                    event.is_multi_day ||
-                    eventStartDay.getTime() !== eventEndDay.getTime()
-                  )
-                })
+                const singleDayEvents = dayEvents.filter(
+                  (event) => !isMultiDayEvent(event)
+                )
 
                 const cellOrd =
                   cellCal.year * 10000 + cellCal.month * 100 + cellCal.day

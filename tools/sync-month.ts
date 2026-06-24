@@ -9,7 +9,7 @@
 import fs from 'fs'
 import path from 'path'
 import { downloadCoverImage } from '../lib/download-cover-image'
-import { getCalendarDateInTimeZone } from '../lib/event-utils'
+import { getCalendarDateInTimeZone, isMultiDayByTimes } from '../lib/event-utils'
 
 const BRISBANE_TZ = 'Australia/Brisbane'
 const DATA_DIR = path.join(process.cwd(), 'data', 'events')
@@ -148,7 +148,6 @@ async function main(): Promise<void> {
 
   const formatted = await Promise.all(
     events.map(async (event) => {
-      const endDate = event.end_time ? new Date(event.end_time) : null
       let cover = event.cover ?? null
 
       if (cover?.source) {
@@ -173,7 +172,7 @@ async function main(): Promise<void> {
         formatted_time: formatTime(event.start_time),
         formatted_end_time: event.end_time ? formatTime(event.end_time) : null,
         formatted_end_date: event.end_time ? formatDate(event.end_time) : null,
-        is_multi_day: !!endDate && new Date(event.start_time).toDateString() !== endDate.toDateString(),
+        is_multi_day: isMultiDayByTimes(event.start_time, event.end_time),
         attending_count: event.attending_count ?? 0,
         interested_count: event.interested_count ?? 0,
         place: event.place ?? null,

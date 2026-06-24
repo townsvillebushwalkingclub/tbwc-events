@@ -10,6 +10,7 @@ import {
   getCoverImagePath,
 } from '../lib/download-cover-image'
 import { isValidFacebookEventId } from '../lib/event-id'
+import { isMultiDayByTimes } from '../lib/event-utils'
 
 const BRISBANE_TIMEZONE = 'Australia/Brisbane'
 const DATA_DIR = path.join(process.cwd(), 'data', 'events')
@@ -181,10 +182,7 @@ async function fetchEventByIdFromApi(eventId: string): Promise<FacebookApiEvent 
 }
 
 async function toStoredEvent(event: FacebookApiEvent): Promise<StoredEvent> {
-  const startDate = new Date(event.start_time)
-  const endDate = event.end_time ? new Date(event.end_time) : null
-  const isMultiDay =
-    !!endDate && startDate.toDateString() !== endDate.toDateString()
+  const isMultiDay = isMultiDayByTimes(event.start_time, event.end_time)
 
   let cover = event.cover || null
   if (cover?.source) {

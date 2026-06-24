@@ -8,7 +8,7 @@ import { downloadCoverImage } from './download-cover-image'
 import { getLocalCoverPath } from './event-cover-path'
 import { applyLocalCoverToEvent } from './event-share-image'
 import { isValidFacebookEventId } from './event-id'
-import { getCalendarDateInTimeZone } from './event-utils'
+import { getCalendarDateInTimeZone, isMultiDayByTimes } from './event-utils'
 import type { TBWCEvent } from '@/types/event'
 
 const BRISBANE_TIMEZONE = 'Australia/Brisbane'
@@ -188,11 +188,7 @@ async function getFacebookEvents(): Promise<TBWCEvent[]> {
 
     const formattedEvents = await Promise.all(
       data.data.map(async (event): Promise<TBWCEvent> => {
-        const startDate = new Date(event.start_time)
-        const endDate = event.end_time ? new Date(event.end_time) : null
-        const isMultiDay =
-          !!endDate &&
-          startDate.toDateString() !== endDate.toDateString()
+        const isMultiDay = isMultiDayByTimes(event.start_time, event.end_time)
 
         let cover = event.cover || null
         if (cover?.source) {
@@ -259,11 +255,7 @@ async function fetchEventByIdFromApi(eventId: string): Promise<TBWCEvent | null>
     const event = (await response.json()) as FacebookApiEvent | null
     if (!event?.id) return null
 
-    const startDate = new Date(event.start_time)
-    const endDate = event.end_time ? new Date(event.end_time) : null
-    const isMultiDay =
-      !!endDate &&
-      startDate.toDateString() !== endDate.toDateString()
+    const isMultiDay = isMultiDayByTimes(event.start_time, event.end_time)
 
     let cover = event.cover || null
     if (cover?.source) {

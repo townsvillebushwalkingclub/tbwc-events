@@ -6,7 +6,7 @@
 import fs from 'fs'
 import path from 'path'
 import { downloadCoverImage } from '../lib/download-cover-image'
-import { getCalendarDateInTimeZone } from '../lib/event-utils'
+import { getCalendarDateInTimeZone, isMultiDayByTimes } from '../lib/event-utils'
 
 function loadEnvFile(): void {
   const envFiles = ['.env.local', '.env']
@@ -119,10 +119,7 @@ interface RawEvent {
 }
 
 async function formatEvent(event: RawEvent): Promise<Record<string, unknown>> {
-  const startDate = new Date(event.start_time)
-  const endDate = event.end_time ? new Date(event.end_time) : null
-  const isMultiDay =
-    !!endDate && startDate.toDateString() !== endDate.toDateString()
+  const isMultiDay = isMultiDayByTimes(event.start_time, event.end_time)
 
   let cover = event.cover || null
   if (cover?.source) {

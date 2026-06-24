@@ -1,3 +1,4 @@
+import { isMultiDayEvent } from '@/lib/event-utils'
 import type { TBWCEvent } from '@/types/event'
 
 interface EventDateTimeProps {
@@ -11,10 +12,7 @@ export function EventDateTime({
   className = '',
   textSize = 'text-lg',
 }: EventDateTimeProps) {
-  const isMultiDay = !!(
-    event.formatted_end_date &&
-    event.formatted_end_date !== event.formatted_date
-  )
+  const isMultiDay = isMultiDayEvent(event)
 
   if (isMultiDay) {
     return (
