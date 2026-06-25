@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getPreferredCalendarMonth } from '@/lib/event-utils'
-import { buildEventsJsonLd } from '@/lib/event-json-ld'
+import { buildHomepageJsonLd } from '@/lib/event-json-ld'
 import { getEventsForCalendarMonths } from '@/lib/facebook-api'
 import Calendar from './components/Calendar'
 import EventSearch from './components/EventSearch'
@@ -77,7 +77,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      {allEvents.length > 0 && <JsonLd data={buildEventsJsonLd(allEvents)} />}
+      <JsonLd data={buildHomepageJsonLd(allEvents)} />
       <div className="container mx-auto px-4 md:px-8 py-4 md:py-8">
         <div className="text-center mb-10">
           <div className="flex flex-col items-center justify-center mb-6">

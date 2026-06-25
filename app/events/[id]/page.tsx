@@ -1,6 +1,6 @@
 import { getEventById, getAllEvents } from '@/lib/facebook-api'
 import { isValidFacebookEventId } from '@/lib/event-id'
-import { buildEventJsonLdDocument } from '@/lib/event-json-ld'
+import { buildEventPageJsonLd } from '@/lib/event-json-ld'
 import { resolveEventShareImageForMetadata } from '@/lib/event-share-image'
 import { EVENTS_SITE_ORIGIN } from '@/lib/site'
 import { notFound } from 'next/navigation'
@@ -171,7 +171,7 @@ export default async function EventPage({
 
   return (
     <>
-      <JsonLd data={buildEventJsonLdDocument(event)} />
+      <JsonLd data={buildEventPageJsonLd(event)} />
       <EventClient initialEvent={event} />
     </>
   )

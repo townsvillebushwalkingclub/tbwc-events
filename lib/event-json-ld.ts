@@ -1,15 +1,13 @@
 import type { EventPlace, TBWCEvent } from '@/types/event'
-import { resolveEventShareImageFromDisk } from '@/lib/event-share-image'
+import { resolveEventShareImageForMetadata } from '@/lib/event-share-image'
+import {
+  buildOrganizationJsonLd,
+  TBWC_ORG_ID,
+  type OrganizationJsonLd,
+} from '@/lib/organization-json-ld'
 import { EVENTS_SITE_ORIGIN } from '@/lib/site'
 
 const SCHEMA_CONTEXT = 'https://schema.org'
-const TBWC_ORGANIZATION_URL = 'https://townsvillebushwalkingclub.com/'
-
-const TBWC_ORGANIZER = {
-  '@type': 'Organization' as const,
-  name: 'Townsville Bushwalking Club',
-  url: TBWC_ORGANIZATION_URL,
-}
 
 const DEFAULT_LOCATION_NAME = 'Townsville, Queensland, Australia'
 
@@ -27,6 +25,10 @@ export function normalizeIsoDateTime(iso: string): string {
 
 function eventPageUrl(eventId: string): string {
   return `${EVENTS_SITE_ORIGIN}/events/${eventId}`
+}
+
+function eventEntityId(eventId: string): string {
+  return `${eventPageUrl(eventId)}#event`
 }
 
 function buildPostalAddress(place: EventPlace) {
@@ -70,14 +72,15 @@ function eventDescription(event: TBWCEvent): string {
 
 export type EventJsonLd = {
   '@type': 'Event'
+  '@id': string
   name: string
   description: string
   startDate: string
   endDate?: string
-  eventStatus?: string
+  eventStatus: string
   eventAttendanceMode: string
   location: ReturnType<typeof buildEventLocation>
-  organizer: typeof TBWC_ORGANIZER
+  organizer: { '@id': typeof TBWC_ORG_ID }
   url: string
   image?: string[]
 }
@@ -86,12 +89,16 @@ export type EventJsonLd = {
 export function buildEventJsonLd(event: TBWCEvent): EventJsonLd {
   const jsonLd: EventJsonLd = {
     '@type': 'Event',
+    '@id': eventEntityId(event.id),
     name: event.name,
     description: eventDescription(event),
     startDate: normalizeIsoDateTime(event.start_time),
+    eventStatus: event.is_cancelled
+      ? `${SCHEMA_CONTEXT}/EventCancelled`
+      : `${SCHEMA_CONTEXT}/EventScheduled`,
     eventAttendanceMode: `${SCHEMA_CONTEXT}/OfflineEventAttendanceMode`,
     location: buildEventLocation(event.place),
-    organizer: TBWC_ORGANIZER,
+    organizer: { '@id': TBWC_ORG_ID },
     url: eventPageUrl(event.id),
   }
 
@@ -99,11 +106,10 @@ export function buildEventJsonLd(event: TBWCEvent): EventJsonLd {
     jsonLd.endDate = normalizeIsoDateTime(event.end_time)
   }
 
-  if (event.is_cancelled) {
-    jsonLd.eventStatus = `${SCHEMA_CONTEXT}/EventCancelled`
-  }
-
-  const shareImage = resolveEventShareImageFromDisk(event.id)
+  const shareImage = resolveEventShareImageForMetadata(
+    event.id,
+    event.cover?.source ?? null
+  )
   if (shareImage) {
     jsonLd.image = [shareImage.url]
   }
@@ -111,28 +117,24 @@ export function buildEventJsonLd(event: TBWCEvent): EventJsonLd {
   return jsonLd
 }
 
-export type EventJsonLdDocument = {
+export type JsonLdGraphDocument = {
   '@context': typeof SCHEMA_CONTEXT
-} & EventJsonLd
-
-export type EventsJsonLdDocument = {
-  '@context': typeof SCHEMA_CONTEXT
-  '@graph': EventJsonLd[]
+  '@graph': (OrganizationJsonLd | EventJsonLd)[]
 }
 
-/** Build a single JSON-LD document for one event page. */
-export function buildEventJsonLdDocument(event: TBWCEvent): EventJsonLdDocument {
+/** Build JSON-LD for the homepage: Organization + upcoming events. */
+export function buildHomepageJsonLd(events: TBWCEvent[]): JsonLdGraphDocument {
   return {
     '@context': SCHEMA_CONTEXT,
-    ...buildEventJsonLd(event),
+    '@graph': [buildOrganizationJsonLd(), ...events.map(buildEventJsonLd)],
   }
 }
 
-/** Build a single JSON-LD document listing multiple events (calendar / list pages). */
-export function buildEventsJsonLd(events: TBWCEvent[]): EventsJsonLdDocument {
+/** Build JSON-LD for an event detail page: Organization + single event. */
+export function buildEventPageJsonLd(event: TBWCEvent): JsonLdGraphDocument {
   return {
     '@context': SCHEMA_CONTEXT,
-    '@graph': events.map(buildEventJsonLd),
+    '@graph': [buildOrganizationJsonLd(), buildEventJsonLd(event)],
   }
 }
 
