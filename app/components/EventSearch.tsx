@@ -13,6 +13,8 @@ interface EventSearchProps {
   clearToPath?: string
   /** ISO timestamp from the server render; passed through for hydration-safe past checks. */
   referenceTime: string
+  /** When true, hide the default month event list until a search is active. */
+  searchOnly?: boolean
 }
 
 export default function EventSearch({
@@ -21,6 +23,7 @@ export default function EventSearch({
   initialSearchQuery = null,
   clearToPath = '/',
   referenceTime,
+  searchOnly = false,
 }: EventSearchProps) {
   const router = useRouter()
   const [searchResults, setSearchResults] = useState<TBWCEvent[] | null>(null)
@@ -71,7 +74,7 @@ export default function EventSearch({
 
   const isSearchMode = !!initialSearchQuery?.trim()
   const searchReady = isSearchMode && searchResults !== null
-  const showMonthList = !isSearchMode
+  const showMonthList = !searchOnly && !isSearchMode
   const showEventsList = showMonthList || searchReady
 
   return (

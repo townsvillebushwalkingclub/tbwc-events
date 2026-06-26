@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { Suspense } from 'react'
 import EventSearch from '@/app/components/EventSearch'
 import SearchBar from '@/app/components/SearchBar'
+import SiteFooter from '@/app/components/SiteFooter'
 import type { Metadata } from 'next'
 
 const PAGE_URL = 'https://events.townsvillebushwalkingclub.com/events/search'
@@ -42,7 +43,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const currentDate = now
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       <div className="container mx-auto px-4 md:px-8 py-4 md:py-8 max-w-4xl">
         <div className="mb-6">
           <Link
@@ -68,7 +69,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             />
           </Link>
           <h1 className="text-2xl md:text-3xl font-bold text-[rgb(var(--foreground-rgb))]">
-            Search events
+            Search Events
           </h1>
           <p className="text-gray-600 mt-1">Townsville Bushwalking Club</p>
         </div>
@@ -83,17 +84,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             initialSearchQuery={query}
             clearToPath="/events/search"
             referenceTime={now.toISOString()}
+            searchOnly
           />
         </div>
 
-        <p className="mt-6 text-center">
-          <Link
-            href="/"
-            className="text-casper-orange hover:underline font-medium"
-          >
-            ← Back to calendar
-          </Link>
-        </p>
+        <SiteFooter />
       </div>
     </div>
   )

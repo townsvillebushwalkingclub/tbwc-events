@@ -1,3 +1,4 @@
+import { getAdjacentEvents } from '@/lib/event-adjacent'
 import { getEventById, getAllEvents } from '@/lib/facebook-api'
 import { isValidFacebookEventId } from '@/lib/event-id'
 import { buildEventPageJsonLd } from '@/lib/event-json-ld'
@@ -169,10 +170,20 @@ export default async function EventPage({
     throw error
   }
 
+  const allEvents = await getAllEvents()
+  const { previous: previousEvent, next: nextEvent } = getAdjacentEvents(
+    allEvents,
+    id
+  )
+
   return (
     <>
       <JsonLd data={buildEventPageJsonLd(event)} />
-      <EventClient initialEvent={event} />
+      <EventClient
+        initialEvent={event}
+        previousEvent={previousEvent}
+        nextEvent={nextEvent}
+      />
     </>
   )
 }

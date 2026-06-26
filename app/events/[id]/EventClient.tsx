@@ -7,13 +7,21 @@ import Link from 'next/link'
 import { processDescription } from '@/lib/process-description'
 import { getFacebookEventUrl } from '@/lib/event-utils'
 import { EventDateTime } from '@/app/components/EventDateTime'
+import SiteFooter from '@/app/components/SiteFooter'
+import type { EventNeighbor } from '@/lib/event-adjacent'
 import type { TBWCEvent } from '@/types/event'
 
 interface EventClientProps {
   initialEvent: TBWCEvent | null
+  previousEvent?: EventNeighbor | null
+  nextEvent?: EventNeighbor | null
 }
 
-export default function EventClient({ initialEvent }: EventClientProps) {
+export default function EventClient({
+  initialEvent,
+  previousEvent = null,
+  nextEvent = null,
+}: EventClientProps) {
   const params = useParams()
   const [event, setEvent] = useState<TBWCEvent | null>(initialEvent)
   const [loading, setLoading] = useState(!initialEvent)
@@ -45,10 +53,15 @@ export default function EventClient({ initialEvent }: EventClientProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center text-gray-900">
-          <div className="animate-spin rounded-full h-12 w-12 border-2 border-casper-orange border-t-transparent mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading event...</p>
+      <div className="bg-white">
+        <div className="container mx-auto px-4 md:px-8 py-4 md:py-8 max-w-4xl">
+          <div className="py-24 flex items-center justify-center">
+            <div className="text-center text-gray-900">
+              <div className="animate-spin rounded-full h-12 w-12 border-2 border-casper-orange border-t-transparent mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading event...</p>
+            </div>
+          </div>
+          <SiteFooter />
         </div>
       </div>
     )
@@ -56,19 +69,22 @@ export default function EventClient({ initialEvent }: EventClientProps) {
 
   if (error || !event) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center text-gray-900">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h1 className="text-2xl font-bold mb-2">Event Not Found</h1>
-          <p className="mb-6 text-gray-600">
-            {error || 'The event you are looking for does not exist.'}
-          </p>
-          <Link
-            href="/"
-            className="bg-casper-orange hover:bg-casper-orange-hover text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-block"
-          >
-            ← Back to Events
-          </Link>
+      <div className="bg-white">
+        <div className="container mx-auto px-4 md:px-8 py-4 md:py-8 max-w-4xl">
+          <div className="py-16 text-center text-gray-900">
+            <div className="text-6xl mb-4">⚠️</div>
+            <h1 className="text-2xl font-bold mb-2">Event Not Found</h1>
+            <p className="mb-6 text-gray-600">
+              {error || 'The event you are looking for does not exist.'}
+            </p>
+            <Link
+              href="/"
+              className="bg-casper-orange hover:bg-casper-orange-hover text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-block"
+            >
+              ← Back to Events
+            </Link>
+          </div>
+          <SiteFooter />
         </div>
       </div>
     )
@@ -78,8 +94,8 @@ export default function EventClient({ initialEvent }: EventClientProps) {
   const coverImageUrl = event.cover?.source ?? null
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 md:px-8 py-8">
+    <div className="bg-white">
+      <div className="container mx-auto px-4 md:px-8 py-4 md:py-8 max-w-4xl">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
           <Link
             href="/"
@@ -220,6 +236,44 @@ export default function EventClient({ initialEvent }: EventClientProps) {
             </div>
           </div>
         </div>
+
+        {(previousEvent || nextEvent) && (
+          <nav
+            aria-label="Adjacent events"
+            className="mt-6 flex justify-between gap-4"
+          >
+            {previousEvent ? (
+              <Link
+                href={`/events/${previousEvent.id}`}
+                className="flex-1 min-w-0 max-w-[calc(50%-0.5rem)] border border-gray-300 hover:border-gray-400 bg-white text-gray-800 px-4 py-3 rounded-lg font-semibold transition-colors"
+              >
+                <div className="text-sm text-gray-600 mb-1">← Previous event</div>
+                <div className="line-clamp-2">{previousEvent.name}</div>
+                <div className="text-sm font-normal text-gray-600 mt-1">
+                  {previousEvent.formatted_date}
+                </div>
+              </Link>
+            ) : (
+              <div className="flex-1" aria-hidden="true" />
+            )}
+            {nextEvent ? (
+              <Link
+                href={`/events/${nextEvent.id}`}
+                className="flex-1 min-w-0 max-w-[calc(50%-0.5rem)] border border-gray-300 hover:border-gray-400 bg-white text-gray-800 px-4 py-3 rounded-lg font-semibold transition-colors text-right ml-auto"
+              >
+                <div className="text-sm text-gray-600 mb-1">Next event →</div>
+                <div className="line-clamp-2">{nextEvent.name}</div>
+                <div className="text-sm font-normal text-gray-600 mt-1">
+                  {nextEvent.formatted_date}
+                </div>
+              </Link>
+            ) : (
+              <div className="flex-1" aria-hidden="true" />
+            )}
+          </nav>
+        )}
+
+        <SiteFooter />
       </div>
     </div>
   )

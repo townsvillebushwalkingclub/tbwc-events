@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import SiteFooter from '@/app/components/SiteFooter'
 import { getAllEvents } from '@/lib/facebook-api'
 import type { Metadata } from 'next'
 
@@ -64,7 +65,7 @@ export default async function AllEventsPage() {
   )
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       <div className="container mx-auto px-4 md:px-8 py-4 md:py-8 max-w-4xl">
         <div className="mb-6">
           <Link
@@ -133,14 +134,7 @@ export default async function AllEventsPage() {
           </ul>
         </nav>
 
-        <p className="mt-6 text-center">
-          <Link
-            href="/"
-            className="text-casper-orange hover:underline font-medium"
-          >
-            ← Back to calendar
-          </Link>
-        </p>
+        <SiteFooter />
       </div>
     </div>
   )

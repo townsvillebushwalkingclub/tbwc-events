@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { getPreferredCalendarMonth } from '@/lib/event-utils'
 import { buildHomepageJsonLd } from '@/lib/event-json-ld'
 import { getEventsForCalendarMonths } from '@/lib/facebook-api'
@@ -8,6 +7,7 @@ import Calendar from './components/Calendar'
 import CalendarSubscribe from './components/CalendarSubscribe'
 import EventSearch from './components/EventSearch'
 import JsonLd from './components/JsonLd'
+import SiteFooter from './components/SiteFooter'
 import SocialLinks from './components/SocialLinks'
 import type { TBWCEvent } from '@/types/event'
 import type { Metadata } from 'next'
@@ -77,7 +77,7 @@ export default async function Home() {
   const currentDate = new Date(preferred.year, preferred.month - 1, 1)
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       <JsonLd data={buildHomepageJsonLd(allEvents)} />
       <div className="container mx-auto px-4 md:px-8 py-4 md:py-8">
         <div className="text-center mb-10">
@@ -152,20 +152,7 @@ export default async function Home() {
 
         <CalendarSubscribe />
 
-        <p className="mt-12 pt-6 text-center flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-          <Link
-            href="/events/all"
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            All Events
-          </Link>
-          <Link
-            href="/events/search"
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            Search
-          </Link>
-        </p>
+        <SiteFooter />
       </div>
     </div>
   )
