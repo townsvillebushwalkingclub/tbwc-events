@@ -1,0 +1,12 @@
+---
+description: Keep README and project docs in sync with the code
+alwaysApply: true
+---
+
+# Documentation
+
+- Update `README.md` in the same PR/commit as code changes when behaviour, APIs, env vars, scripts, or structure change.
+- API routes: document path, response type (JSON, iCal, JS, text), and purpose.
+- Env vars: list required and optional keys in Quick Start / Configuration.
+- Project structure: keep the tree accurate when adding routes, `lib/` modules, or `tools/` scripts.
+- Do not document features that do not exist; remove stale endpoints and scripts.

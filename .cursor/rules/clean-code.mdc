@@ -1,0 +1,37 @@
+---
+description: Clean code, readability, maintainability, and DRY
+alwaysApply: true
+---
+
+# Clean Code
+
+- **Minimize scope** — smallest correct change; don't touch unrelated code.
+- **Readability first** — clear names, simple control flow, self-explanatory code over clever tricks.
+- **Match existing patterns** — follow project conventions for naming, types, imports, and file layout.
+- **One job per module** — keep functions, components, and files focused.
+
+# DRY
+
+- **Extract shared logic** when the same behaviour appears twice (or is about to).
+- **Don't abstract too early** — two similar lines are fine; duplicated business rules are not.
+- **Reuse existing helpers** in `lib/` before adding new ones.
+
+# Maintainability
+
+- **Refactor while you work** — if you spot duplication or confusion in code you're already changing, clean it up in the same area.
+- **Prefer extending** existing functions and components over parallel implementations.
+- **Comments** only for non-obvious business logic; the code should carry the rest.
+- **Tests** only when they add real coverage; skip trivial assertions.
+
+# Before finishing
+
+- Remove dead code, unused imports, and one-off helpers that should be shared.
+- If a change touches many files, ask whether a small shared helper belongs in `lib/`.
+
+# Prose and workflow
+
+- **Hyphens, not en-dashes**: Never use the en-dash character (–, U+2013). Always use the ASCII hyphen-minus (-) for dashes in prose, lists, ranges, and compound words (e.g. `2020-2024`, `one-off`, `TBWC Events - calendar feed`). When editing existing text, replace en-dashes with hyphens.
+
+- **README up-to-date**: Always keep `README.md` in sync with the code. When making code changes, refactors, or renames, update the README in the same change (new env vars, endpoints, scripts, behaviour). See also `documentation.mdc`.
+
+- **Renaming files**: When renaming or moving committed files, use `git mv old_name new_name` to preserve history.
