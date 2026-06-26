@@ -188,7 +188,7 @@ For local testing, use `http://localhost:3000/api/embed-snippet?v=1`. Test pages
 
 ## Assets
 
-[SVG Leaves by Susrut, Vectordad](https://vectordad.com/designs/leaves-svg/)
+[SVG Leaves by Susrut, Vectordad](https://vectordad.com/designs/leaves-svg/) used in the nature themed poster.
 
 ## License
 
