@@ -8,11 +8,18 @@ import { downloadCoverImage } from './download-cover-image'
 import { getLocalCoverPath } from './event-cover-path'
 import { applyLocalCoverToEvent } from './event-share-image'
 import { isValidFacebookEventId } from './event-id'
+import {
+  EVENTS_DATA_DIR,
+  findEventInMonthFiles,
+  getMonthFilePath,
+  isPastMonth,
+  resolveCancelledEvent,
+} from './event-month-files'
 import { getCalendarDateInTimeZone, isMultiDayByTimes } from './event-utils'
 import type { TBWCEvent } from '@/types/event'
 
 const BRISBANE_TIMEZONE = 'Australia/Brisbane'
-const DATA_DIR = path.join(process.cwd(), 'data', 'events')
+const DATA_DIR = EVENTS_DATA_DIR
 
 const FACEBOOK_PAGE_ID = process.env.FACEBOOK_PAGE_ID
 const FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN
@@ -316,13 +323,27 @@ function getCancelledEventIds(): string[] {
   return []
 }
 
-function isPastMonth(year: number, month: number): boolean {
-  const now = new Date()
-  const currentYear = now.getFullYear()
-  const currentMonth = now.getMonth() + 1
-  if (year < currentYear) return true
-  if (year === currentYear && month < currentMonth) return true
-  return false
+async function mergeCancelledEventsIntoMonth(
+  events: TBWCEvent[],
+  year: number,
+  month: number
+): Promise<TBWCEvent[]> {
+  const result = [...events]
+  const existingIds = new Set(result.map((e) => e.id))
+  for (const id of getCancelledEventIds()) {
+    if (existingIds.has(id)) continue
+    const event = await resolveCancelledEvent(id, fetchEventByIdFromApi)
+    if (!event) continue
+    const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
+    if (y === year && m === month) {
+      result.push(event)
+      existingIds.add(event.id)
+    }
+  }
+  result.sort(
+    (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+  )
+  return result
 }
 
 /**
@@ -406,11 +427,6 @@ export function getPastYearMonthsFromFiles(): Array<{ year: number; month: numbe
     console.error('Error reading past year/months from files:', error)
   }
   return pairs
-}
-
-function getMonthFilePath(year: number, month: number): string {
-  const yearDir = path.join(DATA_DIR, year.toString())
-  return path.join(yearDir, `${month.toString().padStart(2, '0')}.json`)
 }
 
 function loadEventsFromFile(year: number, month: number): TBWCEvent[] | null {
@@ -502,7 +518,9 @@ export async function getEventsForMonth(
   try {
     if (isPastMonth(year, month)) {
       const fileEvents = loadEventsFromFile(year, month)
-      if (fileEvents !== null) return fileEvents
+      if (fileEvents !== null) {
+        return mergeCancelledEventsIntoMonth(fileEvents, year, month)
+      }
       console.log(
         `No saved data found for past month ${year}/${month}, fetching from Facebook...`
       )
@@ -518,23 +536,7 @@ export async function getEventsForMonth(
       await saveEventsToFile(year, month, filteredEvents)
     }
 
-    const cancelledIds = getCancelledEventIds()
-    const existingIds = new Set(filteredEvents.map((e) => e.id))
-    for (const id of cancelledIds) {
-      if (existingIds.has(id)) continue
-      const event = await fetchEventByIdFromApi(id)
-      if (event) {
-        const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
-        if (y === year && m === month) {
-          filteredEvents.push(event)
-          existingIds.add(event.id)
-        }
-      }
-    }
-    filteredEvents.sort(
-      (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-    )
-    return filteredEvents
+    return mergeCancelledEventsIntoMonth(filteredEvents, year, month)
   } catch (error) {
     console.error('Error getting events for month:', error)
     throw error
@@ -560,7 +562,7 @@ export async function getEventsForCalendarMonths(
   }
   for (const id of cancelledIds) {
     if (existingIds.has(id)) continue
-    const event = await fetchEventByIdFromApi(id)
+    const event = await resolveCancelledEvent(id, fetchEventByIdFromApi)
     if (!event) continue
     const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
     const key = `${y}-${m}`
@@ -592,39 +594,16 @@ export async function getEventById(eventId: string): Promise<TBWCEvent | null> {
       if (cachedEvent) return applyLocalCoverToEvent(cachedEvent)
     }
 
-    try {
-      if (fs.existsSync(DATA_DIR)) {
-        const yearDirs = fs
-          .readdirSync(DATA_DIR)
-          .filter((dir) => {
-            const dirPath = path.join(DATA_DIR, dir)
-            return (
-              fs.statSync(dirPath).isDirectory() &&
-              /^\d{4}$/.test(dir)
-            )
-          })
-          .map((dir) => parseInt(dir, 10))
-          .sort((a, b) => b - a)
+    const fromFiles = findEventInMonthFiles(eventId)
+    if (fromFiles) return applyLocalCoverToEvent(fromFiles)
 
-        for (const year of yearDirs) {
-          const yearDir = path.join(DATA_DIR, year.toString())
-          const monthFiles = fs
-            .readdirSync(yearDir)
-            .filter((file) => file.endsWith('.json'))
-            .map((file) => parseInt(file.replace('.json', ''), 10))
-            .sort((a, b) => b - a)
-
-          for (const month of monthFiles) {
-            const fileEvents = loadEventsFromFile(year, month)
-            if (fileEvents) {
-              const event = fileEvents.find((e) => e.id === eventId)
-              if (event) return applyLocalCoverToEvent(event)
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error searching past event files:', error)
+    const cancelledIds = getCancelledEventIds()
+    if (cancelledIds.includes(eventId)) {
+      const resolved = await resolveCancelledEvent(
+        eventId,
+        fetchEventByIdFromApi
+      )
+      if (resolved) return applyLocalCoverToEvent(resolved)
     }
 
     const fromApi = await fetchEventByIdFromApi(eventId)
@@ -688,7 +667,7 @@ export async function getAllEvents(): Promise<TBWCEvent[]> {
     const cancelledIds = getCancelledEventIds()
     for (const id of cancelledIds) {
       if (allEvents.some((e) => e.id === id)) continue
-      const event = await fetchEventByIdFromApi(id)
+      const event = await resolveCancelledEvent(id, fetchEventByIdFromApi)
       if (event) allEvents.push(event)
     }
   } catch (error) {

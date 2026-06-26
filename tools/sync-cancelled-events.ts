@@ -9,12 +9,17 @@ import {
   downloadCoverImage,
   getCoverImagePath,
 } from '../lib/download-cover-image'
+import {
+  EVENTS_DATA_DIR,
+  findEventInMonthFiles,
+  upsertEventIntoMonthFile,
+} from '../lib/event-month-files'
 import { isValidFacebookEventId } from '../lib/event-id'
-import { isMultiDayByTimes } from '../lib/event-utils'
+import { getCalendarDateInTimeZone, isMultiDayByTimes } from '../lib/event-utils'
+import type { TBWCEvent } from '../types/event'
 
 const BRISBANE_TIMEZONE = 'Australia/Brisbane'
-const DATA_DIR = path.join(process.cwd(), 'data', 'events')
-const CANCELLED_IDS_FILE = path.join(DATA_DIR, 'cancelled-event-ids.json')
+const CANCELLED_IDS_FILE = path.join(EVENTS_DATA_DIR, 'cancelled-event-ids.json')
 
 interface FacebookApiEvent {
   id: string
@@ -27,24 +32,6 @@ interface FacebookApiEvent {
   interested_count?: number
   cover?: { source: string; id?: string } | null
   is_canceled?: boolean
-}
-
-interface StoredEvent {
-  id: string
-  name: string
-  description: string
-  start_time: string
-  end_time?: string | null
-  formatted_date: string
-  formatted_time: string
-  formatted_end_time: string | null
-  formatted_end_date: string | null
-  is_multi_day: boolean
-  attending_count: number
-  interested_count: number
-  place: { name?: string } | null
-  cover: { source: string; id?: string } | null
-  is_cancelled: boolean
 }
 
 function loadEnvFile(): void {
@@ -96,26 +83,6 @@ function formatEventEndTime(dateString: string | null | undefined): string | nul
     hour12: true,
     timeZone: BRISBANE_TIMEZONE,
   })
-}
-
-function getCalendarDateInTimeZone(dateString: string): { year: number; month: number } {
-  const date = new Date(dateString)
-  const parts = new Intl.DateTimeFormat('en-AU', {
-    timeZone: BRISBANE_TIMEZONE,
-    year: 'numeric',
-    month: 'numeric',
-  }).formatToParts(date)
-
-  const yearPart = parts.find((part) => part.type === 'year')?.value
-  const monthPart = parts.find((part) => part.type === 'month')?.value
-  const year = yearPart ? Number(yearPart) : date.getUTCFullYear()
-  const month = monthPart ? Number(monthPart) : date.getUTCMonth() + 1
-  return { year, month }
-}
-
-function getMonthFilePath(year: number, month: number): string {
-  const yearDir = path.join(DATA_DIR, year.toString())
-  return path.join(yearDir, `${month.toString().padStart(2, '0')}.json`)
 }
 
 function readCancelledEventIds(): string[] {
@@ -181,7 +148,7 @@ async function fetchEventByIdFromApi(eventId: string): Promise<FacebookApiEvent 
   }
 }
 
-async function toStoredEvent(event: FacebookApiEvent): Promise<StoredEvent> {
+async function toStoredEvent(event: FacebookApiEvent): Promise<TBWCEvent> {
   const isMultiDay = isMultiDayByTimes(event.start_time, event.end_time)
 
   let cover = event.cover || null
@@ -217,52 +184,6 @@ async function toStoredEvent(event: FacebookApiEvent): Promise<StoredEvent> {
   }
 }
 
-function loadMonthEvents(filePath: string): StoredEvent[] {
-  if (!fs.existsSync(filePath)) return []
-  try {
-    const content = fs.readFileSync(filePath, 'utf8')
-    const parsed = JSON.parse(content) as unknown
-    return Array.isArray(parsed) ? (parsed as StoredEvent[]) : []
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    console.warn(`⚠️  Could not parse ${filePath}: ${message}`)
-    return []
-  }
-}
-
-function upsertIntoMonthFile(event: StoredEvent): 'added' | 'updated' {
-  const { year, month } = getCalendarDateInTimeZone(event.start_time)
-  const filePath = getMonthFilePath(year, month)
-  const yearDir = path.dirname(filePath)
-
-  if (!fs.existsSync(yearDir)) {
-    fs.mkdirSync(yearDir, { recursive: true })
-  }
-
-  const events = loadMonthEvents(filePath)
-  const existingIndex = events.findIndex((item) => item.id === event.id)
-
-  let result: 'added' | 'updated'
-  if (existingIndex >= 0) {
-    events[existingIndex] = {
-      ...events[existingIndex],
-      ...event,
-      is_cancelled: true,
-    }
-    result = 'updated'
-  } else {
-    events.push(event)
-    result = 'added'
-  }
-
-  events.sort(
-    (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-  )
-
-  fs.writeFileSync(filePath, JSON.stringify(events, null, 2), 'utf8')
-  return result
-}
-
 async function main(): Promise<void> {
   loadEnvFile()
 
@@ -287,9 +208,18 @@ async function main(): Promise<void> {
 
   let added = 0
   let updated = 0
+  let skipped = 0
   let failed = 0
 
   for (const eventId of cancelledIds) {
+    const existing = findEventInMonthFiles(eventId)
+    if (existing) {
+      skipped++
+      const { year, month } = getCalendarDateInTimeZone(existing.start_time)
+      console.log(`⏭️  ${eventId} already in ${year}/${month.toString().padStart(2, '0')} (skipped API)`)
+      continue
+    }
+
     const rawEvent = await fetchEventByIdFromApi(eventId)
     if (!rawEvent) {
       failed++
@@ -297,7 +227,7 @@ async function main(): Promise<void> {
     }
 
     const storedEvent = await toStoredEvent(rawEvent)
-    const result = upsertIntoMonthFile(storedEvent)
+    const result = upsertEventIntoMonthFile(storedEvent)
     const { year, month } = getCalendarDateInTimeZone(storedEvent.start_time)
     const monthLabel = `${year}/${month.toString().padStart(2, '0')}`
 
@@ -314,6 +244,7 @@ async function main(): Promise<void> {
   console.log('📊 Cancelled Event Sync Summary')
   console.log(`   Added:   ${added}`)
   console.log(`   Updated: ${updated}`)
+  console.log(`   Skipped: ${skipped} (already in JSON)`)
   console.log(`   Failed:  ${failed}`)
   console.log('='.repeat(50))
 }
