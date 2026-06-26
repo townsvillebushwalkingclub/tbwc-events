@@ -202,6 +202,13 @@ export default function EventClient({ initialEvent }: EventClientProps) {
 
             <div className="pt-6 border-t border-gray-200 flex flex-wrap gap-4">
               <a
+                href={`/api/event/${event.id}/calendar`}
+                download
+                className="border border-gray-300 hover:border-gray-400 bg-white text-gray-800 px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2"
+              >
+                Add to calendar
+              </a>
+              <a
                 href={facebookEventUrl}
                 target="_blank"
                 rel="noopener noreferrer"

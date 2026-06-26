@@ -1,0 +1,207 @@
+import type { EventPlace, TBWCEvent } from '@/types/event'
+import { isEventPastOnCalendar } from '@/lib/event-utils'
+import { getFacebookEvents } from '@/lib/facebook-api'
+import { absoluteEventPageUrl, EVENTS_SITE_ORIGIN } from '@/lib/site'
+
+export const CALENDAR_TIMEZONE = 'Australia/Brisbane'
+
+const DEFAULT_LOCATION = 'Townsville, Queensland, Australia'
+const DEFAULT_END_OFFSET_MS = 3 * 60 * 60 * 1000
+const MIN_EVENT_YEAR = 2022
+
+const VTIMEZONE_BLOCK = [
+  'BEGIN:VTIMEZONE',
+  `TZID:${CALENDAR_TIMEZONE}`,
+  'BEGIN:STANDARD',
+  'DTSTART:19700101T000000',
+  'TZOFFSETFROM:+1000',
+  'TZOFFSETTO:+1000',
+  'TZNAME:AEST',
+  'END:STANDARD',
+  'END:VTIMEZONE',
+].join('\r\n')
+
+/** RFC 5545 text escaping for SUMMARY, DESCRIPTION, LOCATION, etc. */
+export function escapeIcsText(value: string): string {
+  return value
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,')
+    .replace(/\r\n/g, '\\n')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\n')
+}
+
+function normalizeIso(iso: string): string {
+  return iso.replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
+}
+
+/** Local wall-clock datetime for DTSTART/DTEND with TZID. */
+export function formatIcsDateTime(iso: string): string {
+  const date = new Date(normalizeIso(iso))
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: CALENDAR_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(date)
+
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? '00'
+
+  return `${get('year')}${get('month')}${get('day')}T${get('hour')}${get('minute')}${get('second')}`
+}
+
+function formatIcsUtcStamp(date: Date = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return (
+    `${date.getUTCFullYear()}${pad(date.getUTCMonth() + 1)}${pad(date.getUTCDate())}` +
+    `T${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}${pad(date.getUTCSeconds())}Z`
+  )
+}
+
+function foldIcsLine(line: string): string {
+  const maxBytes = 75
+  const encoder = new TextEncoder()
+  if (encoder.encode(line).length <= maxBytes) return line
+
+  const chunks: string[] = []
+  let remaining = line
+  while (remaining.length > 0) {
+    let sliceEnd = Math.min(remaining.length, maxBytes)
+    while (
+      sliceEnd > 0 &&
+      encoder.encode(remaining.slice(0, sliceEnd)).length > maxBytes
+    ) {
+      sliceEnd--
+    }
+    chunks.push(remaining.slice(0, sliceEnd))
+    remaining = remaining.slice(sliceEnd)
+  }
+
+  return chunks.join('\r\n ')
+}
+
+function foldIcsContent(lines: string[]): string {
+  return lines.map(foldIcsLine).join('\r\n')
+}
+
+function buildLocation(place: EventPlace | null): string {
+  if (!place?.name && !place?.location) return DEFAULT_LOCATION
+
+  const parts: string[] = []
+  if (place.name) parts.push(place.name)
+  const loc = place.location
+  if (loc) {
+    if (loc.street) parts.push(loc.street)
+    const cityLine = [loc.city, loc.state, loc.zip].filter(Boolean).join(' ')
+    if (cityLine) parts.push(cityLine)
+    if (loc.country) parts.push(loc.country)
+  }
+  return parts.join(', ') || DEFAULT_LOCATION
+}
+
+function eventDescription(event: TBWCEvent): string {
+  const text = event.description?.trim()
+  if (text) return text.replace(/\s+/g, ' ').trim()
+  const locationPart = event.place?.name
+    ? ` Location: ${event.place.name}.`
+    : ''
+  return `Join Townsville Bushwalking Club for ${event.name} on ${event.formatted_date}.${locationPart}`
+}
+
+function eventEndIso(event: TBWCEvent): string {
+  if (event.end_time) return event.end_time
+  const start = new Date(normalizeIso(event.start_time))
+  return new Date(start.getTime() + DEFAULT_END_OFFSET_MS).toISOString()
+}
+
+function eventUid(eventId: string): string {
+  return `${eventId}@${new URL(EVENTS_SITE_ORIGIN).host}`
+}
+
+export function buildVEvent(event: TBWCEvent, dtStamp?: Date): string[] {
+  const stamp = formatIcsUtcStamp(dtStamp ?? new Date())
+  const lines = [
+    'BEGIN:VEVENT',
+    `UID:${eventUid(event.id)}`,
+    `DTSTAMP:${stamp}`,
+    `DTSTART;TZID=${CALENDAR_TIMEZONE}:${formatIcsDateTime(event.start_time)}`,
+    `DTEND;TZID=${CALENDAR_TIMEZONE}:${formatIcsDateTime(eventEndIso(event))}`,
+    `SUMMARY:${escapeIcsText(event.name)}`,
+    `DESCRIPTION:${escapeIcsText(eventDescription(event))}`,
+    `LOCATION:${escapeIcsText(buildLocation(event.place))}`,
+    `URL:${absoluteEventPageUrl(event.id)}`,
+  ]
+
+  if (event.is_cancelled) {
+    lines.push('STATUS:CANCELLED')
+  }
+
+  lines.push('END:VEVENT')
+  return lines
+}
+
+export type BuildVCalendarOptions = {
+  name?: string
+  refreshHours?: number
+}
+
+export function buildVCalendar(
+  events: TBWCEvent[],
+  options: BuildVCalendarOptions = {}
+): string {
+  const { name = 'Townsville Bushwalking Club Events', refreshHours = 6 } =
+    options
+  const dtStamp = new Date()
+
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Townsville Bushwalking Club//Events//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    `X-WR-CALNAME:${escapeIcsText(name)}`,
+    `REFRESH-INTERVAL;VALUE=DURATION:PT${refreshHours}H`,
+    VTIMEZONE_BLOCK,
+    ...events.flatMap((event) => buildVEvent(event, dtStamp)),
+    'END:VCALENDAR',
+  ]
+
+  return foldIcsContent(lines) + '\r\n'
+}
+
+export function slugifyEventFilename(name: string): string {
+  const slug = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
+  return slug || 'event'
+}
+
+export async function getUpcomingEventsForCalendar(): Promise<TBWCEvent[]> {
+  const now = new Date()
+  const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 3, 1)
+
+  const allEvents = await getFacebookEvents()
+
+  return allEvents
+    .filter((event) => {
+      if (!event.start_time) return false
+      const eventDate = new Date(normalizeIso(event.start_time))
+      if (eventDate.getFullYear() < MIN_EVENT_YEAR) return false
+      if (eventDate >= maxFutureDate) return false
+      if (isEventPastOnCalendar(event, now)) return false
+      return true
+    })
+    .sort(
+      (a, b) =>
+        new Date(normalizeIso(a.start_time)).getTime() -
+        new Date(normalizeIso(b.start_time)).getTime()
+    )
+}

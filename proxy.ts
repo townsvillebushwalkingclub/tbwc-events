@@ -83,6 +83,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/events/') ||
     pathname.startsWith('/api/event/') ||
     pathname.startsWith('/api/events/') ||
+    pathname.startsWith('/api/calendar/') ||
     pathname === '/api/events'
   ) {
     if (Math.random() < 0.01) cleanupRateLimitStore()
@@ -126,6 +127,7 @@ export const config = {
     '/api/event/:path*',
     '/api/events/:path*',
     '/api/events',
+    '/api/calendar/:path*',
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

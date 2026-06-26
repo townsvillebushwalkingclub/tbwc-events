@@ -5,6 +5,7 @@ import { getPreferredCalendarMonth } from '@/lib/event-utils'
 import { buildHomepageJsonLd } from '@/lib/event-json-ld'
 import { getEventsForCalendarMonths } from '@/lib/facebook-api'
 import Calendar from './components/Calendar'
+import CalendarSubscribe from './components/CalendarSubscribe'
 import EventSearch from './components/EventSearch'
 import JsonLd from './components/JsonLd'
 import SocialLinks from './components/SocialLinks'
@@ -139,6 +140,8 @@ export default async function Home() {
             />
           </Suspense>
         </div>
+
+        <CalendarSubscribe />
 
         <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-8 shadow-sm">
           <EventSearch
