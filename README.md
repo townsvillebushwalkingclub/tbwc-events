@@ -1,23 +1,28 @@
 # Townsville Bushwalking Club - Events Calendar
 
-A modern Next.js web application (TypeScript) that extracts Facebook events from the Townsville Bushwalking Club page and displays them in a beautiful calendar interface with a REST API.
+A modern Next.js web application (TypeScript) that extracts Facebook events from the Townsville Bushwalking Club page and displays them in a calendar interface with a REST API and iCal feeds.
+
+Production site: [events.townsvillebushwalkingclub.com](https://events.townsvillebushwalkingclub.com/)
 
 ## Features
 
-- 📅 **Interactive Calendar View** - Monthly calendar with event indicators
-- 🎯 **Facebook Events Integration** - Real-time events from your Facebook page
-- 🖼️ **Event Thumbnails** - Cover images from Facebook events with fallback icons
-- ⏰ **Start & End Times** - Complete time information for events
-- 📄 **Individual Event Pages** - Dedicated pages for each event with full details and SEO metadata
-- 🗺️ **Sitemap Generation** - A sitemap listing all event and calendar pages for better search engine indexing.
+- 📅 **Interactive Calendar View** - Monthly calendar with event indicators and mobile-friendly layout
+- 🎯 **Facebook Events Integration** - Live events from your Facebook page with in-memory and file caching
+- 📆 **iCal Calendar Feeds** - Subscribeable feed of upcoming events; per-event `.ics` downloads
+- 🖼️ **Event Thumbnails** - Cover images from Facebook events with local fallbacks
+- ⏰ **Start & End Times** - Complete time information, including multi-day events (Australia/Brisbane)
+- 📄 **Individual Event Pages** - Dedicated pages with SEO metadata, JSON-LD, and prev/next navigation
+- 🔎 **Search & Browse** - Search events and browse the full event list
+- 🗺️ **Sitemap Generation** - Dynamic sitemap for event and calendar pages
 - 🔄 **REST API** - JSON endpoints for programmatic access
 - 📱 **Responsive Design** - Works on desktop and mobile devices
-- ⚡ **Modern Tech Stack** - Built with Next.js, React, TypeScript, and Tailwind CSS
-- 🎨 **Beautiful UI** - Modern gradient design with smooth animations
+- ⚡ **Modern Tech Stack** - Next.js, React, TypeScript, and Tailwind CSS
 - 🚀 **Vercel Ready** - Optimized for deployment on Vercel
 - 🔗 **Embed Widget** - JavaScript snippet for embedding events on other websites
-- 💾 **Historical Data Storage** - Past events saved to files to reduce API calls
-- 🔍 **SEO Optimized** - Comprehensive metadata for search engines and social sharing
+- 💾 **Historical Data Storage** - Past events saved to JSON files to reduce API calls
+- 🔍 **SEO Optimized** - Metadata, Open Graph, Twitter cards, and schema.org JSON-LD
+- 🖨️ **Monthly Posters** - Printable poster pages at `/poster/[month]`
+- 🤖 **llms.txt** - Machine-readable club and events summary for AI systems
 
 ## Quick Start
 
@@ -34,7 +39,7 @@ A modern Next.js web application (TypeScript) that extracts Facebook events from
 
    ```bash
    git clone <your-repo-url>
-   cd tbwc-events
+   cd tbwc
    ```
 
 2. **Install dependencies**
@@ -45,10 +50,18 @@ A modern Next.js web application (TypeScript) that extracts Facebook events from
 
 3. **Set up environment variables**
 
-   Create a `.env.local` file and add your Facebook access token:
+   Create a `.env.local` file:
 
    ```text
-   FACEBOOK_ACCESS_TOKEN=your_facebook_access_token_here
+   FACEBOOK_ACCESS_TOKEN=your_facebook_page_access_token_here
+   FACEBOOK_PAGE_ID=your_facebook_page_id_here
+   ```
+
+   Optional:
+
+   ```text
+   NEXT_PUBLIC_SITE_URL=https://events.townsvillebushwalkingclub.com
+   CORS_ALLOWED_ORIGINS=https://townsvillebushwalkingclub.com
    ```
 
 4. **Get Facebook Access Token**
@@ -56,7 +69,7 @@ A modern Next.js web application (TypeScript) that extracts Facebook events from
    - Select your app or create a new one
    - Add permissions: `pages_read_engagement`, `pages_show_list`
    - Generate access token
-   - Copy the token to your `.env` file
+   - Copy the token to `.env.local`
 
 5. **Start the development server**
 
@@ -67,52 +80,82 @@ A modern Next.js web application (TypeScript) that extracts Facebook events from
 6. **Open your browser**
    - Calendar: <http://localhost:3000>
    - API: <http://localhost:3000/api/events>
+   - iCal feed: <http://localhost:3000/api/calendar/feed>
 
 ## API Endpoints
 
-- `GET /api/events` - Get all events
-- `GET /api/events/{year}/{month}` - Get events for a specific month (e.g., `/api/events/2024/1`)
-- `GET /api/event/{id}` - Get a single event by ID
+### JSON event API
+
+These return JSON with `success`, `data`, and `timestamp` fields (where applicable). Events include name, description, times, location, attendance stats, and cover images.
+
+- `GET /api/events` - Upcoming events (approx. 2022 through ~3 months ahead)
+- `GET /api/events/{year}/{month}` - Events for a specific month (e.g. `/api/events/2026/3`)
+- `GET /api/event/{id}` - Single event by Facebook event ID
 - `GET /api/events/search?q=` - Search events by name or description
-- `GET /api/calendar/feed` - iCal feed of upcoming events
+
+### Calendar feeds
+
+- `GET /api/calendar/feed` - Subscribeable iCal feed (`text/calendar`) of upcoming events
+- `GET /api/event/{id}/calendar` - Download a single event as `.ics` (`text/calendar`)
+
+Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The feed updates as Facebook event data changes.
+
+### Other routes
+
+- `GET /api/embed-snippet` - JavaScript embed widget for external sites
 - `GET /llms.txt` - Markdown guide for AI systems (club info and upcoming events)
 
-All endpoints return JSON with `success`, `data`, and `timestamp` fields. Events include name, description, times, location, attendance stats, and cover images.
-
 ## Development
+
+### npm scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run token:refresh` | Refresh Facebook access token |
+| `npm run download:history` | Bulk-download historical events to `data/events/` |
+| `npm run month:sync` | Archive previous month to JSON |
+| `npm run covers:sync` | Sync event cover images |
+| `npm run sync:cancelled` | Sync cancelled event IDs |
+| `npm run poster:send` | Generate and email monthly poster PDF |
 
 ### Project Structure
 
 ```text
-tbwc-events/
-├── app/                   # Next.js App Router (TypeScript)
-│   ├── page.tsx           # Main calendar page
-│   ├── layout.tsx         # Root layout with metadata
-│   ├── events/            # Event detail pages
-│   │   └── [id]/          # Individual event pages
-│   ├── components/        # React components (.tsx)
-│   │   ├── Calendar.tsx   # Calendar component
-│   │   └── EventsList.tsx # Events list component
-│   └── api/               # API routes (.ts)
-│       ├── events/        # Events API endpoints
-│       │   ├── [id]/      # Single event endpoint
-│       │   └── [year]/[month]/ # Monthly events
-│       ├── embed-snippet/ # Embed widget script
-│       └── calendar/      # iCal subscription feed
-│   └── llms.txt/          # AI-readable site guide (llms.txt)
-├── lib/                   # Library and shared logic (.ts)
-│   └── facebook-api.ts   # Facebook API integration
-├── types/                 # Shared TypeScript types
-│   └── event.ts           # Event and related types
-├── tools/                 # Utility scripts (TypeScript, run with tsx)
-│   ├── get-long-lived-token.ts      # Token refresh tool
-│   └── download-historical-events.ts # Historical data download
-├── data/                  # Data storage
-│   └── events/            # Past events JSON files (YYYY/MM.json)
-├── package.json           # Dependencies and scripts
-├── tsconfig.json          # TypeScript configuration
-├── next.config.ts        # Next.js configuration
-└── .env.local             # Environment variables
+tbwc/
+├── app/                        # Next.js App Router
+│   ├── page.tsx                # Homepage calendar + subscribe section
+│   ├── layout.tsx              # Root layout and metadata
+│   ├── events/
+│   │   ├── [id]/               # Event detail pages
+│   │   ├── all/                # Full event list
+│   │   └── search/             # Event search UI
+│   ├── poster/[month]/         # Printable monthly posters
+│   ├── components/             # Calendar, EventSearch, CalendarSubscribe, etc.
+│   ├── api/
+│   │   ├── events/             # JSON events API
+│   │   │   ├── route.ts
+│   │   │   ├── search/
+│   │   │   └── [year]/[month]/
+│   │   ├── event/[id]/         # Single event JSON + .ics download
+│   │   ├── calendar/feed/      # iCal subscription feed
+│   │   └── embed-snippet/      # Embed widget script
+│   ├── llms.txt/               # llms.txt route
+│   ├── sitemap.ts
+│   └── robots.ts
+├── lib/                        # Shared logic
+│   ├── facebook-api.ts         # Facebook Graph API + caching
+│   ├── calendar-ics.ts         # iCal generation
+│   ├── calendar-feed-events.ts
+│   ├── event-utils.ts
+│   └── event-json-ld.ts        # Schema.org JSON-LD
+├── types/event.ts              # TBWCEvent and related types
+├── tools/                      # Maintenance scripts (tsx)
+├── data/events/                # Past events JSON (YYYY/MM.json)
+└── public/event-covers/        # Local event cover images
 ```
 
 ## Facebook API Setup
@@ -146,19 +189,19 @@ Downloads events from 2020 onwards, handles rate limits, and resumes if interrup
 
 ### Configuration
 
-The app fetches events from `https://www.facebook.com/townsvillebushwalkingclub/`. To change the page, update `FACEBOOK_PAGE_ID` in the API routes.
+The app fetches events from the Facebook page identified by `FACEBOOK_PAGE_ID` (default club page: [townsvillebushwalkingclub](https://www.facebook.com/townsvillebushwalkingclub/)). Set `FACEBOOK_PAGE_ID` and `FACEBOOK_ACCESS_TOKEN` in `.env.local`.
 
 ## Troubleshooting
 
 ### Facebook access token is required
 
-- Check `.env.local` has `FACEBOOK_ACCESS_TOKEN` set
+- Check `.env.local` has `FACEBOOK_ACCESS_TOKEN` and `FACEBOOK_PAGE_ID` set
 - Verify token is valid in Graph API Explorer
 
 ### Failed to fetch page info
 
 - Ensure page is public or token has proper permissions
-- Check page username in API routes
+- Confirm `FACEBOOK_PAGE_ID` matches the target page
 
 ### No events data found
 
