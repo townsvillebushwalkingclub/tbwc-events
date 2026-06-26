@@ -21,7 +21,7 @@ export default function CalendarSubscribe() {
 
   return (
     <section
-      className="mb-8 bg-white rounded-2xl border border-gray-200 p-6 md:p-8 shadow-sm"
+      className="mt-8 mb-8 bg-white rounded-2xl border border-gray-200 p-6 md:p-8 shadow-sm"
       aria-labelledby="calendar-subscribe-heading"
     >
       <h2

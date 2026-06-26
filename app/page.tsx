@@ -141,8 +141,6 @@ export default async function Home() {
           </Suspense>
         </div>
 
-        <CalendarSubscribe />
-
         <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-8 shadow-sm">
           <EventSearch
             initialEvents={allEvents}
@@ -151,6 +149,8 @@ export default async function Home() {
             referenceTime={now.toISOString()}
           />
         </div>
+
+        <CalendarSubscribe />
 
         <p className="mt-12 pt-6 text-center flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
           <Link
