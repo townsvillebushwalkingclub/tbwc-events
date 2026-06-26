@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { buildVCalendar, slugifyEventFilename } from '@/lib/calendar-ics'
+import { formatEventDisplayName } from '@/lib/event-utils'
 import { isValidFacebookEventId } from '@/lib/event-id'
 import { getEventById, getPastEventIdsFromFiles } from '@/lib/facebook-api'
 import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/cache-constants'
@@ -92,7 +93,7 @@ export async function GET(
 
     const filename = `${slugifyEventFilename(event.name)}.ics`
     const body = buildVCalendar([event], {
-      name: event.name,
+      name: formatEventDisplayName(event),
     })
 
     const cacheControl =

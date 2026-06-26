@@ -2,6 +2,7 @@
  * Utility functions for event-related operations
  */
 
+import { extractLeadersFromDescription } from '@/lib/poster-description-parse'
 import type { TBWCEvent } from '@/types/event'
 
 const DISPLAY_TIMEZONE = 'Australia/Brisbane'
@@ -131,11 +132,32 @@ export function getMonthLabel(
   return null
 }
 
+/** First letter of the first leader's given name, parsed from the event description. */
+export function getLeaderInitial(description: string | undefined): string | null {
+  if (!description) return null
+  const leaders = extractLeadersFromDescription(description)
+  if (leaders.length === 0) return null
+  const firstToken = leaders[0].trim().split(/\s+/)[0]
+  const match = firstToken.match(/[A-Za-z]/)
+  return match ? match[0].toUpperCase() : null
+}
+
+/** Prefix the event name with the leader initial when one can be parsed. */
+export function formatEventDisplayName(
+  event: Pick<TBWCEvent, 'name' | 'description'>
+): string {
+  const initial = getLeaderInitial(event.description)
+  if (!initial) return event.name
+  const prefix = `${initial} `
+  if (event.name.startsWith(prefix)) return event.name
+  return `${prefix}${event.name}`
+}
+
 /**
  * Calendar event label with status tags prefixed so truncation keeps them visible.
  */
 export function buildCalendarEventLabel(
-  event: Pick<TBWCEvent, 'name' | 'is_cancelled'>,
+  event: Pick<TBWCEvent, 'name' | 'description' | 'is_cancelled'>,
   options: {
     multiDay?: boolean
     maxNameLength?: number
@@ -147,7 +169,7 @@ export function buildCalendarEventLabel(
   if (options.multiDay) tags.push('(Multi-day)')
   const prefix = tags.length > 0 ? `${tags.join(' ')}\u00A0` : ''
 
-  let name = event.name
+  let name = formatEventDisplayName(event)
   if (
     options.maxNameLength != null &&
     name.length > options.maxNameLength

@@ -1,5 +1,8 @@
 import type { EventPlace, TBWCEvent } from '@/types/event'
-import { isEventPastOnCalendar } from '@/lib/event-utils'
+import {
+  formatEventDisplayName,
+  isEventPastOnCalendar,
+} from '@/lib/event-utils'
 import { getFacebookEvents } from '@/lib/facebook-api'
 import { absoluteEventPageUrl, EVENTS_SITE_ORIGIN } from '@/lib/site'
 
@@ -142,7 +145,7 @@ export function buildVEvent(event: TBWCEvent, dtStamp?: Date): string[] {
     `DTSTAMP:${stamp}`,
     `DTSTART;TZID=${CALENDAR_TIMEZONE}:${formatIcsDateTime(event.start_time)}`,
     `DTEND;TZID=${CALENDAR_TIMEZONE}:${formatIcsDateTime(eventEndIso(event))}`,
-    `SUMMARY:${escapeIcsText(event.name)}`,
+    `SUMMARY:${escapeIcsText(formatEventDisplayName(event))}`,
     `DESCRIPTION:${escapeIcsText(eventDescription(event))}`,
     `LOCATION:${escapeIcsText(buildLocation(event.place))}`,
     `URL:${absoluteEventPageUrl(event.id)}`,
