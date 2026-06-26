@@ -21,17 +21,17 @@ Production site: [events.townsvillebushwalkingclub.com](https://events.townsvill
 - 🔗 **Embed Widget** - JavaScript snippet for embedding events on other websites
 - 💾 **Historical Data Storage** - Past events saved to JSON files to reduce API calls
 - 🔍 **SEO Optimized** - Metadata, Open Graph, Twitter cards, and schema.org JSON-LD
-- 🖨️ **Monthly Posters** - Printable poster pages at `/poster/[month]`
+- 🖨️ **Monthly Posters** - Printable poster pages at `/poster/[month]` (save as PDF from the browser)
 - 🤖 **llms.txt** - Machine-readable club and events summary for AI systems
 
 ## Quick Start
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 26+
 - Facebook Developer Account
 - Facebook Page Access Token
-- npm or yarn
+- npm
 
 ### Installation
 
@@ -120,7 +120,7 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
 | `npm run month:sync` | Archive previous month to JSON |
 | `npm run covers:sync` | Sync event cover images |
 | `npm run sync:cancelled` | Sync cancelled event IDs |
-| `npm run poster:send` | Generate and email monthly poster PDF |
+| `npm run poster:send` | Generate and email monthly poster PDF (CI workflow) |
 
 ### Project Structure
 
