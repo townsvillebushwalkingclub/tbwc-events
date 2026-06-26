@@ -1,8 +1,7 @@
 import type { EventPlace, TBWCEvent } from '@/types/event'
-import { filterUpcomingCalendarFeedEvents } from '@/lib/calendar-feed-events'
+import { formatCalendarFeedEventTitle, filterUpcomingCalendarFeedEvents } from '@/lib/calendar-feed-events'
 import {
   BRISBANE_TIMEZONE,
-  formatEventDisplayName,
   getEventDescriptionText,
   parseFacebookEventDate,
 } from '@/lib/event-utils'
@@ -116,15 +115,21 @@ function eventUid(eventId: string): string {
   return `${eventId}@${new URL(EVENTS_SITE_ORIGIN).host}`
 }
 
-export function buildVEvent(event: TBWCEvent, dtStamp?: Date): string[] {
-  const stamp = formatIcsUtcStamp(dtStamp ?? new Date())
+export function buildVEvent(
+  event: TBWCEvent,
+  options: { dtStamp?: Date; includeLeaderInitial?: boolean } = {}
+): string[] {
+  const stamp = formatIcsUtcStamp(options.dtStamp ?? new Date())
+  const summary = options.includeLeaderInitial
+    ? formatCalendarFeedEventTitle(event)
+    : event.name
   const lines = [
     'BEGIN:VEVENT',
     `UID:${eventUid(event.id)}`,
     `DTSTAMP:${stamp}`,
     `DTSTART;TZID=${BRISBANE_TIMEZONE}:${formatIcsDateTime(event.start_time)}`,
     `DTEND;TZID=${BRISBANE_TIMEZONE}:${formatIcsDateTime(eventEndIso(event))}`,
-    `SUMMARY:${escapeIcsText(formatEventDisplayName(event))}`,
+    `SUMMARY:${escapeIcsText(summary)}`,
     `DESCRIPTION:${escapeIcsText(getEventDescriptionText(event, 'preserve-newlines'))}`,
     `LOCATION:${escapeIcsText(buildLocation(event.place))}`,
     `URL:${absoluteEventPageUrl(event.id)}`,
@@ -141,14 +146,18 @@ export function buildVEvent(event: TBWCEvent, dtStamp?: Date): string[] {
 export type BuildVCalendarOptions = {
   name?: string
   refreshHours?: number
+  includeLeaderInitial?: boolean
 }
 
 export function buildVCalendar(
   events: TBWCEvent[],
   options: BuildVCalendarOptions = {}
 ): string {
-  const { name = 'Townsville Bushwalking Club Events', refreshHours = 6 } =
-    options
+  const {
+    name = 'Townsville Bushwalking Club Events',
+    refreshHours = 6,
+    includeLeaderInitial = false,
+  } = options
   const dtStamp = new Date()
 
   const lines = [
@@ -160,7 +169,9 @@ export function buildVCalendar(
     `X-WR-CALNAME:${escapeIcsText(name)}`,
     `REFRESH-INTERVAL;VALUE=DURATION:PT${refreshHours}H`,
     VTIMEZONE_BLOCK,
-    ...events.flatMap((event) => buildVEvent(event, dtStamp)),
+    ...events.flatMap((event) =>
+      buildVEvent(event, { dtStamp, includeLeaderInitial })
+    ),
     'END:VCALENDAR',
   ]
 

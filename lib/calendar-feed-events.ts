@@ -1,4 +1,5 @@
 import type { TBWCEvent } from '@/types/event'
+import { extractLeadersFromDescription } from '@/lib/poster-description-parse'
 import {
   isEventPastOnCalendar,
   parseFacebookEventDate,
@@ -31,4 +32,24 @@ export function filterUpcomingCalendarFeedEvents(
         parseFacebookEventDate(a.start_time).getTime() -
         parseFacebookEventDate(b.start_time).getTime()
     )
+}
+
+function getLeaderInitial(description: string | undefined): string | null {
+  if (!description) return null
+  const leaders = extractLeadersFromDescription(description)
+  if (leaders.length === 0) return null
+  const firstToken = leaders[0].trim().split(/\s+/)[0]
+  const match = firstToken.match(/[A-Za-z]/)
+  return match ? match[0].toUpperCase() : null
+}
+
+/** Event title for the subscribeable iCal feed (leader initial prefix). */
+export function formatCalendarFeedEventTitle(
+  event: Pick<TBWCEvent, 'name' | 'description'>
+): string {
+  const initial = getLeaderInitial(event.description)
+  if (!initial) return event.name
+  const prefix = `${initial} `
+  if (event.name.startsWith(prefix)) return event.name
+  return `${prefix}${event.name}`
 }

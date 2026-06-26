@@ -20,7 +20,6 @@ import {
 } from '@/lib/calendar-grid'
 import {
   buildCalendarEventLabel,
-  formatEventDisplayName,
   getCalendarDateInTimeZone,
   getPreferredCalendarMonth,
   isEventPastOnCalendar,
@@ -473,7 +472,7 @@ export default function Calendar({
                             top: `${30 + index * MULTI_DAY_ROW_HEIGHT}px`,
                             minHeight: `${MULTI_DAY_ROW_HEIGHT}px`,
                           }}
-                          title={`${formatEventDisplayName(event)} (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
+                          title={`${event.name} (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
                         >
                           {buildCalendarEventLabel(
                             event,
@@ -507,7 +506,7 @@ export default function Calendar({
                               marginTop:
                                 index > 0 ? `${index * 16}px` : undefined,
                             }}
-                            title={formatEventDisplayName(event)}
+                            title={event.name}
                           >
                             {buildCalendarEventLabel(
                               event,

@@ -27,7 +27,7 @@ export async function OPTIONS() {
 export async function GET() {
   try {
     const events = await getUpcomingEventsForCalendar()
-    const body = buildVCalendar(events)
+    const body = buildVCalendar(events, { includeLeaderInitial: true })
 
     const response = new NextResponse(body, {
       status: 200,

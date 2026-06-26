@@ -5,7 +5,6 @@ import {
   getEventDetailCacheSeconds,
   validateEventDetailApiAccess,
 } from '@/lib/event-api-access'
-import { formatEventDisplayName } from '@/lib/event-utils'
 import { isValidFacebookEventId } from '@/lib/event-id'
 import { getEventById, getPastEventIdsFromFiles } from '@/lib/facebook-api'
 
@@ -59,7 +58,7 @@ export async function GET(
 
     const filename = `${slugifyEventFilename(event.name)}.ics`
     const body = buildVCalendar([event], {
-      name: formatEventDisplayName(event),
+      name: event.name,
     })
 
     return new NextResponse(body, {
