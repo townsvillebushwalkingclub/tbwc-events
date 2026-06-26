@@ -5,7 +5,51 @@
 import { extractLeadersFromDescription } from '@/lib/poster-description-parse'
 import type { TBWCEvent } from '@/types/event'
 
-const DISPLAY_TIMEZONE = 'Australia/Brisbane'
+export const BRISBANE_TIMEZONE = 'Australia/Brisbane'
+
+const DISPLAY_TIMEZONE = BRISBANE_TIMEZONE
+
+/** Facebook Graph uses +1000; JS Date and schema.org expect +10:00. */
+export function normalizeFacebookIso(iso: string): string {
+  return iso.replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
+}
+
+export function parseFacebookEventDate(iso: string): Date {
+  return new Date(normalizeFacebookIso(iso))
+}
+
+/** Plain-text fallback when an event has no description body. */
+export function buildEventDescriptionFallback(
+  event: Pick<TBWCEvent, 'name' | 'formatted_date' | 'place'>
+): string {
+  const locationPart = event.place?.name
+    ? ` Location: ${event.place.name}.`
+    : ''
+  return `Join Townsville Bushwalking Club for ${event.name} on ${event.formatted_date}.${locationPart}`
+}
+
+function normalizeEventDescriptionNewlines(text: string): string {
+  return text
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .replace(/[^\S\n]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .split('\n')
+    .map((line) => line.trim())
+    .join('\n')
+    .trim()
+}
+
+/** Event description for display/export, with optional newline preservation. */
+export function getEventDescriptionText(
+  event: TBWCEvent,
+  format: 'single-line' | 'preserve-newlines' = 'single-line'
+): string {
+  const text = event.description?.trim()
+  if (!text) return buildEventDescriptionFallback(event)
+  if (format === 'preserve-newlines') return normalizeEventDescriptionNewlines(text)
+  return text.replace(/\s+/g, ' ').trim()
+}
 
 /** Month heading for calendar/list UI; stable across server (UTC) and browser timezones. */
 export function formatCalendarMonthLabel(year: number, month: number): string {

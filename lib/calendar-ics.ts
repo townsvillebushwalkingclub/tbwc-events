@@ -1,20 +1,22 @@
 import type { EventPlace, TBWCEvent } from '@/types/event'
+import { filterUpcomingCalendarFeedEvents } from '@/lib/calendar-feed-events'
 import {
+  BRISBANE_TIMEZONE,
   formatEventDisplayName,
-  isEventPastOnCalendar,
+  getEventDescriptionText,
+  parseFacebookEventDate,
 } from '@/lib/event-utils'
 import { getFacebookEvents } from '@/lib/facebook-api'
 import { absoluteEventPageUrl, EVENTS_SITE_ORIGIN } from '@/lib/site'
 
-export const CALENDAR_TIMEZONE = 'Australia/Brisbane'
+export { BRISBANE_TIMEZONE as CALENDAR_TIMEZONE }
 
 const DEFAULT_LOCATION = 'Townsville, Queensland, Australia'
 const DEFAULT_END_OFFSET_MS = 3 * 60 * 60 * 1000
-const MIN_EVENT_YEAR = 2022
 
 const VTIMEZONE_BLOCK = [
   'BEGIN:VTIMEZONE',
-  `TZID:${CALENDAR_TIMEZONE}`,
+  `TZID:${BRISBANE_TIMEZONE}`,
   'BEGIN:STANDARD',
   'DTSTART:19700101T000000',
   'TZOFFSETFROM:+1000',
@@ -35,15 +37,11 @@ export function escapeIcsText(value: string): string {
     .replace(/\r/g, '\\n')
 }
 
-function normalizeIso(iso: string): string {
-  return iso.replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
-}
-
 /** Local wall-clock datetime for DTSTART/DTEND with TZID. */
 export function formatIcsDateTime(iso: string): string {
-  const date = new Date(normalizeIso(iso))
+  const date = parseFacebookEventDate(iso)
   const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone: CALENDAR_TIMEZONE,
+    timeZone: BRISBANE_TIMEZONE,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -108,28 +106,9 @@ function buildLocation(place: EventPlace | null): string {
   return parts.join(', ') || DEFAULT_LOCATION
 }
 
-function eventDescription(event: TBWCEvent): string {
-  const text = event.description?.trim()
-  if (text) {
-    return text
-      .replace(/\r\n/g, '\n')
-      .replace(/\r/g, '\n')
-      .replace(/[^\S\n]+/g, ' ')
-      .replace(/\n{3,}/g, '\n\n')
-      .split('\n')
-      .map((line) => line.trim())
-      .join('\n')
-      .trim()
-  }
-  const locationPart = event.place?.name
-    ? ` Location: ${event.place.name}.`
-    : ''
-  return `Join Townsville Bushwalking Club for ${event.name} on ${event.formatted_date}.${locationPart}`
-}
-
 function eventEndIso(event: TBWCEvent): string {
   if (event.end_time) return event.end_time
-  const start = new Date(normalizeIso(event.start_time))
+  const start = parseFacebookEventDate(event.start_time)
   return new Date(start.getTime() + DEFAULT_END_OFFSET_MS).toISOString()
 }
 
@@ -143,10 +122,10 @@ export function buildVEvent(event: TBWCEvent, dtStamp?: Date): string[] {
     'BEGIN:VEVENT',
     `UID:${eventUid(event.id)}`,
     `DTSTAMP:${stamp}`,
-    `DTSTART;TZID=${CALENDAR_TIMEZONE}:${formatIcsDateTime(event.start_time)}`,
-    `DTEND;TZID=${CALENDAR_TIMEZONE}:${formatIcsDateTime(eventEndIso(event))}`,
+    `DTSTART;TZID=${BRISBANE_TIMEZONE}:${formatIcsDateTime(event.start_time)}`,
+    `DTEND;TZID=${BRISBANE_TIMEZONE}:${formatIcsDateTime(eventEndIso(event))}`,
     `SUMMARY:${escapeIcsText(formatEventDisplayName(event))}`,
-    `DESCRIPTION:${escapeIcsText(eventDescription(event))}`,
+    `DESCRIPTION:${escapeIcsText(getEventDescriptionText(event, 'preserve-newlines'))}`,
     `LOCATION:${escapeIcsText(buildLocation(event.place))}`,
     `URL:${absoluteEventPageUrl(event.id)}`,
   ]
@@ -198,23 +177,6 @@ export function slugifyEventFilename(name: string): string {
 }
 
 export async function getUpcomingEventsForCalendar(): Promise<TBWCEvent[]> {
-  const now = new Date()
-  const maxFutureDate = new Date(now.getFullYear(), now.getMonth() + 3, 1)
-
   const allEvents = await getFacebookEvents()
-
-  return allEvents
-    .filter((event) => {
-      if (!event.start_time) return false
-      const eventDate = new Date(normalizeIso(event.start_time))
-      if (eventDate.getFullYear() < MIN_EVENT_YEAR) return false
-      if (eventDate >= maxFutureDate) return false
-      if (isEventPastOnCalendar(event, now)) return false
-      return true
-    })
-    .sort(
-      (a, b) =>
-        new Date(normalizeIso(a.start_time)).getTime() -
-        new Date(normalizeIso(b.start_time)).getTime()
-    )
+  return filterUpcomingCalendarFeedEvents(allEvents)
 }

@@ -1,4 +1,5 @@
 import type { EventPlace, TBWCEvent } from '@/types/event'
+import { getEventDescriptionText, normalizeFacebookIso } from '@/lib/event-utils'
 import { resolveEventShareImageForMetadata } from '@/lib/event-share-image'
 import {
   buildOrganizationJsonLd,
@@ -19,9 +20,7 @@ const DEFAULT_POSTAL_ADDRESS = {
 }
 
 /** Facebook uses +1000; schema.org validators expect +10:00. */
-export function normalizeIsoDateTime(iso: string): string {
-  return iso.replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
-}
+export { normalizeFacebookIso as normalizeIsoDateTime } from '@/lib/event-utils'
 
 function eventPageUrl(eventId: string): string {
   return `${EVENTS_SITE_ORIGIN}/events/${eventId}`
@@ -62,12 +61,7 @@ function buildEventLocation(place: EventPlace | null) {
 }
 
 function eventDescription(event: TBWCEvent): string {
-  const text = event.description?.trim()
-  if (text) return text.replace(/\s+/g, ' ').trim()
-  const locationPart = event.place?.name
-    ? ` Location: ${event.place.name}.`
-    : ''
-  return `Join Townsville Bushwalking Club for ${event.name} on ${event.formatted_date}.${locationPart}`
+  return getEventDescriptionText(event, 'single-line')
 }
 
 export type EventJsonLd = {
@@ -92,7 +86,7 @@ export function buildEventJsonLd(event: TBWCEvent): EventJsonLd {
     '@id': eventEntityId(event.id),
     name: event.name,
     description: eventDescription(event),
-    startDate: normalizeIsoDateTime(event.start_time),
+    startDate: normalizeFacebookIso(event.start_time),
     eventStatus: event.is_cancelled
       ? `${SCHEMA_CONTEXT}/EventCancelled`
       : `${SCHEMA_CONTEXT}/EventScheduled`,
@@ -103,7 +97,7 @@ export function buildEventJsonLd(event: TBWCEvent): EventJsonLd {
   }
 
   if (event.end_time) {
-    jsonLd.endDate = normalizeIsoDateTime(event.end_time)
+    jsonLd.endDate = normalizeFacebookIso(event.end_time)
   }
 
   const shareImage = resolveEventShareImageForMetadata(

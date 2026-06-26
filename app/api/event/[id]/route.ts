@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server'
+import {
+  buildEventDetailCacheControl,
+  getEventDetailCacheSeconds,
+  validateEventDetailApiAccess,
+} from '@/lib/event-api-access'
 import { getEventById, getPastEventIdsFromFiles } from '@/lib/facebook-api'
 import { isValidFacebookEventId } from '@/lib/event-id'
-import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/cache-constants'
 
 export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
@@ -52,48 +56,15 @@ export async function GET(
       )
     }
 
-    if (event.start_time) {
-      const now = new Date()
-      const minYear = 2019
-      const eventDate = new Date(event.start_time)
-      const maxFutureDate = new Date(
-        now.getFullYear(),
-        now.getMonth() + 4,
-        0
+    const access = validateEventDetailApiAccess(event)
+    if (!access.ok) {
+      return NextResponse.json(
+        { success: false, error: access.message },
+        { status: access.status }
       )
-
-      if (eventDate.getFullYear() < minYear) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Events before ${minYear} are not available`,
-          },
-          { status: 403 }
-        )
-      }
-
-      if (eventDate > maxFutureDate) {
-        return NextResponse.json(
-          {
-            success: false,
-            error:
-              'Events more than 3 months in the future are not available',
-          },
-          { status: 403 }
-        )
-      }
     }
 
-    let cacheTime = FACEBOOK_EVENTS_REVALIDATE_SECONDS
-    if (event.start_time) {
-      const now = new Date()
-      const eventDate = new Date(event.start_time)
-      now.setHours(0, 0, 0, 0)
-      eventDate.setHours(0, 0, 0, 0)
-      if (eventDate < now) {
-        cacheTime = 31536000 * 10
-      }
-    }
+    const cacheTime = getEventDetailCacheSeconds(event)
 
     const response = NextResponse.json({
       success: true,
@@ -101,17 +72,10 @@ export async function GET(
       timestamp: new Date().toISOString(),
     })
 
-    if (cacheTime > 31536000) {
-      response.headers.set(
-        'Cache-Control',
-        'public, max-age=31536000, s-maxage=31536000, immutable'
-      )
-    } else {
-      response.headers.set(
-        'Cache-Control',
-        `public, max-age=${cacheTime}, s-maxage=${cacheTime}, stale-while-revalidate=${cacheTime}`
-      )
-    }
+    response.headers.set(
+      'Cache-Control',
+      buildEventDetailCacheControl(cacheTime)
+    )
 
     response.headers.set('Access-Control-Allow-Origin', '*')
     response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS')

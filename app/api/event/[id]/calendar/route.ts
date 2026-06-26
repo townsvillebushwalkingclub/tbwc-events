@@ -1,17 +1,17 @@
 import { NextResponse } from 'next/server'
 import { buildVCalendar, slugifyEventFilename } from '@/lib/calendar-ics'
+import {
+  buildEventDetailCacheControl,
+  getEventDetailCacheSeconds,
+  validateEventDetailApiAccess,
+} from '@/lib/event-api-access'
 import { formatEventDisplayName } from '@/lib/event-utils'
 import { isValidFacebookEventId } from '@/lib/event-id'
 import { getEventById, getPastEventIdsFromFiles } from '@/lib/facebook-api'
-import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/cache-constants'
 
 export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 const ICS_CONTENT_TYPE = 'text/calendar; charset=utf-8'
-
-function normalizeIso(iso: string): string {
-  return iso.replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
-}
 
 /** Prerender calendar downloads for past event IDs (they won't change). */
 export async function generateStaticParams() {
@@ -49,46 +49,12 @@ export async function GET(
       })
     }
 
-    if (event.start_time) {
-      const now = new Date()
-      const minYear = 2019
-      const eventDate = new Date(normalizeIso(event.start_time))
-      const maxFutureDate = new Date(
-        now.getFullYear(),
-        now.getMonth() + 4,
-        0
-      )
-
-      if (eventDate.getFullYear() < minYear) {
-        return new NextResponse(
-          `Events before ${minYear} are not available`,
-          {
-            status: 403,
-            headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-          }
-        )
-      }
-
-      if (eventDate > maxFutureDate) {
-        return new NextResponse(
-          'Events more than 3 months in the future are not available',
-          {
-            status: 403,
-            headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-          }
-        )
-      }
-    }
-
-    let cacheTime = FACEBOOK_EVENTS_REVALIDATE_SECONDS
-    if (event.start_time) {
-      const now = new Date()
-      const eventDate = new Date(normalizeIso(event.start_time))
-      now.setHours(0, 0, 0, 0)
-      eventDate.setHours(0, 0, 0, 0)
-      if (eventDate < now) {
-        cacheTime = 31536000 * 10
-      }
+    const access = validateEventDetailApiAccess(event)
+    if (!access.ok) {
+      return new NextResponse(access.message, {
+        status: access.status,
+        headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      })
     }
 
     const filename = `${slugifyEventFilename(event.name)}.ics`
@@ -96,17 +62,14 @@ export async function GET(
       name: formatEventDisplayName(event),
     })
 
-    const cacheControl =
-      cacheTime > 31536000
-        ? 'public, max-age=31536000, s-maxage=31536000, immutable'
-        : `public, max-age=${cacheTime}, s-maxage=${cacheTime}, stale-while-revalidate=${cacheTime}`
-
     return new NextResponse(body, {
       status: 200,
       headers: {
         'Content-Type': ICS_CONTENT_TYPE,
         'Content-Disposition': `attachment; filename="${filename}"`,
-        'Cache-Control': cacheControl,
+        'Cache-Control': buildEventDetailCacheControl(
+          getEventDetailCacheSeconds(event)
+        ),
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
