@@ -222,7 +222,7 @@ export default function EventClient({
                 download
                 className="border border-gray-300 hover:border-gray-400 bg-white text-gray-800 px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center gap-2"
               >
-                Add to calendar
+                Add to calendar (.ics)
               </a>
               <a
                 href={facebookEventUrl}
