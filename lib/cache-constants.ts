@@ -3,8 +3,8 @@
  * Use literal numbers in Next.js segment config exports (revalidate).
  */
 
-/** Facebook events cache / ISR revalidate (24 hours, in seconds). */
-export const FACEBOOK_EVENTS_REVALIDATE_SECONDS = 86400
+/** Facebook events cache / ISR revalidate (6 hours, in seconds). */
+export const FACEBOOK_EVENTS_REVALIDATE_SECONDS = 21600
 
-/** Facebook events in-memory cache (24 hours, in milliseconds). */
-export const FACEBOOK_EVENTS_CACHE_DURATION_MS = 86_400_000
+/** Facebook events in-memory cache (6 hours, in milliseconds). */
+export const FACEBOOK_EVENTS_CACHE_DURATION_MS = 21_600_000

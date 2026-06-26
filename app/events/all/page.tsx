@@ -18,7 +18,7 @@ function formatListDate(dateString: string): string {
   })
 }
 
-export const revalidate = 21600 // 6 hours
+export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 export const metadata: Metadata = {
   title: 'All Events - Townsville Bushwalking Club',

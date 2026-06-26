@@ -21,8 +21,8 @@ import {
 import type { TBWCEvent } from '@/types/event'
 import PosterPage from './PosterPage'
 
-/** Match Facebook events in-memory cache (24h) for instant ISR loads. */
-export const revalidate = 86400
+/** Match site-wide Facebook events revalidate interval for ISR loads. */
+export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 interface PageProps {
   params: Promise<{ month: string }>

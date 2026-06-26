@@ -3,8 +3,9 @@ import {
   buildVCalendar,
   getUpcomingEventsForCalendar,
 } from '@/lib/calendar-ics'
+import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/cache-constants'
 
-export const revalidate = 21600
+export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 const ICS_CONTENT_TYPE = 'text/calendar; charset=utf-8'
 
@@ -35,7 +36,7 @@ export async function GET() {
         'Content-Type': ICS_CONTENT_TYPE,
         'Content-Disposition': 'inline; filename="tbwc-events.ics"',
         'Cache-Control':
-          'public, s-maxage=21600, stale-while-revalidate=21600',
+          `public, s-maxage=${FACEBOOK_EVENTS_REVALIDATE_SECONDS}, stale-while-revalidate=${FACEBOOK_EVENTS_REVALIDATE_SECONDS}`,
       },
     })
 

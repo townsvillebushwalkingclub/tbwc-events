@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getFacebookEvents } from '@/lib/facebook-api'
+import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/cache-constants'
 
-export const revalidate = 86400
+export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 export async function OPTIONS() {
   return new NextResponse(null, {
@@ -38,7 +39,7 @@ export async function GET() {
 
     response.headers.set(
       'Cache-Control',
-      'public, s-maxage=86400, stale-while-revalidate=86400'
+      `public, s-maxage=${FACEBOOK_EVENTS_REVALIDATE_SECONDS}, stale-while-revalidate=${FACEBOOK_EVENTS_REVALIDATE_SECONDS}`
     )
     response.headers.set('Access-Control-Allow-Origin', '*')
     response.headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS')

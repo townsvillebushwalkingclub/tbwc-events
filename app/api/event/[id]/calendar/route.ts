@@ -2,8 +2,9 @@ import { NextResponse } from 'next/server'
 import { buildVCalendar, slugifyEventFilename } from '@/lib/calendar-ics'
 import { isValidFacebookEventId } from '@/lib/event-id'
 import { getEventById, getPastEventIdsFromFiles } from '@/lib/facebook-api'
+import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/cache-constants'
 
-export const revalidate = 86400
+export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 const ICS_CONTENT_TYPE = 'text/calendar; charset=utf-8'
 
@@ -78,7 +79,7 @@ export async function GET(
       }
     }
 
-    let cacheTime = 86400
+    let cacheTime = FACEBOOK_EVENTS_REVALIDATE_SECONDS
     if (event.start_time) {
       const now = new Date()
       const eventDate = new Date(normalizeIso(event.start_time))

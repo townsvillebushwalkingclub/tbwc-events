@@ -1,8 +1,9 @@
 import { getAllEvents } from '@/lib/facebook-api'
 import { NextResponse } from 'next/server'
+import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/cache-constants'
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 3600 // 1 hour
+export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 export async function GET(request: Request) {
   try {
@@ -46,7 +47,7 @@ export async function GET(request: Request) {
     })
     response.headers.set(
       'Cache-Control',
-      'public, s-maxage=3600, stale-while-revalidate=3600'
+      `public, s-maxage=${FACEBOOK_EVENTS_REVALIDATE_SECONDS}, stale-while-revalidate=${FACEBOOK_EVENTS_REVALIDATE_SECONDS}`
     )
     return response
   } catch (error) {

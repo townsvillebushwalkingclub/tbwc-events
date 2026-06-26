@@ -73,7 +73,9 @@ A modern Next.js web application (TypeScript) that extracts Facebook events from
 - `GET /api/events` - Get all events
 - `GET /api/events/{year}/{month}` - Get events for a specific month (e.g., `/api/events/2024/1`)
 - `GET /api/event/{id}` - Get a single event by ID
-- `GET /health` - Health check endpoint
+- `GET /api/events/search?q=` - Search events by name or description
+- `GET /api/calendar/feed` - iCal feed of upcoming events
+- `GET /llms.txt` - Markdown guide for AI systems (club info and upcoming events)
 
 All endpoints return JSON with `success`, `data`, and `timestamp` fields. Events include name, description, times, location, attendance stats, and cover images.
 
@@ -96,7 +98,8 @@ tbwc-events/
 │       │   ├── [id]/      # Single event endpoint
 │       │   └── [year]/[month]/ # Monthly events
 │       ├── embed-snippet/ # Embed widget script
-│       └── health/        # Health check endpoint
+│       └── calendar/      # iCal subscription feed
+│   └── llms.txt/          # AI-readable site guide (llms.txt)
 ├── lib/                   # Library and shared logic (.ts)
 │   └── facebook-api.ts   # Facebook API integration
 ├── types/                 # Shared TypeScript types

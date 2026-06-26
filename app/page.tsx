@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 
 // Static generation: no searchParams so the page can be prerendered.
 // Calendar month switching is handled client-side (and fetches from API when needed).
-export const revalidate = 21600 // 6 hours
+export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 export default async function Home() {
   const now = new Date()

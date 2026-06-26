@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getEventById, getPastEventIdsFromFiles } from '@/lib/facebook-api'
 import { isValidFacebookEventId } from '@/lib/event-id'
+import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/cache-constants'
 
-export const revalidate = 86400
+export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 /** Prerender API responses for past event IDs (they won't change). */
 export async function generateStaticParams() {
@@ -83,7 +84,7 @@ export async function GET(
       }
     }
 
-    let cacheTime = 86400
+    let cacheTime = FACEBOOK_EVENTS_REVALIDATE_SECONDS
     if (event.start_time) {
       const now = new Date()
       const eventDate = new Date(event.start_time)

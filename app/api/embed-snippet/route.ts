@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server'
 import { ALLOWED_DOMAINS } from '@/lib/allowed-domains'
 import { getFacebookEvents } from '@/lib/facebook-api'
 import { OUTBOUND_REF } from '@/lib/outbound-ref'
+import { FACEBOOK_EVENTS_REVALIDATE_SECONDS } from '@/lib/cache-constants'
 
-// Cache embed for 1 hour so inlined event data stays reasonably fresh
-export const revalidate = 3600
+// Cache embed for 6 hours so inlined event data stays in sync with site pages
+export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 export async function GET() {
     // Convert allowed domains array to JSON for injection into the script
@@ -872,7 +873,7 @@ export async function GET() {
         headers: {
             'Content-Type': 'application/javascript; charset=utf-8',
             'Cache-Control':
-                'public, max-age=3600, s-maxage=3600, stale-while-revalidate=3600', // 1 hour (matches inlined event data freshness)
+                `public, max-age=${FACEBOOK_EVENTS_REVALIDATE_SECONDS}, s-maxage=${FACEBOOK_EVENTS_REVALIDATE_SECONDS}, stale-while-revalidate=${FACEBOOK_EVENTS_REVALIDATE_SECONDS}`, // matches site event data freshness
         },
     })
 }
