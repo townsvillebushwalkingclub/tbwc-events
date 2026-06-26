@@ -107,7 +107,17 @@ function buildLocation(place: EventPlace | null): string {
 
 function eventDescription(event: TBWCEvent): string {
   const text = event.description?.trim()
-  if (text) return text.replace(/\s+/g, ' ').trim()
+  if (text) {
+    return text
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      .replace(/[^\S\n]+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .split('\n')
+      .map((line) => line.trim())
+      .join('\n')
+      .trim()
+  }
   const locationPart = event.place?.name
     ? ` Location: ${event.place.name}.`
     : ''
