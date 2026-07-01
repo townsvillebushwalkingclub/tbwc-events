@@ -85,6 +85,7 @@ const sampleEvents: TBWCEvent[] =
 import {
   FACEBOOK_EVENTS_CACHE_DURATION_MS,
 } from '@/lib/cache-constants'
+import { isRuntimeFilesystemWritable } from '@/lib/runtime-writable'
 
 export {
   FACEBOOK_EVENTS_CACHE_DURATION_MS,
@@ -470,6 +471,10 @@ async function saveEventsToFile(
   month: number,
   events: TBWCEvent[]
 ): Promise<void> {
+  if (!isRuntimeFilesystemWritable()) {
+    return
+  }
+
   try {
     const eventsToSave = await Promise.all(
       events.map(async (event) => {

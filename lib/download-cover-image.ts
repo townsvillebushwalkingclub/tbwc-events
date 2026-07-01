@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import sharp from 'sharp'
+import { isRuntimeFilesystemWritable } from '@/lib/runtime-writable'
 
 const COVERS_DIR = path.join(process.cwd(), 'public', 'event-covers')
 const JPEG_QUALITY = 80
@@ -82,6 +83,9 @@ export async function downloadCoverImage(
   imageUrl: string
 ): Promise<string | null> {
   if (!imageUrl) return null
+  if (!isRuntimeFilesystemWritable()) {
+    return null
+  }
   try {
     ensureCoversDirectory()
     const existingFiles = fs.readdirSync(COVERS_DIR)

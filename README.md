@@ -179,7 +179,14 @@ The app handles token expiration gracefully with cached data and clear error mes
 
 ### Historical Events
 
-Past events are automatically saved to `data/events/YYYY/MM.json` to reduce API calls. To download historical data:
+Past events are archived to `data/events/YYYY/MM.json` by the **Archive Previous Month** GitHub Action at **1:00 AM Brisbane** on the 1st of each month (see `.github/workflows/sync-month.yml`). Archives are committed to git and deployed to Vercel; production does not write to disk (Vercel's filesystem is read-only).
+
+To backfill or recover a missed month manually:
+
+- **GitHub Actions:** open **Archive Previous Month** and click **Run workflow**
+- **Local:** `npm run month:sync` then commit and push `data/events/` and cover assets
+
+Bulk historical download:
 
 ```bash
 npm run download:history

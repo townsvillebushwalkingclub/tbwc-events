@@ -2,7 +2,8 @@ name: Archive Previous Month
 
 on:
   schedule:
-    - cron: '0 16 1 * *'  # 2am AEST (UTC+10) on the 1st of every month
+    # 15:00 UTC on month-end days = 01:00 Brisbane on the 1st (AEST, UTC+10)
+    - cron: '0 15 28-31 * *'
   workflow_dispatch:       # allow manual runs from the Actions tab
 
 jobs:
@@ -22,16 +23,35 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Should run archive
+        id: should_run
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          BRISBANE_DAY=$(TZ=Australia/Brisbane date +%d)
+          BRISBANE_HOUR=$(TZ=Australia/Brisbane date +%H)
+          if [ "$BRISBANE_DAY" = "01" ] && [ "$BRISBANE_HOUR" = "01" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "Not 01:00 on the 1st in Brisbane - skipping scheduled run"
+          fi
+
       - name: Archive previous month events and covers
+        if: steps.should_run.outputs.run == 'true'
         run: npx tsx tools/sync-month.ts
         env:
           FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
           FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
 
       - name: Regenerate cover manifest
+        if: steps.should_run.outputs.run == 'true'
         run: npm run covers:manifest
 
       - name: Commit and push if changed
+        if: steps.should_run.outputs.run == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

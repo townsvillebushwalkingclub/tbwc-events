@@ -7,6 +7,7 @@ import path from 'path'
 import { getLocalCoverPath } from '@/lib/event-cover-path'
 import { isValidFacebookEventId } from '@/lib/event-id'
 import { getCalendarDateInTimeZone } from '@/lib/event-utils'
+import { isRuntimeFilesystemWritable } from '@/lib/runtime-writable'
 import type { TBWCEvent } from '@/types/event'
 
 export const EVENTS_DATA_DIR = path.join(process.cwd(), 'data', 'events')
@@ -85,6 +86,10 @@ export function findEventInMonthFiles(eventId: string): TBWCEvent | null {
 
 /** Insert or update one event in its start-month JSON file. */
 export function upsertEventIntoMonthFile(event: TBWCEvent): 'added' | 'updated' {
+  if (!isRuntimeFilesystemWritable()) {
+    return 'updated'
+  }
+
   const { year, month } = getCalendarDateInTimeZone(event.start_time)
   const filePath = getMonthFilePath(year, month)
   const yearDir = path.dirname(filePath)

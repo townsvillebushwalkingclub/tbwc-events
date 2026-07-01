@@ -85,12 +85,9 @@ function formatTime(dateString: string): string {
   })
 }
 
-function getPreviousMonth(): { year: number; month: number } {
-  const now = new Date()
-  const month = now.getUTCMonth() + 1  // 1-12
-  return month === 1
-    ? { year: now.getUTCFullYear() - 1, month: 12 }
-    : { year: now.getUTCFullYear(), month: month - 1 }
+function getPreviousMonth(now = new Date()): { year: number; month: number } {
+  const { year, month } = getCalendarDateInTimeZone(now)
+  return month === 1 ? { year: year - 1, month: 12 } : { year, month: month - 1 }
 }
 
 function getMonthBounds(year: number, month: number): { since: number; until: number } {
