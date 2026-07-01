@@ -7,7 +7,7 @@
 import fs from 'fs'
 import path from 'path'
 import nodemailer from 'nodemailer'
-import puppeteer, { type Page } from 'puppeteer'
+import puppeteer from 'puppeteer'
 import {
   formatPosterMonthLabel,
   formatPosterMonthSlug,
@@ -59,7 +59,11 @@ const smtpPassword = requireEnv('POSTER_MAIL_SMTP_PASSWORD')
 const smtpPort = parseInt(process.env.POSTER_MAIL_SMTP_PORT || '587', 10)
 const smtpSecure = process.env.POSTER_MAIL_SMTP_SECURE === 'true'
 
-async function waitForImages(page: Page): Promise<void> {
+type BrowserPage = Awaited<
+  ReturnType<Awaited<ReturnType<typeof puppeteer.launch>>['newPage']>
+>
+
+async function waitForImages(page: BrowserPage): Promise<void> {
   await page.evaluate(async () => {
     const images = Array.from(document.querySelectorAll('img'))
     await Promise.all(
