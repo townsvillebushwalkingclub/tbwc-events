@@ -60,6 +60,17 @@ export function formatCalendarMonthLabel(year: number, month: number): string {
   })
 }
 
+/** Short date for calendar tooltips; stable across server (UTC) and browser locales. */
+export function formatCalendarShortDate(dateOrIso: Date | string): string {
+  const date = typeof dateOrIso === 'string' ? new Date(dateOrIso) : dateOrIso
+  return date.toLocaleDateString('en-AU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: DISPLAY_TIMEZONE,
+  })
+}
+
 /**
  * Get the calendar date (year, month, day) for an instant in a given timezone.
  * Use this for "which month/day does this event show on?" so events at midnight

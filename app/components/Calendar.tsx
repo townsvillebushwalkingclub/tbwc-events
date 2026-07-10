@@ -25,6 +25,7 @@ import {
   isEventPastOnCalendar,
   isMultiDayEvent,
   formatCalendarMonthLabel,
+  formatCalendarShortDate,
 } from '@/lib/event-utils'
 import type { TBWCEvent } from '@/types/event'
 
@@ -434,10 +435,7 @@ export default function Calendar({
                 return (
                   <>
                     {multiDayEvents.map((event, index) => {
-                      const eventStart = new Date(event.start_time)
-                      const eventEnd = event.end_time
-                        ? new Date(event.end_time)
-                        : eventStart
+                      const eventEnd = event.end_time ?? event.start_time
                       const startCal = getCalendarDateInTimeZone(event.start_time)
                       const endCal = event.end_time
                         ? getCalendarDateInTimeZone(event.end_time)
@@ -472,7 +470,7 @@ export default function Calendar({
                             top: `${30 + index * MULTI_DAY_ROW_HEIGHT}px`,
                             minHeight: `${MULTI_DAY_ROW_HEIGHT}px`,
                           }}
-                          title={`${event.name} (${eventStart.toLocaleDateString()} - ${eventEnd.toLocaleDateString()})`}
+                          title={`${event.name} (${formatCalendarShortDate(event.start_time)} - ${formatCalendarShortDate(eventEnd)})`}
                         >
                           {buildCalendarEventLabel(
                             event,
