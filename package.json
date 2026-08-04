@@ -40,29 +40,31 @@
     "date-fns": "^4.4.0",
     "jszip": "^3.10.1",
     "next": "16.3.0",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.25",
     "qrcode": "^1.5.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.3",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@types/node": "^25.9.1",
-    "@types/nodemailer": "^8.0.0",
+    "@types/node": "^25.9.5",
+    "@types/nodemailer": "^8.0.1",
     "@types/qrcode": "^1.5.6",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "eslint": "^9.39.0",
+    "eslint": "^9.39.5",
     "eslint-config-next": "16.3.0",
-    "nodemailer": "^9.0.1",
-    "puppeteer": "^25.1.0",
-    "tsx": "^4.22.4",
+    "nodemailer": "^9.0.3",
+    "puppeteer": "^25.4.0",
+    "tsx": "^4.23.5",
     "typescript": "^6.0.3"
   },
   "overrides": {
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "postcss": "^8.5.15"
+    "postcss": "^8.5.25",
+    "brace-expansion@1": "1.1.18",
+    "brace-expansion@5": "5.0.9"
   }
 }
