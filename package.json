@@ -53,7 +53,7 @@
     "@types/qrcode": "^1.5.6",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
-    "eslint": "10.8.0",
+    "eslint": "^9.39.0",
     "eslint-config-next": "16.3.0",
     "nodemailer": "^9.0.1",
     "puppeteer": "^25.1.0",

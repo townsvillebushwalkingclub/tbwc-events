@@ -27,6 +27,7 @@ import {
   formatCalendarMonthLabel,
   formatCalendarShortDate,
 } from '@/lib/event-utils'
+import { usePastCheckTime } from '@/lib/use-past-check-time'
 import type { TBWCEvent } from '@/types/event'
 
 const MULTI_DAY_ROW_HEIGHT = 22
@@ -109,11 +110,9 @@ export default function Calendar({
   const [adjacentEvents, setAdjacentEvents] = useState<TBWCEvent[]>([])
   const [adjacentKey, setAdjacentKey] = useState<string | null>(null)
   const [todayDateString, setTodayDateString] = useState<string | null>(null)
-  const [pastCheckTime, setPastCheckTime] = useState(
-    () => new Date(referenceTime)
-  )
   const [isMobileCalendar, setIsMobileCalendar] = useState(false)
   const prevTodayRef = useRef<string | null>(null)
+  const pastCheckTime = usePastCheckTime(referenceTime)
 
   const inPrefetchRange = isInPrefetchRange(
     viewYear,
@@ -121,7 +120,10 @@ export default function Calendar({
     prefetchAnchorYear,
     prefetchAnchorMonth
   )
-  const baseEvents = inPrefetchRange ? serverEvents : overflowEvents ?? []
+  const baseEvents = useMemo(
+    () => (inPrefetchRange ? serverEvents : overflowEvents ?? []),
+    [inPrefetchRange, serverEvents, overflowEvents]
+  )
 
   const navigateToMonth = useCallback(
     (newYear: number, newMonth: number) => {
@@ -302,12 +304,6 @@ export default function Calendar({
     const id = setInterval(syncToday, 60_000)
     return () => clearInterval(id)
   }, [router])
-
-  useEffect(() => {
-    setPastCheckTime(new Date())
-    const id = setInterval(() => setPastCheckTime(new Date()), 60_000)
-    return () => clearInterval(id)
-  }, [referenceTime])
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 1023px)')

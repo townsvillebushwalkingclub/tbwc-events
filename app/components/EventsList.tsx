@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   processDescription,
   normalizeNewlines,
@@ -13,6 +13,7 @@ import {
   isEventPastOnCalendar,
   formatCalendarMonthLabel,
 } from '@/lib/event-utils'
+import { usePastCheckTime } from '@/lib/use-past-check-time'
 import { EventDateTime } from './EventDateTime'
 import type { TBWCEvent } from '@/types/event'
 
@@ -33,15 +34,7 @@ export default function EventsList({
   const [expandedDescriptions, setExpandedDescriptions] = useState<
     Record<string, boolean>
   >({})
-  const [pastCheckTime, setPastCheckTime] = useState(
-    () => new Date(referenceTime)
-  )
-
-  useEffect(() => {
-    setPastCheckTime(new Date())
-    const id = setInterval(() => setPastCheckTime(new Date()), 60_000)
-    return () => clearInterval(id)
-  }, [referenceTime])
+  const pastCheckTime = usePastCheckTime(referenceTime)
 
   const monthYear = formatCalendarMonthLabel(
     currentDate.getFullYear(),

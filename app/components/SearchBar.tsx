@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, FormEvent } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const SEARCH_PAGE = '/events/search'
@@ -10,10 +10,12 @@ export default function SearchBar() {
   const searchParams = useSearchParams()
   const urlQuery = searchParams.get('q') || searchParams.get('search') || ''
   const [query, setQuery] = useState(urlQuery)
+  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
 
-  useEffect(() => {
+  if (urlQuery !== prevUrlQuery) {
+    setPrevUrlQuery(urlQuery)
     setQuery(urlQuery)
-  }, [urlQuery])
+  }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()

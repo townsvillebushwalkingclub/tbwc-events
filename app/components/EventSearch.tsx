@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import EventsList from './EventsList'
 import type { TBWCEvent } from '@/types/event'
@@ -26,54 +26,48 @@ export default function EventSearch({
   searchOnly = false,
 }: EventSearchProps) {
   const router = useRouter()
+  const trimmedQuery = initialSearchQuery?.trim() ?? ''
   const [searchResults, setSearchResults] = useState<TBWCEvent[] | null>(null)
-  const [isSearching, setIsSearching] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-
-  const runSearch = useCallback(async (q: string) => {
-    const trimmed = (q || '').trim()
-    if (!trimmed) {
-      setSearchResults(null)
-      setSearchTerm('')
-      return
-    }
-    setIsSearching(true)
-    setSearchTerm(trimmed)
-    try {
-      const res = await fetch(
-        `/api/events/search?q=${encodeURIComponent(trimmed)}`
-      )
-      const json = await res.json()
-      if (json.success && Array.isArray(json.data)) {
-        setSearchResults(json.data)
-      } else {
-        setSearchResults([])
-      }
-    } catch (err) {
-      console.error('Search failed:', err)
-      setSearchResults([])
-    } finally {
-      setIsSearching(false)
-    }
-  }, [])
+  const [fetchedFor, setFetchedFor] = useState('')
 
   useEffect(() => {
-    if (initialSearchQuery?.trim()) {
-      runSearch(initialSearchQuery.trim())
-    } else {
-      setSearchResults(null)
-      setSearchTerm('')
+    if (!trimmedQuery) return
+
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch(
+          `/api/events/search?q=${encodeURIComponent(trimmedQuery)}`
+        )
+        const json = await res.json()
+        if (cancelled) return
+        if (json.success && Array.isArray(json.data)) {
+          setSearchResults(json.data)
+        } else {
+          setSearchResults([])
+        }
+        setFetchedFor(trimmedQuery)
+      } catch (err) {
+        console.error('Search failed:', err)
+        if (!cancelled) {
+          setSearchResults([])
+          setFetchedFor(trimmedQuery)
+        }
+      }
+    })()
+
+    return () => {
+      cancelled = true
     }
-  }, [initialSearchQuery, runSearch])
+  }, [trimmedQuery])
 
   const handleClear = () => {
     router.push(clearToPath)
-    setSearchResults(null)
-    setSearchTerm('')
   }
 
-  const isSearchMode = !!initialSearchQuery?.trim()
-  const searchReady = isSearchMode && searchResults !== null
+  const isSearchMode = !!trimmedQuery
+  const isSearching = isSearchMode && fetchedFor !== trimmedQuery
+  const searchReady = isSearchMode && fetchedFor === trimmedQuery
   const showMonthList = !searchOnly && !isSearchMode
   const showEventsList = showMonthList || searchReady
 
@@ -83,8 +77,8 @@ export default function EventSearch({
         <div className="mb-4 flex flex-wrap items-center gap-3 rounded-lg bg-sky-light px-4 py-2 text-sm text-gray-800">
           <span>
             {searchResults!.length === 0
-              ? `No events found for "${searchTerm}".`
-              : `Found ${searchResults!.length} event${searchResults!.length === 1 ? '' : 's'} for "${searchTerm}".`}
+              ? `No events found for "${trimmedQuery}".`
+              : `Found ${searchResults!.length} event${searchResults!.length === 1 ? '' : 's'} for "${trimmedQuery}".`}
           </span>
           <button
             type="button"
@@ -104,12 +98,8 @@ export default function EventSearch({
         <EventsList
           events={searchReady ? searchResults! : initialEvents}
           currentDate={currentDate}
+          titleOverride={searchReady ? `Search: ${trimmedQuery}` : null}
           referenceTime={referenceTime}
-          titleOverride={
-            searchReady
-              ? `Search results${searchTerm ? ` for "${searchTerm}"` : ''}`
-              : null
-          }
         />
       )}
     </div>

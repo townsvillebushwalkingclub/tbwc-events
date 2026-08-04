@@ -151,7 +151,8 @@ tbwc/
 │   ├── calendar-ics.ts         # iCal generation
 │   ├── calendar-feed-events.ts
 │   ├── event-utils.ts
-│   └── event-json-ld.ts        # Schema.org JSON-LD
+│   ├── event-json-ld.ts        # Schema.org JSON-LD
+│   └── use-past-check-time.ts  # Client past/upcoming clock hook
 ├── types/event.ts              # TBWCEvent and related types
 ├── tools/                      # Maintenance scripts (tsx)
 ├── data/events/                # Past events JSON (YYYY/MM.json)

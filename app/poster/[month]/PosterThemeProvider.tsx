@@ -72,10 +72,12 @@ export function PosterThemeProvider({
       localStorage.setItem(POSTER_THEME_STORAGE_KEY, initialTheme)
       return
     }
+    // Hydrate from localStorage/URL after SSR (server used DEFAULT).
     const resolved = readInitialTheme(null)
-    setThemeState(resolved)
     localStorage.setItem(POSTER_THEME_STORAGE_KEY, resolved)
     syncThemeToUrl(resolved)
+    // External store sync; deferred so it is not a cascading render in-effect.
+    queueMicrotask(() => setThemeState(resolved))
   }, [initialTheme])
 
   useEffect(() => {
@@ -87,7 +89,7 @@ export function PosterThemeProvider({
       savedTitleRef.current = document.title
       const themeLabel = POSTER_THEMES[theme]
       if (!document.title.includes(themeLabel)) {
-        document.title = `${document.title} – ${themeLabel}`
+        document.title = `${document.title} - ${themeLabel}`
       }
     }
 
