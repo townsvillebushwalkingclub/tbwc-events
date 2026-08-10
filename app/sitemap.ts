@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: `${baseUrl}/events/search`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'yearly',
       priority: 0.7,
     },
   ]
@@ -44,8 +44,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     routes.push({
       url: `${baseUrl}/events/${event.id}`,
       lastModified: eventDate || new Date(),
-      changeFrequency: isPast ? 'yearly' : 'daily',
-      priority: isPast ? 0.5 : 0.9,
+      changeFrequency: isPast ? 'never' : 'daily',
+      priority: isPast ? 0.1 : 0.9,
     })
   })
 
