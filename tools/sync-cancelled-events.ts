@@ -209,6 +209,7 @@ async function main(): Promise<void> {
   let added = 0
   let updated = 0
   let skipped = 0
+  let noArchive = 0
   let failed = 0
 
   for (const eventId of cancelledIds) {
@@ -234,18 +235,24 @@ async function main(): Promise<void> {
     if (result === 'added') {
       added++
       console.log(`✅ Added ${eventId} to ${monthLabel}`)
-    } else {
+    } else if (result === 'updated') {
       updated++
       console.log(`♻️  Updated ${eventId} in ${monthLabel}`)
+    } else {
+      noArchive++
+      console.log(
+        `⏭️  ${eventId} skipped — no ${monthLabel} archive yet (run month:sync first)`
+      )
     }
   }
 
   console.log('\n' + '='.repeat(50))
   console.log('📊 Cancelled Event Sync Summary')
-  console.log(`   Added:   ${added}`)
-  console.log(`   Updated: ${updated}`)
-  console.log(`   Skipped: ${skipped} (already in JSON)`)
-  console.log(`   Failed:  ${failed}`)
+  console.log(`   Added:      ${added}`)
+  console.log(`   Updated:    ${updated}`)
+  console.log(`   Skipped:    ${skipped} (already in JSON)`)
+  console.log(`   No archive: ${noArchive} (month file missing)`)
+  console.log(`   Failed:     ${failed}`)
   console.log('='.repeat(50))
 }
 

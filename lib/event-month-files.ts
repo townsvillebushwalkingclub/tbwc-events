@@ -84,18 +84,23 @@ export function findEventInMonthFiles(eventId: string): TBWCEvent | null {
   return null
 }
 
-/** Insert or update one event in its start-month JSON file. */
-export function upsertEventIntoMonthFile(event: TBWCEvent): 'added' | 'updated' {
-  if (!isRuntimeFilesystemWritable()) {
-    return 'updated'
-  }
-
+/**
+ * Insert or update one event in its start-month JSON file.
+ * Never creates a month archive - only updates files that already exist
+ * (created by month:sync).
+ */
+export function upsertEventIntoMonthFile(
+  event: TBWCEvent
+): 'added' | 'updated' | 'skipped' {
   const { year, month } = getCalendarDateInTimeZone(event.start_time)
   const filePath = getMonthFilePath(year, month)
-  const yearDir = path.dirname(filePath)
 
-  if (!fs.existsSync(yearDir)) {
-    fs.mkdirSync(yearDir, { recursive: true })
+  if (!fs.existsSync(filePath)) {
+    return 'skipped'
+  }
+
+  if (!isRuntimeFilesystemWritable()) {
+    return 'updated'
   }
 
   const events = readMonthFileRaw(filePath)
@@ -120,7 +125,7 @@ export function upsertEventIntoMonthFile(event: TBWCEvent): 'added' | 'updated' 
 
 /**
  * Load a cancelled event: month files first, then Facebook.
- * Past-month results are archived to JSON to avoid repeat API calls.
+ * If a past-month archive already exists, upsert into it; never create stubs.
  */
 export async function resolveCancelledEvent(
   eventId: string,
