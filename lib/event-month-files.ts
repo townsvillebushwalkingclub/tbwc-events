@@ -132,7 +132,9 @@ export async function resolveCancelledEvent(
   fetchFromApi: (id: string) => Promise<TBWCEvent | null>
 ): Promise<TBWCEvent | null> {
   const fromFile = findEventInMonthFiles(eventId)
-  if (fromFile) return fromFile
+  if (fromFile) {
+    return applyLocalCover({ ...fromFile, is_cancelled: true })
+  }
 
   const fromApi = await fetchFromApi(eventId)
   if (!fromApi) return null

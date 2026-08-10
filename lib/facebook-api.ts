@@ -324,14 +324,27 @@ function getCancelledEventIds(): string[] {
   return []
 }
 
+/** Force `is_cancelled` when the ID is listed in cancelled-event-ids.json. */
+function withCancelledOverride(
+  event: TBWCEvent,
+  cancelledIds: Set<string>
+): TBWCEvent {
+  if (!cancelledIds.has(event.id) || event.is_cancelled) return event
+  return { ...event, is_cancelled: true }
+}
+
 async function mergeCancelledEventsIntoMonth(
   events: TBWCEvent[],
   year: number,
   month: number
 ): Promise<TBWCEvent[]> {
-  const result = [...events]
+  const cancelledIds = getCancelledEventIds()
+  const cancelledSet = new Set(cancelledIds)
+  const result = events.map((event) =>
+    withCancelledOverride(event, cancelledSet)
+  )
   const existingIds = new Set(result.map((e) => e.id))
-  for (const id of getCancelledEventIds()) {
+  for (const id of cancelledIds) {
     if (existingIds.has(id)) continue
     const event = await resolveCancelledEvent(id, fetchEventByIdFromApi)
     if (!event) continue
@@ -554,14 +567,17 @@ export async function getEventsForCalendarMonths(
   if (!months?.length) return []
   const allEvents = await getFacebookEvents()
   const cancelledIds = getCancelledEventIds()
+  const cancelledSet = new Set(cancelledIds)
   const existingIds = new Set<string>()
   const byMonth = new Map<string, TBWCEvent[]>()
   for (const { year, month } of months) {
     const key = `${year}-${month}`
-    const filtered = allEvents.filter((event) => {
-      const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
-      return y === year && m === month
-    })
+    const filtered = allEvents
+      .filter((event) => {
+        const { year: y, month: m } = getCalendarDateInTimeZone(event.start_time)
+        return y === year && m === month
+      })
+      .map((event) => withCancelledOverride(event, cancelledSet))
     filtered.forEach((e) => existingIds.add(e.id))
     byMonth.set(key, filtered)
   }
@@ -594,16 +610,19 @@ export async function getEventsForCalendarMonths(
 
 export async function getEventById(eventId: string): Promise<TBWCEvent | null> {
   try {
+    const cancelledSet = new Set(getCancelledEventIds())
+    const finish = (event: TBWCEvent): TBWCEvent =>
+      applyLocalCoverToEvent(withCancelledOverride(event, cancelledSet))
+
     if (eventsCache) {
       const cachedEvent = eventsCache.find((e) => e.id === eventId)
-      if (cachedEvent) return applyLocalCoverToEvent(cachedEvent)
+      if (cachedEvent) return finish(cachedEvent)
     }
 
     const fromFiles = findEventInMonthFiles(eventId)
-    if (fromFiles) return applyLocalCoverToEvent(fromFiles)
+    if (fromFiles) return finish(fromFiles)
 
-    const cancelledIds = getCancelledEventIds()
-    if (cancelledIds.includes(eventId)) {
+    if (cancelledSet.has(eventId)) {
       const resolved = await resolveCancelledEvent(
         eventId,
         fetchEventByIdFromApi
@@ -612,11 +631,11 @@ export async function getEventById(eventId: string): Promise<TBWCEvent | null> {
     }
 
     const fromApi = await fetchEventByIdFromApi(eventId)
-    if (fromApi) return applyLocalCoverToEvent(fromApi)
+    if (fromApi) return finish(fromApi)
 
     const allEvents = await getFacebookEvents()
     const event = allEvents.find((e) => e.id === eventId)
-    return event ? applyLocalCoverToEvent(event) : null
+    return event ? finish(event) : null
   } catch (error) {
     console.error('Error getting event by ID:', error)
     throw error
@@ -670,6 +689,10 @@ export async function getAllEvents(): Promise<TBWCEvent[]> {
     }
 
     const cancelledIds = getCancelledEventIds()
+    const cancelledSet = new Set(cancelledIds)
+    for (let i = 0; i < allEvents.length; i++) {
+      allEvents[i] = withCancelledOverride(allEvents[i], cancelledSet)
+    }
     for (const id of cancelledIds) {
       if (allEvents.some((e) => e.id === id)) continue
       const event = await resolveCancelledEvent(id, fetchEventByIdFromApi)
