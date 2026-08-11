@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import SiteFooter from '@/app/components/SiteFooter'
+import EventCoverThumb from '@/app/components/EventCoverThumb'
 import { getAllEvents } from '@/lib/facebook-api'
 import type { Metadata } from 'next'
 
@@ -117,8 +118,9 @@ export default async function AllEventsPage() {
                 >
                   <Link
                     href={`/events/${event.id}`}
-                    className="flex flex-wrap items-baseline gap-x-3 gap-y-1 px-4 py-3 bg-white hover:bg-gray-50 transition-colors text-left"
+                    className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 bg-white hover:bg-gray-50 transition-colors text-left"
                   >
+                    <EventCoverThumb cover={event.cover} />
                     <span
                       className="text-gray-500 text-sm shrink-0"
                       style={{ minWidth: '7.5rem' }}

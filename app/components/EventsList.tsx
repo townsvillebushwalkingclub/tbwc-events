@@ -15,6 +15,7 @@ import {
 } from '@/lib/event-utils'
 import { usePastCheckTime } from '@/lib/use-past-check-time'
 import { EventDateTime } from './EventDateTime'
+import EventCoverThumb from './EventCoverThumb'
 import type { TBWCEvent } from '@/types/event'
 
 interface EventsListProps {
@@ -117,6 +118,7 @@ export default function EventsList({
                 className="rounded-2xl p-4 border border-gray-200 bg-gray-100 text-gray-500"
               >
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                  <EventCoverThumb cover={event.cover} />
                   <Link
                     href={`/events/${event.id}`}
                     className="font-semibold text-gray-600 hover:text-gray-800 transition-colors"
