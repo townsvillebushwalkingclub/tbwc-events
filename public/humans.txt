@@ -7,7 +7,6 @@ From: Wanderstories - https://wanderstories.space/
 Townsville Bushwalking Club - https://townsvillebushwalkingclub.com/
 
 /* SITE */
-Last update: 2026/08/12
 Language: English
 Doctype: HTML5
 Standards: HTML5, CSS3
