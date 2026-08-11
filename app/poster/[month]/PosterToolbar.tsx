@@ -14,18 +14,18 @@ import { usePosterTheme } from './PosterThemeProvider'
 interface PosterToolbarProps {
   prev: PosterMonth
   next: PosterMonth
-  excludeQuery: string
+  filterQuery: string
   aiDownload: PosterAiDownloadProps
 }
 
 export default function PosterToolbar({
   prev,
   next,
-  excludeQuery,
+  filterQuery,
   aiDownload,
 }: PosterToolbarProps) {
   const { theme, setTheme } = usePosterTheme()
-  const navQuery = appendPosterThemeToQuery(excludeQuery, theme)
+  const navQuery = appendPosterThemeToQuery(filterQuery, theme)
 
   return (
     <div className="poster-toolbar no-print">

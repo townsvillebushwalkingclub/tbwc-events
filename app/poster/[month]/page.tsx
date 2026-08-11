@@ -3,6 +3,11 @@ import type { Metadata } from 'next'
 import { getPosterLayout } from '@/lib/poster-layout'
 import type { PosterAiDownloadEvent } from '@/lib/poster-ai-prompt'
 import {
+  moveFeaturedFirst,
+  parsePosterFeaturedParam,
+  parsePosterIncludeParam,
+} from '@/lib/poster-query'
+import {
   addMonths,
   formatPosterDateTime,
   formatPosterFeatureDate,
@@ -27,6 +32,7 @@ export const revalidate = 21600 // FACEBOOK_EVENTS_REVALIDATE_SECONDS
 
 interface PageProps {
   params: Promise<{ month: string }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
 export function generateStaticParams() {
@@ -51,18 +57,31 @@ export async function generateMetadata({
   }
 }
 
-export default async function PosterMonthPage({ params }: PageProps) {
+export default async function PosterMonthPage({
+  params,
+  searchParams,
+}: PageProps) {
   const { month } = await params
+  const query = await searchParams
   const anchor = parsePosterMonthParam(month)
   if (!anchor) notFound()
 
-  const poster = await getPosterEventsForMonth(anchor)
+  const includeIds = parsePosterIncludeParam(query.include)
+  const featuredId = parsePosterFeaturedParam(query.featured)
+  if (featuredId) includeIds.add(featuredId)
+
+  const poster = await getPosterEventsForMonth(
+    anchor,
+    new Set(),
+    includeIds
+  )
+  const currentEvents = moveFeaturedFirst(poster.currentMonth, featuredId)
   const prev = addMonths(anchor.year, anchor.month, -1)
   const next = addMonths(anchor.year, anchor.month, 1)
-  const layout = getPosterLayout(poster.currentMonth.length)
+  const layout = getPosterLayout(currentEvents.length)
   const useFeatureDate = layout.showDescription
 
-  const aiDownloadEvents: PosterAiDownloadEvent[] = poster.currentMonth.map(
+  const aiDownloadEvents: PosterAiDownloadEvent[] = currentEvents.map(
     (event) => toAiDownloadEvent(event, useFeatureDate)
   )
 
@@ -81,7 +100,7 @@ export default async function PosterMonthPage({ params }: PageProps) {
         nextMonthLabel: poster.nextMonthLabel,
       }}
       anchorLabel={poster.anchorLabel}
-      currentEvents={poster.currentMonth}
+      currentEvents={currentEvents}
       nextEvents={poster.nextMonth}
       nextMonthLabel={poster.nextMonthLabel}
     />

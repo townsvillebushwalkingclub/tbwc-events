@@ -424,6 +424,28 @@
   min-height: 0;
 }
 
+/* Sparse months: featured hero must dominate; otherwise the lone "More"
+   card grows larger than the highlighted walk (flex: 1 on the grid). */
+.poster-page--theme-nature .poster-events-hero-split--n2 .poster-events-hero {
+  flex: 1 1 62%;
+  max-height: 64%;
+}
+
+.poster-page--theme-nature .poster-events-hero-split--n2 .poster-events-grid {
+  flex: 0 1 28%;
+  max-height: 30%;
+}
+
+.poster-page--theme-nature .poster-events-hero-split--n3 .poster-events-hero {
+  flex: 1 1 48%;
+  max-height: 50%;
+}
+
+.poster-page--theme-nature .poster-events-hero-split--n3 .poster-events-grid {
+  flex: 1 1 40%;
+  max-height: 42%;
+}
+
 .poster-page--theme-nature .poster-next-month {
   position: relative;
   display: flex;

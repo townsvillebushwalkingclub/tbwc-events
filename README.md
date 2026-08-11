@@ -108,6 +108,11 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
 - `GET /events/{id}/cover` - Event cover image (JPEG/PNG) used for Open Graph and Messenger previews
 - `GET /api/embed-snippet` - JavaScript embed widget for external sites
 - `GET /llms.txt` - Markdown guide for AI systems (club info and upcoming events)
+- `GET /poster/{yyyy-mm}` - Printable monthly poster (HTML; print/save as PDF from the browser). Optional query params:
+  - `include=id1,id2` - force-include those Facebook event IDs on the poster (any month; still capped at 12 current / 5 next-month teaser)
+  - `exclude=id1,id2` - hide those event IDs from the poster
+  - `featured=id` - pin that event as the large/hero walk when the layout allows (also force-includes it)
+  - `theme=nature|simple` - poster visual theme (`nature` is the default)
 
 ## Development
 

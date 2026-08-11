@@ -26,7 +26,7 @@ export function parsePosterThemeParam(
   return raw && isPosterThemeId(raw) ? raw : null
 }
 
-/** Append theme to an existing poster query string (`?exclude=…` or ``). */
+/** Append theme to an existing poster query string (`?include=…&exclude=…&featured=…` or ``). */
 export function appendPosterThemeToQuery(
   query: string,
   theme: PosterThemeId

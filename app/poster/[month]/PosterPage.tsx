@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { formatPosterExcludeQuery } from '@/lib/poster-exclude'
+import { formatPosterFilterQuery } from '@/lib/poster-query'
 import { formatPosterNextMonthLine } from '@/lib/poster-format'
 import { PosterThemeProvider } from './PosterThemeProvider'
 import PosterContent from './PosterContent'
@@ -11,8 +11,9 @@ import type { PosterMonth } from '@/lib/poster-month'
 import type { TBWCEvent } from '@/types/event'
 import {
   filterPosterExcludedEvents,
-  usePosterExcludeIds,
-} from './usePosterExclude'
+  moveFeaturedFirst,
+  usePosterFilters,
+} from './usePosterFilters'
 
 export interface PosterPageProps {
   prev: PosterMonth
@@ -33,37 +34,46 @@ export default function PosterPage({
   nextEvents,
   nextMonthLabel,
 }: PosterPageProps) {
-  const excludeIds = usePosterExcludeIds()
-  const excludeQuery = formatPosterExcludeQuery(excludeIds)
+  const { excludeIds, includeIds, featuredId } = usePosterFilters()
+  const filterQuery = formatPosterFilterQuery({
+    excludeIds,
+    includeIds,
+    featuredId,
+  })
 
   const filteredCurrentEvents = useMemo(
-    () => filterPosterExcludedEvents(currentEvents, excludeIds),
-    [currentEvents, excludeIds]
+    () =>
+      moveFeaturedFirst(
+        filterPosterExcludedEvents(currentEvents, excludeIds),
+        featuredId
+      ),
+    [currentEvents, excludeIds, featuredId]
   )
   const filteredNextEvents = useMemo(
     () => filterPosterExcludedEvents(nextEvents, excludeIds),
     [nextEvents, excludeIds]
   )
-  const filteredAiDownload = useMemo(
-    (): PosterAiDownloadProps => ({
+  const filteredAiDownload = useMemo((): PosterAiDownloadProps => {
+    const featuredCurrent = moveFeaturedFirst(
+      aiDownload.currentEvents.filter((event) => !excludeIds.has(event.id)),
+      featuredId
+    )
+    return {
       ...aiDownload,
-      currentEvents: aiDownload.currentEvents.filter(
-        (event) => !excludeIds.has(event.id)
-      ),
+      currentEvents: featuredCurrent,
       nextEvents: filteredNextEvents.map((event) => ({
         name: event.name,
         dateLine: formatPosterNextMonthLine(event),
       })),
-    }),
-    [aiDownload, excludeIds, filteredNextEvents]
-  )
+    }
+  }, [aiDownload, excludeIds, featuredId, filteredNextEvents])
 
   return (
     <PosterThemeProvider>
       <PosterToolbar
         prev={prev}
         next={next}
-        excludeQuery={excludeQuery}
+        filterQuery={filterQuery}
         aiDownload={filteredAiDownload}
       />
       <PosterContent

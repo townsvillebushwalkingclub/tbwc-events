@@ -4,10 +4,6 @@
 
 import { getFacebookEvents } from '@/lib/facebook-api'
 import {
-  formatPosterExcludeQuery,
-  parsePosterExcludeParam,
-} from '@/lib/poster-exclude'
-import {
   formatPosterCompactDate,
   formatPosterDateTime,
   formatPosterFeatureDate,
@@ -28,9 +24,12 @@ import type { TBWCEvent } from '@/types/event'
 
 export { POSTER_QR_URL } from '@/lib/poster-constants'
 export {
-  formatPosterExcludeQuery,
+  formatPosterFilterQuery,
+  moveFeaturedFirst,
   parsePosterExcludeParam,
-} from '@/lib/poster-exclude'
+  parsePosterFeaturedParam,
+  parsePosterIncludeParam,
+} from '@/lib/poster-query'
 export type { PosterMonth } from '@/lib/poster-month'
 export {
   addMonths,
@@ -82,9 +81,71 @@ function excludeEvents(events: TBWCEvent[], excludeIds: Set<string>): TBWCEvent[
   return events.filter((event) => !excludeIds.has(event.id))
 }
 
+function sortEventsByStart(events: TBWCEvent[]): TBWCEvent[] {
+  return [...events].sort(
+    (a, b) =>
+      new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+  )
+}
+
+function dedupeById(events: TBWCEvent[]): TBWCEvent[] {
+  const seen = new Set<string>()
+  return events.filter((event) => {
+    if (seen.has(event.id)) return false
+    seen.add(event.id)
+    return true
+  })
+}
+
+/**
+ * Resolve force-include IDs from the full event pool (any month).
+ * Skips cancelled / missing start_time. Result is chronological.
+ */
+export function resolvePosterIncludeEvents(
+  allEvents: TBWCEvent[],
+  includeIds: Set<string>
+): TBWCEvent[] {
+  if (includeIds.size === 0) return []
+  const byId = new Map(allEvents.map((event) => [event.id, event]))
+  const found: TBWCEvent[] = []
+  for (const id of includeIds) {
+    const event = byId.get(id)
+    if (!event || !event.start_time || event.is_cancelled) continue
+    found.push(event)
+  }
+  return sortEventsByStart(found)
+}
+
+/**
+ * Cap month events while reserving force-included IDs (including cross-month).
+ * Preserves chronological order in the result.
+ */
+export function selectPosterEvents(
+  monthEvents: TBWCEvent[],
+  includeEvents: TBWCEvent[],
+  max: number
+): TBWCEvent[] {
+  if (max <= 0) return []
+  if (includeEvents.length === 0) return monthEvents.slice(0, max)
+
+  const monthIds = new Set(monthEvents.map((event) => event.id))
+  const includeIds = new Set(includeEvents.map((event) => event.id))
+  const included = sortEventsByStart([
+    ...monthEvents.filter((event) => includeIds.has(event.id)),
+    ...includeEvents.filter((event) => !monthIds.has(event.id)),
+  ])
+  const rest = monthEvents.filter((event) => !includeIds.has(event.id))
+  const slotsForRest = Math.max(0, max - included.length)
+  return sortEventsByStart([
+    ...included,
+    ...rest.slice(0, slotsForRest),
+  ]).slice(0, max)
+}
+
 export async function getPosterEventsForMonth(
   anchor: PosterMonth,
-  excludeIds: Set<string> = new Set()
+  excludeIds: Set<string> = new Set(),
+  includeIds: Set<string> = new Set()
 ): Promise<PosterEventsData> {
   const next = addMonths(anchor.year, anchor.month, 1)
   let all: TBWCEvent[] = []
@@ -95,22 +156,30 @@ export async function getPosterEventsForMonth(
   }
 
   const upcoming = filterUpcoming(all)
-  const currentMonth = excludeEvents(
-    eventsInMonth(upcoming, anchor.year, anchor.month),
-    excludeIds
-  ).slice(0, POSTER_MAX_CURRENT_MONTH)
-  const nextMonthRaw = excludeEvents(
-    eventsInMonth(upcoming, next.year, next.month),
+  // Includes may be from any month; resolve against full pool so past or
+  // far-future walks can still be pinned onto this poster.
+  const includeEvents = excludeEvents(
+    resolvePosterIncludeEvents(all, includeIds),
     excludeIds
   )
-  const nextMonthSeen = new Set<string>()
-  const nextMonth = nextMonthRaw
-    .filter((e) => {
-      if (nextMonthSeen.has(e.id)) return false
-      nextMonthSeen.add(e.id)
-      return true
-    })
-    .slice(0, POSTER_MAX_NEXT_MONTH)
+  const currentMonth = selectPosterEvents(
+    excludeEvents(
+      eventsInMonth(upcoming, anchor.year, anchor.month),
+      excludeIds
+    ),
+    includeEvents,
+    POSTER_MAX_CURRENT_MONTH
+  )
+  const currentIds = new Set(currentMonth.map((event) => event.id))
+  // Next-month teaser: natural next-month walks, minus anything already on the
+  // main poster (cross-month includes live in currentMonth only).
+  const nextMonth = selectPosterEvents(
+    dedupeById(
+      excludeEvents(eventsInMonth(upcoming, next.year, next.month), excludeIds)
+    ).filter((event) => !currentIds.has(event.id)),
+    [],
+    POSTER_MAX_NEXT_MONTH
+  )
 
   return {
     anchor,

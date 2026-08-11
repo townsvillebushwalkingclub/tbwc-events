@@ -43,7 +43,9 @@ export default function PosterEventsArea({
     const gridClass = posterHeroSplitGridClassName(gridEvents.length)
 
     return (
-      <div className="poster-events-hero-split">
+      <div
+        className={`poster-events-hero-split poster-events-hero-split--n${currentEvents.length}`}
+      >
         <div className="poster-events-hero">
           <PosterEventCard
             event={heroEvent}
