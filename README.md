@@ -60,9 +60,12 @@ Production site: [events.townsvillebushwalkingclub.com](https://events.townsvill
    Optional:
 
    ```text
+   FACEBOOK_APP_ID=your_facebook_app_id_here
    NEXT_PUBLIC_SITE_URL=https://events.townsvillebushwalkingclub.com
    CORS_ALLOWED_ORIGINS=https://townsvillebushwalkingclub.com
    ```
+
+   `FACEBOOK_APP_ID` is public and safe to expose. When set, pages include `<meta property="fb:app_id">` for Meta Sharing Debugger / Domain Insights. Never put `FACEBOOK_APP_SECRET` in the Next.js app env used for the site (keep it for local `npm run token:refresh` only).
 
 4. **Get Facebook Access Token**
    - Go to [Facebook Graph API Explorer](https://developers.facebook.com/tools/explorer/)
@@ -200,6 +203,8 @@ Downloads events from 2020 onwards, handles rate limits, and resumes if interrup
 ### Configuration
 
 The app fetches events from the Facebook page identified by `FACEBOOK_PAGE_ID` (default club page: [townsvillebushwalkingclub](https://www.facebook.com/townsvillebushwalkingclub/)). Set `FACEBOOK_PAGE_ID` and `FACEBOOK_ACCESS_TOKEN` in `.env.local`.
+
+Optional: set `FACEBOOK_APP_ID` so Open Graph pages emit `fb:app_id` (associates shares with the club Meta app). Required for `npm run token:refresh` together with `FACEBOOK_APP_SECRET` (secret stays server/local only).
 
 ## Troubleshooting
 

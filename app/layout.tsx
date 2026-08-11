@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import type { Metadata } from 'next'
 
+const facebookAppId = process.env.FACEBOOK_APP_ID?.trim()
 
 export const metadata: Metadata = {
   title: 'Townsville Bushwalking Club - Events Calendar',
@@ -45,6 +46,7 @@ export const metadata: Metadata = {
     description:
       'Discover upcoming bushwalking events and activities with the Townsville Bushwalking Club.',
   },
+  ...(facebookAppId ? { facebook: { appId: facebookAppId } } : {}),
   robots: {
     index: true,
     follow: true,
