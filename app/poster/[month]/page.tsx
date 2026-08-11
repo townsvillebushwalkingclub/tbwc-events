@@ -16,6 +16,7 @@ import {
   formatPosterNextMonthLine,
   getCurrentPosterMonth,
   getPosterEventsForMonth,
+  isPosterMonthBefore,
   parsePosterMonthParam,
   truncatePosterDescription,
 } from '@/lib/poster-utils'
@@ -80,6 +81,13 @@ export default async function PosterMonthPage({
   const next = addMonths(anchor.year, anchor.month, 1)
   const layout = getPosterLayout(currentEvents.length)
   const useFeatureDate = layout.showDescription
+  const todayMonth = getCurrentPosterMonth()
+  const currentMonthLink = isPosterMonthBefore(anchor, todayMonth)
+    ? {
+        href: `/poster/${formatPosterMonthSlug(todayMonth.year, todayMonth.month)}`,
+        label: formatPosterMonthLabel(todayMonth.year, todayMonth.month),
+      }
+    : null
 
   const aiDownloadEvents: PosterAiDownloadEvent[] = currentEvents.map(
     (event) => toAiDownloadEvent(event, useFeatureDate)
@@ -103,6 +111,7 @@ export default async function PosterMonthPage({
       currentEvents={currentEvents}
       nextEvents={poster.nextMonth}
       nextMonthLabel={poster.nextMonthLabel}
+      currentMonthLink={currentMonthLink}
     />
   )
 }

@@ -53,3 +53,15 @@ export function formatPosterMonthLabel(year: number, month: number): string {
     timeZone: BRISBANE,
   })
 }
+
+export function posterMonthOrdinal(month: PosterMonth): number {
+  return month.year * 100 + month.month
+}
+
+/** True when `month` is strictly before `other` (year/month only). */
+export function isPosterMonthBefore(
+  month: PosterMonth,
+  other: PosterMonth
+): boolean {
+  return posterMonthOrdinal(month) < posterMonthOrdinal(other)
+}

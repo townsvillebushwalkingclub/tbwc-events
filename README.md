@@ -113,6 +113,7 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
   - `exclude=id1,id2` - hide those event IDs from the poster
   - `featured=id` - pin that event as the large/hero walk when the layout allows (also force-includes it)
   - `theme=nature|simple` - poster visual theme (`nature` is the default)
+  - Past months with no upcoming events show a notice linking to the current month poster (instead of the empty-events message)
 
 ## Development
 

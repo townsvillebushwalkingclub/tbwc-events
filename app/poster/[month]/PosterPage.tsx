@@ -23,6 +23,7 @@ export interface PosterPageProps {
   currentEvents: TBWCEvent[]
   nextEvents: TBWCEvent[]
   nextMonthLabel: string
+  currentMonthLink?: { href: string; label: string } | null
 }
 
 export default function PosterPage({
@@ -33,6 +34,7 @@ export default function PosterPage({
   currentEvents,
   nextEvents,
   nextMonthLabel,
+  currentMonthLink = null,
 }: PosterPageProps) {
   const { excludeIds, includeIds, featuredId } = usePosterFilters()
   const filterQuery = formatPosterFilterQuery({
@@ -81,6 +83,7 @@ export default function PosterPage({
         currentEvents={filteredCurrentEvents}
         nextEvents={filteredNextEvents}
         nextMonthLabel={nextMonthLabel}
+        currentMonthLink={currentMonthLink}
       />
     </PosterThemeProvider>
   )

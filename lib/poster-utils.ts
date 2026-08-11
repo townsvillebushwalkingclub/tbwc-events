@@ -36,7 +36,9 @@ export {
   formatPosterMonthLabel,
   formatPosterMonthSlug,
   getCurrentPosterMonth,
+  isPosterMonthBefore,
   parsePosterMonthParam,
+  posterMonthOrdinal,
 } from '@/lib/poster-month'
 
 export const POSTER_MAX_CURRENT_MONTH = 12

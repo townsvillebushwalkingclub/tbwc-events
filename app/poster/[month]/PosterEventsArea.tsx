@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import {
   getPosterEventsLayout,
   posterGridClassName,
@@ -14,6 +15,8 @@ import PosterSectionDivider from './PosterSectionDivider'
 interface PosterEventsAreaProps {
   anchorLabel: string
   currentEvents: TBWCEvent[]
+  /** When set, empty past-month posters suggest viewing this month instead. */
+  currentMonthLink?: { href: string; label: string } | null
 }
 
 function monthNameFromLabel(anchorLabel: string): string {
@@ -23,6 +26,7 @@ function monthNameFromLabel(anchorLabel: string): string {
 export default function PosterEventsArea({
   anchorLabel,
   currentEvents,
+  currentMonthLink = null,
 }: PosterEventsAreaProps) {
   const { theme } = usePosterTheme()
   const eventsLayout = getPosterEventsLayout(theme, currentEvents.length)
@@ -30,7 +34,21 @@ export default function PosterEventsArea({
 
   if (displayMode === 'empty') {
     return (
-      <p className="poster-empty">No upcoming events scheduled this month.</p>
+      <div className="poster-empty">
+        {currentMonthLink ? (
+          <p className="poster-empty-notice no-print" role="status">
+            This month has passed.{' '}
+            <Link href={currentMonthLink.href} className="poster-empty-notice-link">
+              View the {currentMonthLink.label} poster
+            </Link>{' '}
+            instead.
+          </p>
+        ) : (
+          <p className="poster-empty-message">
+            No upcoming events scheduled this month.
+          </p>
+        )}
+      </div>
     )
   }
 

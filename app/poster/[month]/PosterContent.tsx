@@ -14,6 +14,7 @@ interface PosterContentProps {
   currentEvents: TBWCEvent[]
   nextEvents: TBWCEvent[]
   nextMonthLabel: string
+  currentMonthLink?: { href: string; label: string } | null
 }
 
 export default function PosterContent({
@@ -21,6 +22,7 @@ export default function PosterContent({
   currentEvents,
   nextEvents,
   nextMonthLabel,
+  currentMonthLink = null,
 }: PosterContentProps) {
   const { theme } = usePosterTheme()
   const sparseClass = posterIsSparseMonth(currentEvents.length)
@@ -37,6 +39,7 @@ export default function PosterContent({
         <PosterEventsArea
           anchorLabel={anchorLabel}
           currentEvents={currentEvents}
+          currentMonthLink={currentMonthLink}
         />
       </section>
       <PosterBottom

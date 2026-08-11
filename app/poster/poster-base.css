@@ -495,10 +495,42 @@
 .poster-empty {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 4mm;
+  padding: 4mm 6mm;
+  text-align: center;
+}
+
+.poster-empty-message {
+  margin: 0;
   color: #5c6b78;
   font-style: italic;
+}
+
+.poster-empty-notice {
+  margin: 0;
+  max-width: 140mm;
+  padding: 3.5mm 5mm;
+  border: 2px solid #e85d3a;
+  border-radius: 6px;
+  background: #fff4f0;
+  color: #1a1d21;
+  font-size: 1.05em;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.poster-empty-notice-link {
+  color: #c94e2b;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.poster-empty-notice-link:hover {
+  color: #e85d3a;
 }
 
 .poster-bottom {
