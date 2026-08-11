@@ -21,7 +21,10 @@ export const metadata: Metadata = {
     'nature walks',
     'adventure',
   ],
-  authors: [{ name: 'Townsville Bushwalking Club' }],
+  authors: [
+    { name: 'Townsville Bushwalking Club' },
+    { name: 'Luen Warneke', url: 'https://luenwarneke.com/' },
+  ],
   creator: 'Townsville Bushwalking Club',
   publisher: 'Townsville Bushwalking Club',
   formatDetection: {
@@ -69,6 +72,10 @@ export default function RootLayout({
   const isProduction = process.env.NODE_ENV === 'production'
   return (
     <html lang="en">
+      <head>
+        <link type="text/plain" rel="author" href="/humans.txt" />
+        <link rel="describedby" href="/llms.txt" />
+      </head>
       <body>
         {children}
         <GoogleAnalytics gaId="G-YZJR1FQJW1" />

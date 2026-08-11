@@ -23,6 +23,7 @@ Production site: [events.townsvillebushwalkingclub.com](https://events.townsvill
 - 🔍 **SEO Optimized** - Metadata, Open Graph, Twitter cards, and schema.org JSON-LD
 - 🖨️ **Monthly Posters** - Printable poster pages at `/poster/[month]` (save as PDF from the browser)
 - 🤖 **llms.txt** - Machine-readable club and events summary for AI systems
+- 👤 **humans.txt** - Credits for the people behind the site
 
 ## Quick Start
 
@@ -107,7 +108,8 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
 
 - `GET /events/{id}/cover` - Event cover image (JPEG/PNG) used for Open Graph and Messenger previews
 - `GET /api/embed-snippet` - JavaScript embed widget for external sites
-- `GET /llms.txt` - Markdown guide for AI systems (club info and upcoming events)
+- `GET /llms.txt` - Markdown guide for AI systems (club info and upcoming events). Discovered via `rel="describedby"` (HTML link + HTTP `Link` header) and explicitly allowed in `robots.txt`
+- `GET /humans.txt` - Credits for site authors and tech stack
 - `GET /poster/{yyyy-mm}` - Printable monthly poster (HTML; print/save as PDF from the browser). Optional query params:
   - `include=id1,id2` - force-include those Facebook event IDs on the poster (any month; still capped at 12 current / 5 next-month teaser)
   - `exclude=id1,id2` - hide those event IDs from the poster
@@ -167,7 +169,9 @@ tbwc/
 ├── types/event.ts              # TBWCEvent and related types
 ├── tools/                      # Maintenance scripts (tsx)
 ├── data/events/                # Past events JSON (YYYY/MM.json)
-└── public/event-covers/        # Local event cover images
+└── public/
+    ├── humans.txt              # Site credits
+    └── event-covers/           # Local event cover images
 ```
 
 ## Facebook API Setup
