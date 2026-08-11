@@ -8,11 +8,20 @@ const GRADE_PATTERN = /^\s*Grade\s*:\s*(.+)$/im
 
 const CLUB_EMAIL = 'info@townsvillebushwalkingclub.com'
 
-const SAFETY_LINKS = {
+const CLUB_LINKS = {
+  home: TBWC_ORG_URL.replace(/\/$/, ''),
+  about: `${TBWC_ORG_URL}about/`,
+  contact: `${TBWC_ORG_URL}contact/`,
   walkerGuidelines: `${TBWC_ORG_URL}walker-guidelines/`,
   walkTogether: `${TBWC_ORG_URL}walk-together/`,
   whatToBring: `${TBWC_ORG_URL}what-to-bring/`,
   walkGrading: `${TBWC_ORG_URL}club-walk-grading-system/`,
+  childProtection: `${TBWC_ORG_URL}child-protection-and-risk-management-policy/`,
+  facebookPage: 'https://www.facebook.com/townsvillebushwalkingclub/',
+  facebookGroup: 'https://www.facebook.com/groups/townsvillebushwalking',
+  instagram: 'https://instagram.com/townsvillebushwalkingclub/',
+  bushwalkingQueensland: 'https://www.bushwalkingqueensland.org.au/',
+  bushwalkingAustralia: 'https://bushwalkingaustralia.org/',
 } as const
 
 /** Fetch non-past, non-cancelled events sorted by start time. */
@@ -47,57 +56,67 @@ function formatEventLinkNotes(event: TBWCEvent): string {
   return parts.join(', ')
 }
 
-function buildOptionalInformationSection(): string {
-  const org = TBWC_ORG_URL.replace(/\/$/, '')
+/** Free-form details after the summary blockquote (no headings; llmstxt.org). */
+function buildDetailsSection(): string {
   return [
-    '### Mission',
+    'Townsville Bushwalking Club (TBWC) has organised guided outdoor adventures in Townsville and North Queensland since 1960. Activities are primarily bushwalking and hiking (both on and off track), along with canyoning, rock scrambling, bikepacking, and kayaking. Members and visitors explore national parks, coastal tracks, creeks, gorges, and hinterland country with experienced trip leaders.',
     '',
-    'Townsville Bushwalking Club (TBWC) has been organising guided bushwalks, hikes, and outdoor adventures in Townsville and North Queensland since 1960. We welcome members and visitors to explore national parks, coastal tracks, and hinterland country with experienced trip leaders.',
+    'TBWC is affiliated with Bushwalking Queensland and Bushwalking Australia.',
     '',
-    `Main club website: ${org}`,
+    'Club walks and events are free. Visitors may participate in up to three Club walks without charge. After the third walk, visitors must apply to become members. Annual membership is $40 (1 July to 30 June). New members joining after 1 August pay a pro-rata fee for their first membership year only; later renewals are the full annual rate.',
     '',
-    '### Safety',
+    'How to attend a first walk:',
+    '1. Read the Walker Guidelines and What to Bring pages linked below.',
+    '2. Register (RSVP) by emailing the trip leader. The leader\'s contact details are in the walk description on the event page. Selecting "Going" on Facebook does not register you. Contacting the leader is required for club insurance due diligence.',
+    '3. Confirm with the leader that the activity suits your experience and fitness, and ask before bringing a child.',
+    '4. Arrive prepared for Queensland conditions.',
     '',
-    'All participants must follow club walker guidelines and come prepared for Queensland conditions. Key resources:',
+    'Event grades use the TBWC 4-part code (duration, terrain, fitness, plus optional modifiers such as W for wet travel). For example, M56W means medium duration, difficult terrain, hard fitness, with wet travel. See the Walk Grading System link below.',
     '',
-    `- [Walker guidelines](${SAFETY_LINKS.walkerGuidelines})`,
-    `- [Walk together](${SAFETY_LINKS.walkTogether})`,
-    `- [What to bring](${SAFETY_LINKS.whatToBring})`,
+    'Whether children can attend is up to the trip leader and depends on how difficult the event is (grade, terrain, and conditions), as well as the child\'s age, experience, and ability. Children older than 12 and under 18 should be accompanied by a parent or guardian unless the Club has approved other arrangements consistent with its current policies (see the child protection policy link below). Always contact the trip leader before attending with a child so they can decide whether the activity is appropriate.',
     '',
-    '### Walk grading',
-    '',
-    'Event grades in the Upcoming Events section use the TBWC 4-part code (duration, terrain, fitness, plus optional modifiers such as W for wet travel). For example, M56W means medium duration, difficult terrain, hard fitness, with wet travel.',
-    '',
-    `- [Walk grading system](${SAFETY_LINKS.walkGrading})`,
-    '',
-    'RSVP directly with the trip leader listed on each event. Selecting "Going" on Facebook does not register you for a walk. Contacting the leader is required for club insurance due diligence.',
-    '',
-    '### Membership',
-    '',
-    `- TBWC members: walks are free.`,
-    `- Visitors: $5 per walk.`,
-    `- After three club walks, visitors are welcome to join as a member.`,
-    `- Enquiries: ${CLUB_EMAIL}`,
-    `- Clubhouse: Blessed Mary Mackillop Parish meeting room, 43 Ross River Road, Mundingburra QLD 4812`,
-    '',
-    `Events calendar: ${EVENTS_SITE_ORIGIN}/`,
+    `Enquiries: ${CLUB_EMAIL}`,
+    'Clubhouse: Blessed Mary Mackillop Parish meeting room, 43 Ross River Road, Mundingburra QLD 4812',
   ].join('\n')
 }
 
-export function buildLlmsTxt(events: TBWCEvent[]): string {
-  const lines: string[] = [
-    '# Townsville Bushwalking Club',
+function buildGuidelinesSection(): string {
+  return [
+    '## Guidelines and policies',
     '',
-    '> Official events calendar for guided bushwalks, hikes, and outdoor adventures in Townsville and North Queensland, Australia.',
-    '',
-    '## Optional Information',
-    '',
-    buildOptionalInformationSection(),
-    '',
-    '## Upcoming Events',
-    '',
-  ]
+    `- [Walker Guidelines](${CLUB_LINKS.walkerGuidelines}): Expected conduct and preparation before attending`,
+    `- [Walk Together](${CLUB_LINKS.walkTogether}): How club walks are run as a group`,
+    `- [What to Bring?](${CLUB_LINKS.whatToBring}): Gear and preparation for Queensland conditions`,
+    `- [Walk Grading System](${CLUB_LINKS.walkGrading}): Duration, terrain, fitness, and modifiers (for example M56W)`,
+    `- [Child protection and risk management policy](${CLUB_LINKS.childProtection}): Age limits and arrangements for children`,
+  ].join('\n')
+}
 
+function buildClubInformationSection(): string {
+  return [
+    '## Club information',
+    '',
+    `- [Townsville Bushwalking Club website](${CLUB_LINKS.home}): Main club site with trip reports and news`,
+    `- [About](${CLUB_LINKS.about}): Who the club is and what we do`,
+    `- [Contact](${CLUB_LINKS.contact}): Get in touch with the club`,
+    `- [Events calendar](${EVENTS_SITE_ORIGIN}/): This site - upcoming walks and outdoor activities`,
+  ].join('\n')
+}
+
+function buildOptionalSection(): string {
+  return [
+    '## Optional',
+    '',
+    `- [Facebook page](${CLUB_LINKS.facebookPage}): Official Facebook page`,
+    `- [Facebook group](${CLUB_LINKS.facebookGroup}): Member and visitor discussion group`,
+    `- [Instagram](${CLUB_LINKS.instagram}): Photos and trip highlights`,
+    `- [Bushwalking Queensland](${CLUB_LINKS.bushwalkingQueensland}): State peak body`,
+    `- [Bushwalking Australia](${CLUB_LINKS.bushwalkingAustralia}): National peak body`,
+  ].join('\n')
+}
+
+function buildUpcomingEventsSection(events: TBWCEvent[]): string {
+  const lines: string[] = ['## Upcoming Events', '']
   if (events.length === 0) {
     lines.push('- No upcoming events are currently scheduled.')
   } else {
@@ -107,9 +126,30 @@ export function buildLlmsTxt(events: TBWCEvent[]): string {
       lines.push(`- [${event.name}](${url}): ${notes}`)
     }
   }
-
-  lines.push('')
   return lines.join('\n')
+}
+
+/**
+ * Build llms.txt body (llmstxt.org): H1, summary blockquote, details,
+ * then H2 link lists ending with Optional.
+ */
+export function buildLlmsTxt(events: TBWCEvent[]): string {
+  return [
+    '# Townsville Bushwalking Club',
+    '',
+    '> Official events calendar for guided bushwalks, hikes, and outdoor adventures in Townsville and North Queensland, Australia. Primarily bushwalking and hiking (on and off track); also canyoning, rock scrambling, bikepacking, and kayaking.',
+    '',
+    buildDetailsSection(),
+    '',
+    buildUpcomingEventsSection(events),
+    '',
+    buildGuidelinesSection(),
+    '',
+    buildClubInformationSection(),
+    '',
+    buildOptionalSection(),
+    '',
+  ].join('\n')
 }
 
 export async function generateLlmsTxt(): Promise<string> {
