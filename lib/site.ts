@@ -20,6 +20,11 @@ export function absoluteEventPageUrl(eventId: string): string {
   return `${EVENTS_SITE_ORIGIN}/events/${eventId}`
 }
 
+/** Stable on-site cover URL for Open Graph (proxies Facebook when not in the manifest). */
+export function absoluteEventCoverRouteUrl(eventId: string): string {
+  return `${EVENTS_SITE_ORIGIN}/events/${eventId}/cover`
+}
+
 /** Resolve a site-hosted cover path (/event-covers/…) to an absolute URL. */
 export function absoluteEventShareImageUrl(
   imageUrl: string | null | undefined

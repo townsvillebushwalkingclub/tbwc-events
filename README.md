@@ -102,6 +102,7 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
 
 ### Other routes
 
+- `GET /events/{id}/cover` - Event cover image (JPEG/PNG) used for Open Graph and Messenger previews
 - `GET /api/embed-snippet` - JavaScript embed widget for external sites
 - `GET /llms.txt` - Markdown guide for AI systems (club info and upcoming events)
 
@@ -131,6 +132,7 @@ tbwc/
 │   ├── layout.tsx              # Root layout and metadata
 │   ├── events/
 │   │   ├── [id]/               # Event detail pages
+│   │   │   └── cover/          # Cover image for Open Graph
 │   │   ├── all/                # Full event list
 │   │   └── search/             # Event search UI
 │   ├── poster/[month]/         # Printable monthly posters

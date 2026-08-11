@@ -1,6 +1,6 @@
 {
   "name": "tbwc",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Townsville Bushwalking Club Events Calendar and API",
   "private": true,
   "scripts": {

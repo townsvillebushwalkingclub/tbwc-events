@@ -1,64 +1,64 @@
 name: Archive Previous Month
 
 on:
-  schedule:
-    # 15:00 UTC on month-end days = 01:00 Brisbane on the 1st (AEST, UTC+10)
-    - cron: '0 15 28-31 * *'
-  workflow_dispatch:       # allow manual runs from the Actions tab
+    schedule:
+        # 15:00 UTC on month-end days = 01:00 Brisbane on the 1st (AEST, UTC+10)
+        - cron: '0 15 28-31 * *'
+    workflow_dispatch: # allow manual runs from the Actions tab
 
 jobs:
-  sync:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    sync:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
 
-    steps:
-      - uses: actions/checkout@v6
+        steps:
+            - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'npm'
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: '24'
+                  cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+            - name: Install dependencies
+              run: npm ci
 
-      - name: Should run archive
-        id: should_run
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "run=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          BRISBANE_DAY=$(TZ=Australia/Brisbane date +%d)
-          BRISBANE_HOUR=$(TZ=Australia/Brisbane date +%H)
-          if [ "$BRISBANE_DAY" = "01" ] && [ "$BRISBANE_HOUR" = "01" ]; then
-            echo "run=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "run=false" >> "$GITHUB_OUTPUT"
-            echo "Not 01:00 on the 1st in Brisbane - skipping scheduled run"
-          fi
+            - name: Should run archive
+              id: should_run
+              run: |
+                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                    echo "run=true" >> "$GITHUB_OUTPUT"
+                    exit 0
+                  fi
+                  BRISBANE_DAY=$(TZ=Australia/Brisbane date +%d)
+                  BRISBANE_HOUR=$(TZ=Australia/Brisbane date +%H)
+                  if [ "$BRISBANE_DAY" = "01" ] && [ "$BRISBANE_HOUR" = "01" ]; then
+                    echo "run=true" >> "$GITHUB_OUTPUT"
+                  else
+                    echo "run=false" >> "$GITHUB_OUTPUT"
+                    echo "Not 01:00 on the 1st in Brisbane - skipping scheduled run"
+                  fi
 
-      - name: Archive previous month events and covers
-        if: steps.should_run.outputs.run == 'true'
-        run: npx tsx tools/sync-month.ts
-        env:
-          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
-          FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
+            - name: Archive previous month events and covers
+              if: steps.should_run.outputs.run == 'true'
+              run: npx tsx tools/sync-month.ts
+              env:
+                  FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+                  FACEBOOK_ACCESS_TOKEN: ${{ secrets.FACEBOOK_ACCESS_TOKEN }}
 
-      - name: Regenerate cover manifest
-        if: steps.should_run.outputs.run == 'true'
-        run: npm run covers:manifest
+            - name: Regenerate cover manifest
+              if: steps.should_run.outputs.run == 'true'
+              run: npm run covers:manifest
 
-      - name: Commit and push if changed
-        if: steps.should_run.outputs.run == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/events/ public/event-covers/ data/event-cover-manifest.json data/cover-sources.json
-          if git diff --staged --quiet; then
-            echo "Nothing to commit"
-          else
-            git commit -m "chore: archive $(date -u +'%B %Y' -d '1 month ago') events [skip ci]"
-            git push
-          fi
+            - name: Commit and push if changed
+              if: steps.should_run.outputs.run == 'true'
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git add data/events/ public/event-covers/ data/event-cover-manifest.json data/cover-sources.json
+                  if git diff --staged --quiet; then
+                    echo "Nothing to commit"
+                  else
+                    git commit -m "chore: archive $(date -u +'%B %Y' -d '1 month ago') events"
+                    git push
+                  fi

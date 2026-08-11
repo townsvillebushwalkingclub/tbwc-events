@@ -8,7 +8,7 @@ import {
 import { getLocalCoverPath } from './event-cover-path'
 import type { TBWCEvent } from '@/types/event'
 import { getCoverFromManifest } from './event-cover-manifest'
-import { absoluteEventShareImageUrl } from './site'
+import { absoluteEventCoverRouteUrl, absoluteEventShareImageUrl } from './site'
 
 export type EventShareImage = {
   url: string
@@ -85,7 +85,8 @@ export function applyLocalCoverToEvent(event: TBWCEvent): TBWCEvent {
 
 /**
  * Open Graph image on events.townsvillebushwalkingclub.com (never Facebook CDN).
- * Uses build-time manifest so this works on Vercel without fs at runtime.
+ * Prefers the build-time manifest; otherwise a stable /events/{id}/cover URL
+ * that proxies the Facebook cover when no committed file exists.
  */
 export function resolveEventShareImageForMetadata(
   eventId: string,
@@ -111,8 +112,18 @@ export function resolveEventShareImageForMetadata(
 
   // Local dev fallback when manifest hasn't been generated yet (no-op on Vercel)
   const localPath = getLocalCoverPathFromFs(eventId)
-  if (!localPath) return null
-  const url = absoluteEventShareImageUrl(localPath)
-  if (!url) return null
-  return { url, width: 1200, height: 630 }
+  if (localPath) {
+    const url = absoluteEventShareImageUrl(localPath)
+    if (url) return { url, width: 1200, height: 630 }
+  }
+
+  if (localSource) {
+    return {
+      url: absoluteEventCoverRouteUrl(eventId),
+      width: 1200,
+      height: 630,
+    }
+  }
+
+  return null
 }

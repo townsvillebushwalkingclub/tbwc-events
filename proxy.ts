@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { isValidFacebookEventId } from '@/lib/event-id'
+
+function isEventCoverImagePath(pathname: string): boolean {
+  const match = pathname.match(/^\/events\/(\d+)\/cover$/)
+  return !!match && isValidFacebookEventId(match[1])
+}
 
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>()
 const RATE_LIMIT_WINDOW = 60 * 1000
@@ -80,11 +86,12 @@ export async function proxy(request: NextRequest) {
   response.headers.set('Content-Security-Policy', csp)
 
   if (
-    pathname.startsWith('/events/') ||
-    pathname.startsWith('/api/event/') ||
-    pathname.startsWith('/api/events/') ||
-    pathname.startsWith('/api/calendar/') ||
-    pathname === '/api/events'
+    !isEventCoverImagePath(pathname) &&
+    (pathname.startsWith('/events/') ||
+      pathname.startsWith('/api/event/') ||
+      pathname.startsWith('/api/events/') ||
+      pathname.startsWith('/api/calendar/') ||
+      pathname === '/api/events')
   ) {
     if (Math.random() < 0.01) cleanupRateLimitStore()
     const ip = getClientIP(request)
