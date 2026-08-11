@@ -15,10 +15,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Print poster routes (/poster/*) are intentionally omitted (noindex, not for search).
+  // Omit lastModified: we have no reliable page-modification timestamps (event
+  // start_time and sitemap generation time are not last-content-change dates).
   const routes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1.0,
     },
@@ -41,7 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const isPast = eventDate && eventDate < now
     routes.push({
       url: `${baseUrl}/events/${event.id}`,
-      lastModified: eventDate || new Date(),
       changeFrequency: isPast ? 'never' : 'weekly',
       priority: isPast ? 0.1 : 0.9,
     })
