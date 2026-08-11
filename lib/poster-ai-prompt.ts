@@ -172,7 +172,9 @@ ${
     : '- No cover photos attached — use appropriate outdoor/hiking placeholder images.'
 }`
 
-  return `Create a polished, print-ready A4 portrait events poster (210 × 297 mm) for the Townsville Bushwalking Club. Match the visual style of a modern outdoor club events flyer: warm, earthy, magazine-quality, with rounded corners throughout and generous white space.
+  return `Create ONE still image (PNG or JPEG photograph/illustration — not a PDF, not a document, not a slideshow). Output a single raster image of a polished A4 portrait events poster (210 × 297 mm, 2480 × 3508 px at 300 dpi). Do not generate a PDF, Word file, or any other document format.
+
+Match the visual style of a modern outdoor club events flyer: warm, earthy, magazine-quality, with rounded corners throughout and generous white space.
 
 OVERALL LOOK & FEEL:
 - Background: off-white / warm cream (#faf8f5), not pure white
@@ -201,5 +203,5 @@ ${attachmentsNote}
 EVENT DETAILS FOR ${anchorLabel.toUpperCase()} (${currentEvents.length} event(s)):
 ${eventSections(currentEvents)}
 
-Generate ONE cohesive poster design. Use the attached logo and cover photos exactly where specified. Keep all text sharp and legible at print size. Do not add events, dates, or text beyond what is listed above.`
+Generate ONE cohesive poster as a single image file (PNG or JPEG). Do not create a PDF. Use the attached logo and cover photos exactly where specified. Keep all text sharp and legible at print size. Do not add events, dates, or text beyond what is listed above.`
 }
