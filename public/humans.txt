@@ -1,0 +1,15 @@
+/* TEAM */
+Developer: Luen Warneke
+Site: https://luenwarneke.com/
+From: Wanderstories - https://wanderstories.space/
+
+/* THANKS */
+Townsville Bushwalking Club - https://townsvillebushwalkingclub.com/
+
+/* SITE */
+Last update: 2026/08/12
+Language: English
+Doctype: HTML5
+Standards: HTML5, CSS3
+Components: Next.js, React, TypeScript, Tailwind CSS
+Software: Vercel
