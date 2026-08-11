@@ -24,13 +24,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${baseUrl}/events/all`,
-      lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.7,
     },
     {
       url: `${baseUrl}/events/search`,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.7,
     },
@@ -44,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     routes.push({
       url: `${baseUrl}/events/${event.id}`,
       lastModified: eventDate || new Date(),
-      changeFrequency: isPast ? 'never' : 'daily',
+      changeFrequency: isPast ? 'never' : 'weekly',
       priority: isPast ? 0.1 : 0.9,
     })
   })
