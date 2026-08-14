@@ -57,7 +57,7 @@ export function extractEventGrade(description: string): string | null {
  * Used for the llms.txt generation stamp (AI freshness signal).
  */
 export function formatBrisbaneIso(date: Date = new Date()): string {
-  const parts = new Intl.DateTimeFormat('en-CA', {
+  const parts = new Intl.DateTimeFormat('en-AU', {
     timeZone: BRISBANE_TIMEZONE,
     year: 'numeric',
     month: '2-digit',
