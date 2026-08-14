@@ -108,7 +108,7 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
 
 - `GET /events/{id}/cover` - Event cover image (JPEG/PNG) used for Open Graph and Messenger previews
 - `GET /api/embed-snippet` - JavaScript embed widget for external sites
-- `GET /llms.txt` - Markdown guide for AI systems (club info and upcoming events). Discovered via `rel="describedby"` (HTML link + HTTP `Link` header)
+- `GET /llms.txt` - Markdown guide for AI systems (club info and upcoming events). Includes a Brisbane `Last updated` ISO 8601 stamp and per-event ISO start/end times. Discovered via `rel="describedby"` (HTML link + HTTP `Link` header)
 - `GET /humans.txt` - Credits for site authors and tech stack
 - `GET /poster/{yyyy-mm}` - Printable monthly poster (HTML; print/save as PDF from the browser). Optional query params:
   - `include=id1,id2` - force-include those Facebook event IDs on the poster (any month; still capped at 12 current / 5 next-month teaser)

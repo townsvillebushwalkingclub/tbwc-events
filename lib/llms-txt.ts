@@ -1,10 +1,17 @@
-import { isEventPastOnCalendar } from '@/lib/event-utils'
+import {
+  BRISBANE_TIMEZONE,
+  isEventPastOnCalendar,
+  normalizeFacebookIso,
+} from '@/lib/event-utils'
 import { getFacebookEvents } from '@/lib/facebook-api'
 import { TBWC_ORG_URL } from '@/lib/organization-json-ld'
 import { absoluteEventPageUrl, EVENTS_SITE_ORIGIN } from '@/lib/site'
 import type { TBWCEvent } from '@/types/event'
 
 const GRADE_PATTERN = /^\s*Grade\s*:\s*(.+)$/im
+
+/** Brisbane has no DST; fixed offset for ISO 8601 timestamps in this file. */
+const BRISBANE_OFFSET = '+10:00'
 
 const CLUB_EMAIL = 'info@townsvillebushwalkingclub.com'
 
@@ -45,20 +52,41 @@ export function extractEventGrade(description: string): string | null {
   return grade.length > 0 ? grade : null
 }
 
+/**
+ * Format an instant as ISO 8601 in Australia/Brisbane (+10:00).
+ * Used for the llms.txt generation stamp (AI freshness signal).
+ */
+export function formatBrisbaneIso(date: Date = new Date()): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: BRISBANE_TIMEZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(date)
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? ''
+  return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}:${get('second')}${BRISBANE_OFFSET}`
+}
+
 function formatEventLinkNotes(event: TBWCEvent): string {
-  const parts: string[] = [event.formatted_date]
-  const grade = extractEventGrade(event.description)
-  if (grade) {
-    parts.push(`Grade: ${grade}`)
-  } else {
-    parts.push('Grade: Not specified')
+  const parts: string[] = [`starts ${normalizeFacebookIso(event.start_time)}`]
+  if (event.end_time) {
+    parts.push(`ends ${normalizeFacebookIso(event.end_time)}`)
   }
+  const grade = extractEventGrade(event.description)
+  parts.push(grade ? `Grade: ${grade}` : 'Grade: Not specified')
   return parts.join(', ')
 }
 
 /** Free-form details after the summary blockquote (no headings; llmstxt.org). */
-function buildDetailsSection(): string {
+function buildDetailsSection(generatedAt: Date): string {
   return [
+    `Last updated: ${formatBrisbaneIso(generatedAt)}`,
+    '',
     'Townsville Bushwalking Club (TBWC) has organised guided outdoor adventures in Townsville and North Queensland since 1960. Activities are primarily bushwalking and hiking (both on and off track), along with canyoning, rock scrambling, bikepacking, and kayaking. Members and visitors explore national parks, coastal tracks, creeks, gorges, and hinterland country with experienced trip leaders.',
     '',
     'TBWC is affiliated with Bushwalking Queensland and Bushwalking Australia.',
@@ -130,16 +158,20 @@ function buildUpcomingEventsSection(events: TBWCEvent[]): string {
 }
 
 /**
- * Build llms.txt body (llmstxt.org): H1, summary blockquote, details,
- * then H2 link lists ending with Optional.
+ * Build llms.txt body (llmstxt.org): H1, summary blockquote, details
+ * (including Last updated), then H2 link lists ending with Optional.
+ * Event notes use ISO 8601 start/end times (Australia/Brisbane offsets).
  */
-export function buildLlmsTxt(events: TBWCEvent[]): string {
+export function buildLlmsTxt(
+  events: TBWCEvent[],
+  generatedAt: Date = new Date()
+): string {
   return [
     '# Townsville Bushwalking Club',
     '',
     '> Official events calendar for guided bushwalks, hikes, and outdoor adventures in Townsville and North Queensland, Australia. Primarily bushwalking and hiking (on and off track); also canyoning, rock scrambling, bikepacking, and kayaking.',
     '',
-    buildDetailsSection(),
+    buildDetailsSection(generatedAt),
     '',
     buildUpcomingEventsSection(events),
     '',
