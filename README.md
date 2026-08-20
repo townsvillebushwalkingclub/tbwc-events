@@ -132,7 +132,6 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
 | `npm run month:sync` | Archive previous month to JSON |
 | `npm run covers:sync` | Sync event cover images |
 | `npm run sync:cancelled` | Sync cancelled event IDs |
-| `npm run poster:send` | Generate and email monthly poster PDF (CI workflow) |
 
 ### Project Structure
 
