@@ -2,8 +2,8 @@ import { getAdjacentEvents } from '@/lib/event-adjacent'
 import { getEventById, getAllEvents } from '@/lib/facebook-api'
 import { isValidFacebookEventId } from '@/lib/event-id'
 import { buildEventPageJsonLd } from '@/lib/event-json-ld'
+import { getEventDescriptionText } from '@/lib/event-utils'
 import { resolveEventShareImageForMetadata } from '@/lib/event-share-image'
-import { applyDescriptionCorrections } from '@/lib/process-description'
 import { EVENTS_SITE_ORIGIN } from '@/lib/site'
 import { notFound } from 'next/navigation'
 import JsonLd from '@/app/components/JsonLd'
@@ -69,9 +69,7 @@ export async function generateMetadata({
     }
 
     const description = event.description
-      ? applyDescriptionCorrections(event.description)
-          .substring(0, 160)
-          .replace(/\n/g, ' ')
+      ? getEventDescriptionText(event, 'single-line').substring(0, 160)
       : `Join us for ${event.name} on ${event.formatted_date}. ${
           event.place ? `Location: ${event.place.name}` : ''
         }`
