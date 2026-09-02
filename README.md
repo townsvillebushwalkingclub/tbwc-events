@@ -249,9 +249,12 @@ For local testing, use `http://localhost:3000/api/embed-snippet?v=1`. Test pages
 
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+3. Run `npm run git:setup` once per clone to configure local commit authorship for this repo:
+   - **Author:** `townsvillebushwalkingclub <townsvillebushwalkingclub@gmail.com>`
+   - **Co-author:** `luen <Luen@users.noreply.github.com>` (added automatically via `.githooks/prepare-commit-msg`)
+4. Make your changes
+5. Test thoroughly
+6. Submit a pull request
 
 ## Assets
 

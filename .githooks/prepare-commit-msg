@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+# Append Luen as co-author on commits authored for this repo.
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+
+. "$(dirname "$0")/../tools/git-author-config.sh"
+
+case "$COMMIT_SOURCE" in
+  merge|squash) exit 0 ;;
+esac
+
+if grep -qi "Co-authored-by: ${GIT_CO_AUTHOR_NAME}" "$COMMIT_MSG_FILE"; then
+  exit 0
+fi
+
+printf '\n%s\n' "$GIT_CO_AUTHOR_TRAILER" >> "$COMMIT_MSG_FILE"

@@ -14,7 +14,8 @@
     "covers:manifest": "npx tsx tools/generate-cover-manifest.ts",
     "token:refresh": "npx tsx tools/get-long-lived-token.ts",
     "download:history": "npx tsx tools/download-historical-events.ts",
-    "sync:cancelled": "npx tsx tools/sync-cancelled-events.ts"
+    "sync:cancelled": "npx tsx tools/sync-cancelled-events.ts",
+    "git:setup": "node -e \"require('child_process').execSync(process.platform==='win32'?'powershell -File tools/setup-git-author.ps1':'sh tools/setup-git-author.sh',{stdio:'inherit'})\""
   },
   "keywords": [
     "townsville",
