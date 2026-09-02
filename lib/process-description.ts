@@ -37,6 +37,19 @@ function linkifyAustralianMobileNumbers(text: string): string {
   })
 }
 
+/** Known stale contact details to correct at render time. */
+const DESCRIPTION_CORRECTIONS: Array<[RegExp, string]> = [
+  [/wilfred\.suzanne@bigpond\.com(?!\.au)/gi, 'wilfred.suzanne@bigpond.com.au'],
+]
+
+export function applyDescriptionCorrections(text: string): string {
+  if (!text) return ''
+  return DESCRIPTION_CORRECTIONS.reduce(
+    (result, [pattern, replacement]) => result.replace(pattern, replacement),
+    text
+  )
+}
+
 /**
  * Normalize newlines for consistent spacing
  */
@@ -83,7 +96,8 @@ export function processDescription(
 ): string {
   if (!description) return ''
 
-  let processed = normalizeFirst ? normalizeNewlines(description) : description
+  let processed = applyDescriptionCorrections(description)
+  processed = normalizeFirst ? normalizeNewlines(processed) : processed
 
   processed = processed
     .replace(/&/g, '&amp;')
