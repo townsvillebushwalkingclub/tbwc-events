@@ -465,11 +465,16 @@ export async function GET() {
         return 'Re: ' + eventTitle;
     }
 
+    function applyDescriptionCorrections(text) {
+        if (!text) return '';
+        return text.replace(/wilfred\\.suzanne@bigpond\\.com(?!\\.au)/gi, 'wilfred.suzanne@bigpond.com.au');
+    }
+
     function processDescription(description, eventTitle, eventStartTime) {
         if (!description) return '';
         
         // First, escape any existing HTML to prevent conflicts
-        let processed = description
+        let processed = applyDescriptionCorrections(description)
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')

@@ -2,6 +2,7 @@
  * Utility functions for event-related operations
  */
 
+import { applyDescriptionCorrections } from '@/lib/process-description'
 import type { TBWCEvent } from '@/types/event'
 
 export const BRISBANE_TIMEZONE = 'Australia/Brisbane'
@@ -44,7 +45,7 @@ export function getEventDescriptionText(
   event: TBWCEvent,
   format: 'single-line' | 'preserve-newlines' = 'single-line'
 ): string {
-  const text = event.description?.trim()
+  const text = applyDescriptionCorrections(event.description?.trim() ?? '')
   if (!text) return buildEventDescriptionFallback(event)
   if (format === 'preserve-newlines') return normalizeEventDescriptionNewlines(text)
   return text.replace(/\s+/g, ' ').trim()

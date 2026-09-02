@@ -2,7 +2,7 @@
  * Client-safe helpers to pull leader names and RSVP emails from event descriptions.
  */
 
-import { normalizeNewlines } from '@/lib/process-description'
+import { applyDescriptionCorrections, normalizeNewlines } from '@/lib/process-description'
 
 const EMAIL_PATTERN = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/gi
 const LEADER_LINE_PATTERN = /^\s*Leaders?\s*:\s*(.+)$/gim
@@ -27,7 +27,7 @@ function uniqueStrings(values: string[]): string[] {
 
 export function extractEmailsFromText(text: string): string[] {
   if (!text) return []
-  const matches = text.match(EMAIL_PATTERN) ?? []
+  const matches = applyDescriptionCorrections(text).match(EMAIL_PATTERN) ?? []
   return uniqueStrings(matches.map((email) => email.toLowerCase()))
 }
 
