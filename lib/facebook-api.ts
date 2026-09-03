@@ -84,6 +84,9 @@ const sampleEvents: TBWCEvent[] =
 
 import {
   FACEBOOK_EVENTS_CACHE_DURATION_MS,
+  FACEBOOK_EVENTS_CACHE_TAG,
+  FACEBOOK_EVENTS_REVALIDATE_SECONDS,
+  facebookEventCacheTag,
 } from '@/lib/cache-constants'
 import { isRuntimeFilesystemWritable } from '@/lib/runtime-writable'
 
@@ -161,7 +164,12 @@ async function getFacebookEvents(): Promise<TBWCEvent[]> {
   const url = `https://graph.facebook.com/v23.0/${FACEBOOK_PAGE_ID}/events?access_token=${FACEBOOK_ACCESS_TOKEN}&fields=id,name,description,start_time,end_time,place,attending_count,interested_count,cover,is_canceled&limit=100`
 
   try {
-    const response = await fetch(url)
+    const response = await fetch(url, {
+      next: {
+        revalidate: FACEBOOK_EVENTS_REVALIDATE_SECONDS,
+        tags: [FACEBOOK_EVENTS_CACHE_TAG],
+      },
+    })
     if (!response.ok) {
       const errorText = await response.text()
       console.error('Facebook API error response:', errorText)
@@ -258,7 +266,12 @@ async function fetchEventByIdFromApi(eventId: string): Promise<TBWCEvent | null>
     'id,name,description,start_time,end_time,place,attending_count,interested_count,cover,is_canceled'
   const url = `https://graph.facebook.com/v23.0/${eventId}?access_token=${FACEBOOK_ACCESS_TOKEN}&fields=${fields}`
   try {
-    const response = await fetch(url)
+    const response = await fetch(url, {
+      next: {
+        revalidate: FACEBOOK_EVENTS_REVALIDATE_SECONDS,
+        tags: [FACEBOOK_EVENTS_CACHE_TAG, facebookEventCacheTag(eventId)],
+      },
+    })
     if (!response.ok) return null
     const event = (await response.json()) as FacebookApiEvent | null
     if (!event?.id) return null

@@ -64,6 +64,7 @@ Production site: [events.townsvillebushwalkingclub.com](https://events.townsvill
    FACEBOOK_APP_ID=your_facebook_app_id_here
    NEXT_PUBLIC_SITE_URL=https://events.townsvillebushwalkingclub.com
    CORS_ALLOWED_ORIGINS=https://townsvillebushwalkingclub.com
+   CACHE_CLEAR_SECRET=your_long_random_secret_here
    ```
 
    `FACEBOOK_APP_ID` is public and safe to expose. When set, pages include `<meta property="fb:app_id">` for Meta Sharing Debugger / Domain Insights. Never put `FACEBOOK_APP_SECRET` in the Next.js app env used for the site (keep it for local `npm run token:refresh` only).
@@ -108,6 +109,7 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
 
 - `GET /events/{id}/cover` - Event cover image (JPEG/PNG) used for Open Graph and Messenger previews
 - `GET /api/embed-snippet` - JavaScript embed widget for external sites
+- `POST /api/cache/clear` - Clear Facebook event caches instantly (requires `Authorization: Bearer <CACHE_CLEAR_SECRET>`). Optional JSON body: `{ "eventId": "..." }` to refresh a single event page/API as well
 - `GET /llms.txt` - Markdown guide for AI systems (club info and upcoming events). Includes a Brisbane `Last updated` ISO 8601 stamp and per-event ISO start/end times. Discovered via `rel="describedby"` (HTML link + HTTP `Link` header)
 - `GET /humans.txt` - Credits for site authors and tech stack
 - `GET /poster/{yyyy-mm}` - Printable monthly poster (HTML; print/save as PDF from the browser). Optional query params:
@@ -132,6 +134,8 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
 | `npm run month:sync` | Archive previous month to JSON |
 | `npm run covers:sync` | Sync event cover images |
 | `npm run sync:cancelled` | Sync cancelled event IDs |
+| `npm run cache:clear` | Clear Facebook/ISR caches after editing an event on Facebook |
+| `npm run git:setup` | Configure local git author and co-author for this repo |
 
 ### Project Structure
 
@@ -154,11 +158,15 @@ tbwc/
 │   │   │   └── [year]/[month]/
 │   │   ├── event/[id]/         # Single event JSON + .ics download
 │   │   ├── calendar/feed/      # iCal subscription feed
+│   │   ├── cache/clear/        # Clear Facebook/ISR caches (POST, secret)
 │   │   └── embed-snippet/      # Embed widget script
 │   ├── llms.txt/               # llms.txt route
 │   ├── sitemap.ts
 │   └── robots.ts
 ├── lib/                        # Shared logic
+│   ├── cache-constants.ts      # Shared cache TTLs and tags
+│   ├── cache-clear.ts          # Cache invalidation helpers
+│   ├── cache-auth.ts           # Cache clear secret verification
 │   ├── facebook-api.ts         # Facebook Graph API + caching
 │   ├── calendar-ics.ts         # iCal generation
 │   ├── calendar-feed-events.ts
@@ -191,6 +199,38 @@ npm run token:refresh
 This runs the TypeScript tool with `tsx` and converts short-lived tokens to long-lived (60 days) or fetches a **Page Access Token** (never expires, recommended for production).
 
 The app handles token expiration gracefully with cached data and clear error messages.
+
+### Clearing cache after Facebook edits
+
+Facebook event data is cached for about 6 hours (in-memory, Next.js ISR, and CDN). After you change an event on Facebook, clear caches immediately:
+
+1. Set `CACHE_CLEAR_SECRET` in Vercel env vars and locally in `.env.local`
+2. Run:
+
+```bash
+npm run cache:clear
+```
+
+For one event only:
+
+```bash
+npm run cache:clear -- 1234567890123456
+```
+
+Against production:
+
+```bash
+npm run cache:clear -- --url https://events.townsvillebushwalkingclub.com
+```
+
+Or call the API directly:
+
+```bash
+curl -X POST https://events.townsvillebushwalkingclub.com/api/cache/clear \
+  -H "Authorization: Bearer YOUR_CACHE_CLEAR_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"eventId":"1234567890123456"}'
+```
 
 ### Historical Events
 
