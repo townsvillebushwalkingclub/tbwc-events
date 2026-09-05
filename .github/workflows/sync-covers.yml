@@ -20,7 +20,7 @@ jobs:
                   cache: 'npm'
 
             - name: Install dependencies
-              run: ppnpm install --frozen-lockfile
+              run: pnpm install --frozen-lockfile
 
             - name: Download new covers
               run: pnpm exec tsx tools/sync-covers.ts

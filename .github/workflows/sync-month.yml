@@ -21,7 +21,7 @@ jobs:
                   cache: 'npm'
 
             - name: Install dependencies
-              run: ppnpm install --frozen-lockfile
+              run: pnpm install --frozen-lockfile
 
             - name: Should run archive
               id: should_run
