@@ -46,7 +46,7 @@ Production site: [events.townsvillebushwalkingclub.com](https://events.townsvill
 2. **Install dependencies**
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Set up environment variables**
@@ -67,7 +67,7 @@ Production site: [events.townsvillebushwalkingclub.com](https://events.townsvill
    CACHE_CLEAR_SECRET=your_long_random_secret_here
    ```
 
-   `FACEBOOK_APP_ID` is public and safe to expose. When set, pages include `<meta property="fb:app_id">` for Meta Sharing Debugger / Domain Insights. Never put `FACEBOOK_APP_SECRET` in the Next.js app env used for the site (keep it for local `npm run token:refresh` only).
+   `FACEBOOK_APP_ID` is public and safe to expose. When set, pages include `<meta property="fb:app_id">` for Meta Sharing Debugger / Domain Insights. Never put `FACEBOOK_APP_SECRET` in the Next.js app env used for the site (keep it for local `pnpm run token:refresh` only).
 
 4. **Get Facebook Access Token**
    - Go to [Facebook Graph API Explorer](https://developers.facebook.com/tools/explorer/)
@@ -79,7 +79,7 @@ Production site: [events.townsvillebushwalkingclub.com](https://events.townsvill
 5. **Start the development server**
 
    ```bash
-   npm run dev
+   pnpm run dev
    ```
 
 6. **Open your browser**
@@ -125,17 +125,17 @@ Subscribe in Google Calendar, Apple Calendar, or Outlook using the feed URL. The
 
 | Script | Description |
 |--------|-------------|
-| `npm run dev` | Start development server |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run token:refresh` | Refresh Facebook access token |
-| `npm run download:history` | Bulk-download historical events to `data/events/` |
-| `npm run month:sync` | Archive previous month to JSON |
-| `npm run covers:sync` | Sync event cover images |
-| `npm run sync:cancelled` | Sync cancelled event IDs |
-| `npm run cache:clear` | Clear Facebook/ISR caches after editing an event on Facebook |
-| `npm run git:setup` | Configure local git author and co-author for this repo |
+| `pnpm run dev` | Start development server |
+| `pnpm run build` | Production build |
+| `pnpm run start` | Start production server |
+| `pnpm run lint` | Run ESLint |
+| `pnpm run token:refresh` | Refresh Facebook access token |
+| `pnpm run download:history` | Bulk-download historical events to `data/events/` |
+| `pnpm run month:sync` | Archive previous month to JSON |
+| `pnpm run covers:sync` | Sync event cover images |
+| `pnpm run sync:cancelled` | Sync cancelled event IDs |
+| `pnpm run cache:clear` | Clear Facebook/ISR caches after editing an event on Facebook |
+| `pnpm run git:setup` | Configure local git author and co-author for this repo |
 
 ### Project Structure
 
@@ -193,7 +193,7 @@ tbwc/
 Tokens expire periodically. To refresh:
 
 ```bash
-npm run token:refresh
+pnpm run token:refresh
 ```
 
 This runs the TypeScript tool with `tsx` and converts short-lived tokens to long-lived (60 days) or fetches a **Page Access Token** (never expires, recommended for production).
@@ -208,19 +208,19 @@ Facebook event data is cached for about 6 hours (in-memory, Next.js ISR, and CDN
 2. Run:
 
 ```bash
-npm run cache:clear
+pnpm run cache:clear
 ```
 
 For one event only:
 
 ```bash
-npm run cache:clear -- 1234567890123456
+pnpm run cache:clear -- 1234567890123456
 ```
 
 Against production:
 
 ```bash
-npm run cache:clear -- --url https://events.townsvillebushwalkingclub.com
+pnpm run cache:clear -- --url https://events.townsvillebushwalkingclub.com
 ```
 
 Or call the API directly:
@@ -239,12 +239,12 @@ Past events are archived to `data/events/YYYY/MM.json` by the **Archive Previous
 To backfill or recover a missed month manually:
 
 - **GitHub Actions:** open **Archive Previous Month** and click **Run workflow**
-- **Local:** `npm run month:sync` then commit and push `data/events/` and cover assets
+- **Local:** `pnpm run month:sync` then commit and push `data/events/` and cover assets
 
 Bulk historical download:
 
 ```bash
-npm run download:history
+pnpm run download:history
 ```
 
 Downloads events from 2020 onwards, handles rate limits, and resumes if interrupted.
@@ -253,7 +253,7 @@ Downloads events from 2020 onwards, handles rate limits, and resumes if interrup
 
 The app fetches events from the Facebook page identified by `FACEBOOK_PAGE_ID` (default club page: [townsvillebushwalkingclub](https://www.facebook.com/townsvillebushwalkingclub/)). Set `FACEBOOK_PAGE_ID` and `FACEBOOK_ACCESS_TOKEN` in `.env.local`.
 
-Optional: set `FACEBOOK_APP_ID` so Open Graph pages emit `fb:app_id` (associates shares with the club Meta app). Required for `npm run token:refresh` together with `FACEBOOK_APP_SECRET` (secret stays server/local only).
+Optional: set `FACEBOOK_APP_ID` so Open Graph pages emit `fb:app_id` (associates shares with the club Meta app). Required for `pnpm run token:refresh` together with `FACEBOOK_APP_SECRET` (secret stays server/local only).
 
 ## Troubleshooting
 
@@ -289,7 +289,7 @@ For local testing, use `http://localhost:3000/api/embed-snippet?v=1`. Test pages
 
 1. Fork the repository
 2. Create a feature branch
-3. Run `npm run git:setup` once per clone to configure local commit authorship for this repo:
+3. Run `pnpm run git:setup` once per clone to configure local commit authorship for this repo:
    - **Author:** `townsvillebushwalkingclub <townsvillebushwalkingclub@gmail.com>`
    - **Co-author:** `luen <Luen@users.noreply.github.com>` (added automatically via `.githooks/prepare-commit-msg`)
 4. Make your changes
