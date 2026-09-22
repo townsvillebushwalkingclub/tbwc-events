@@ -33,7 +33,7 @@
   "author": "Luen Warneke",
   "license": "ISC",
   "dependencies": {
-    "@next/third-parties": "16.3.4",
+    "@next/third-parties": "16.3.5",
     "@tailwindcss/postcss": "^4.3.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
