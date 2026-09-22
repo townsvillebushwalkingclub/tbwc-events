@@ -88,7 +88,7 @@ function buildDetailsSection(generatedAt: Date): string {
   return [
     `Last updated: ${formatBrisbaneIso(generatedAt)}`,
     '',
-    'Townsville Bushwalking Club (TBWC) was formed in May 1960 and has organised guided outdoor adventures in Townsville and North Queensland since then (the club celebrated its 60th birthday in 2020). Activities are primarily bushwalking and hiking (both on and off track), along with canyoning, rock scrambling, bikepacking, and kayaking. Members and visitors explore national parks, coastal tracks, creeks, gorges, and hinterland country with experienced trip leaders.',
+    'Townsville Bushwalking Club (TBWC) was formed in May 1960 and has organised guided outdoor adventures in Townsville and North Queensland since then. Activities are primarily bushwalking and hiking (both on and off track), along with canyoning, rock scrambling, bikepacking, and kayaking. Members and visitors explore national parks, coastal tracks, creeks, gorges, and hinterland country with experienced trip leaders.',
     '',
     'TBWC is affiliated with Bushwalking Queensland and Bushwalking Australia.',
     '',
