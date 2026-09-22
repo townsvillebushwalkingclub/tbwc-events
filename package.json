@@ -62,7 +62,8 @@
     "@types/react-dom": "19.2.5",
     "postcss": "^8.5.26",
     "brace-expansion@1": "1.1.18",
-    "brace-expansion@5": "5.0.9"
+    "brace-expansion@5": "5.0.9",
+    "js-yaml": "4.3.2"
   },
   "packageManager": "pnpm@10.33.0"
 }
