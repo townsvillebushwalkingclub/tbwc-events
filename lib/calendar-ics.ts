@@ -154,7 +154,7 @@ export function buildVCalendar(
   options: BuildVCalendarOptions = {}
 ): string {
   const {
-    name = 'Townsville Bushwalking Club Events',
+    name = 'TBWC Events',
     refreshHours = 6,
     includeLeaderInitial = false,
   } = options
@@ -167,6 +167,7 @@ export function buildVCalendar(
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     `X-WR-CALNAME:${escapeIcsText(name)}`,
+    `X-WR-TIMEZONE:${BRISBANE_TIMEZONE}`,
     `REFRESH-INTERVAL;VALUE=DURATION:PT${refreshHours}H`,
     VTIMEZONE_BLOCK,
     ...events.flatMap((event) =>
