@@ -40,7 +40,7 @@
     "date-fns": "^4.4.0",
     "jszip": "^3.10.1",
     "next": "16.3.4",
-    "postcss": "^8.5.26",
+    "postcss": "^8.5.28",
     "qrcode": "^1.5.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -60,7 +60,7 @@
   "overrides": {
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
-    "postcss": "^8.5.26",
+    "postcss": "^8.5.28",
     "brace-expansion@1": "1.1.18",
     "brace-expansion@5": "5.0.9",
     "js-yaml": "4.3.2"
