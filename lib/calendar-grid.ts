@@ -1,4 +1,5 @@
 import { getCalendarDateInTimeZone } from './event-utils'
+import type { TBWCEvent } from '@/types/event'
 
 export interface CalendarDate {
   year: number
@@ -63,7 +64,7 @@ export interface MonthCalendarGrid {
 
 /**
  * Monday-start grid covering the full month (plus leading/trailing days in
- * adjacent months). Uses 5 or 6 weeks — never a trailing row that is entirely
+ * adjacent months). Uses 5 or 6 weeks - never a trailing row that is entirely
  * outside the displayed month.
  */
 export function getMonthCalendarGrid(
@@ -144,4 +145,37 @@ export function monthsToFetchForGrid(
   }
 
   return gridMonths.filter(({ year, month }) => !covered.has(monthKey(year, month)))
+}
+
+/**
+ * Default homepage calendar month (Brisbane calendar date).
+ * Stays on the current month until today falls on or after the Monday of the
+ * last week-row of that month's Monday-start grid (see getMonthCalendarGrid).
+ * The events argument is unused and kept only for call-site compatibility.
+ */
+export function getPreferredCalendarMonth(
+  _events?: TBWCEvent[],
+  now: Date = new Date()
+): { year: number; month: number } {
+  const todayCal = getCalendarDateInTimeZone(now)
+  const { endDate } = getMonthCalendarGrid(todayCal.year, todayCal.month)
+
+  // Last week-row is Mon..Sun ending on endDate (always a Sunday).
+  const lastWeekMonday = new Date(endDate)
+  lastWeekMonday.setDate(endDate.getDate() - 6)
+
+  const lastMondayOrd =
+    lastWeekMonday.getFullYear() * 10000 +
+    (lastWeekMonday.getMonth() + 1) * 100 +
+    lastWeekMonday.getDate()
+  const todayOrd = todayCal.year * 10000 + todayCal.month * 100 + todayCal.day
+
+  if (todayOrd >= lastMondayOrd) {
+    if (todayCal.month === 12) {
+      return { year: todayCal.year + 1, month: 1 }
+    }
+    return { year: todayCal.year, month: todayCal.month + 1 }
+  }
+
+  return { year: todayCal.year, month: todayCal.month }
 }

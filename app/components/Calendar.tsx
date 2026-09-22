@@ -15,13 +15,13 @@ import {
   getMonthsInGrid,
   getMultiDayEventSegment,
   getPrefetchMonths,
+  getPreferredCalendarMonth,
   monthKey,
   monthsToFetchForGrid,
 } from '@/lib/calendar-grid'
 import {
   buildCalendarEventLabel,
   getCalendarDateInTimeZone,
-  getPreferredCalendarMonth,
   isEventPastOnCalendar,
   isMultiDayEvent,
   formatCalendarMonthLabel,
