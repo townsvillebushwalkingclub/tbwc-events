@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import Image from 'next/image'
-import { getPreferredCalendarMonth } from '@/lib/event-utils'
+import { getPreferredCalendarMonth } from '@/lib/calendar-grid'
 import { buildHomepageJsonLd } from '@/lib/event-json-ld'
 import { getEventsForCalendarMonths } from '@/lib/facebook-api'
 import Calendar from './components/Calendar'

@@ -16,6 +16,7 @@
     "download:history": "pnpm exec tsx tools/download-historical-events.ts",
     "sync:cancelled": "pnpm exec tsx tools/sync-cancelled-events.ts",
     "cache:clear": "pnpm exec tsx tools/clear-cache.ts",
+    "test:preferred-month": "pnpm exec tsx --test lib/preferred-calendar-month.test.ts",
     "git:setup": "node -e \"require('child_process').execSync(process.platform==='win32'?'powershell -File tools/setup-git-author.ps1':'sh tools/setup-git-author.sh',{stdio:'inherit'})\""
   },
   "keywords": [
