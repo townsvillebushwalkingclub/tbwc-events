@@ -27,7 +27,10 @@ export async function OPTIONS() {
 export async function GET() {
   try {
     const events = await getUpcomingEventsForCalendar()
-    const body = buildVCalendar(events, { includeLeaderInitial: true })
+    const body = buildVCalendar(events, {
+      name: 'TBWC Events',
+      includeLeaderInitial: true,
+    })
 
     const response = new NextResponse(body, {
       status: 200,
